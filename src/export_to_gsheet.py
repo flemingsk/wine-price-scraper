@@ -5,35 +5,40 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.db import engine
 
-
 # --------------------
 # CONFIG
 # --------------------
 GOOGLE_SHEET_NAME = "Wine Prices"
 TAB_NAME = "price_records"
 
-
 # --------------------
 # GOOGLE SHEETS AUTH
 # --------------------
+SERVICE_ACCOUNT_FILE = os.getenv("GSHEET_CREDENTIALS_FILE", "gspread_key.json")
 GSHEET_CREDENTIALS_JSON = os.getenv("GSHEET_CREDENTIALS_JSON")
 
-if not GSHEET_CREDENTIALS_JSON:
-    raise RuntimeError(
-        "GSHEET_CREDENTIALS_JSON environment variable is not set"
+# If the JSON is provided in an environment variable (CI/CD), write it to a file
+if GSHEET_CREDENTIALS_JSON:
+    with open(SERVICE_ACCOUNT_FILE, "w") as f:
+        f.write(GSHEET_CREDENTIALS_JSON)
+
+# Check if file exists
+if not os.path.exists(SERVICE_ACCOUNT_FILE):
+    raise FileNotFoundError(
+        f"Google Sheets credentials not found. "
+        f"Provide either GSHEET_CREDENTIALS_JSON env var or a local file at {SERVICE_ACCOUNT_FILE}"
     )
 
-creds_dict = json.loads(GSHEET_CREDENTIALS_JSON)
+# Load credentials
+with open(SERVICE_ACCOUNT_FILE, "r") as f:
+    creds_dict = json.load(f)
 
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive",
 ]
 
-creds = ServiceAccountCredentials.from_json_keyfile_dict(
-    creds_dict, scope
-)
-
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
 
@@ -68,7 +73,6 @@ def export_to_gsheet():
     JOIN master_products mp ON mp.id = pr.master_product_id
     ORDER BY pr.fetched_at;
     """
-
     df = pd.read_sql(query, engine)
 
     # --------------------

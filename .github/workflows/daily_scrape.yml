@@ -1,38 +1,46 @@
 name: Daily Wine Price Scrape
 
+# Triggers
 on:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: '0 9 * * *'   # 10:00 CET (winter time)
-  workflow_dispatch:
+    - cron: "0 10 * * *"  # daily at 10:00 CET (09:00 UTC)
 
 jobs:
-  scrape:
+  scrape-and-export:
     runs-on: ubuntu-latest
 
+    # Environment variables from GitHub Secrets
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      GSHEET_CREDENTIALS_JSON: ${{ secrets.GSHEET_CREDENTIALS_JSON }}
+      GSHEET_CREDENTIALS_FILE: gspread_key.json
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
+      # 2️⃣ Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: 3.13
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          playwright install
+          python -m pip install --upgrade pip
+          pip install -r src/requirements.txt
 
-      - name: Restore Google credentials
+      # 4️⃣ Write Google Sheets credentials JSON
+      - name: Write Google Sheets credentials
         run: |
-          echo "${{ secrets.GCP_CREDENTIALS }}" | base64 --decode > gcp.json
-          mkdir -p ~/.config/gcloud
-          mv gcp.json ~/.config/gcloud/application_default_credentials.json
+          echo "${GSHEET_CREDENTIALS_JSON}" > $GSHEET_CREDENTIALS_FILE
 
+      # 5️⃣ Run the scraper
       - name: Run scraper
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          GSHEET_ID: ${{ secrets.GSHEET_ID }}
-          GOOGLE_APPLICATION_CREDENTIALS: ~/.config/gcloud/application_default_credentials.json
         run: |
           python -m src.app

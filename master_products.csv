@@ -1,0 +1,14 @@
+﻿estate_name,retailer,product_url,url_template,price_selector,vintage_start,vintage_end,bottle_size,active,notes
+Chateau Latour Martillac,millesima,https://www.millesima.fr/chateau-latour-martillac-2019-cu-cc-1.html,https://www.millesima.fr/chateau-latour-martillac-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works for all vintages
+Chateau Carbonnieux,millesima,https://www.millesima.fr/chateau-carbonnieux-2019-cu-cc-1.html,https://www.millesima.fr/chateau-carbonnieux-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works
+Chateau de Fieuzal,millesima,https://www.millesima.fr/chateau-de-fieuzal-2019-cu-cc-1.html,https://www.millesima.fr/chateau-de-fieuzal-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works
+Chateau Larrivet Haut-Brion,millesima,https://www.millesima.fr/chateau-larrivet-haut-brion-2019-cu-cc-1.html,https://www.millesima.fr/chateau-larrivet-haut-brion-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works
+Chateau Olivier,millesima,https://www.millesima.fr/chateau-olivier-2019-cu-cc-1.html,https://www.millesima.fr/chateau-olivier-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works
+Chateau Malartic Lagraviere,millesima,https://www.millesima.fr/chateau-malartic-lagraviere-2019-cu-cc-1.html,https://www.millesima.fr/chateau-malartic-lagraviere-{vintage}-cu-cc-1.html,span.ProductPrice_offer-price__rVXIa,2015,2024,0.75L,TRUE,Template works
+Chateau Latour Martillac,vinatis,https://www.vinatis.com/id-61799-chateau-latour-martillac-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Carbonnieux,vinatis,https://www.vinatis.com/id-50554-chateau-carbonnieux-rouge-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/2339-chateau-latour-martillac-2019-rouge.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/2350-chateau-carbonnieux-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,12bouteilles,https://www.12bouteilles.com/fr/chateau-larrivet-haut-brion/2323-chateau-larrivet-haut-brion-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,12bouteilles,https://www.12bouteilles.com/fr/chateau-malartic-lagraviere/2337-chateau-malartic-lagraviere-2019-rouge.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,12bouteilles,https://www.12bouteilles.com/fr/chateau-sociando-mallet/2393-chateau-sociando-mallet-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL

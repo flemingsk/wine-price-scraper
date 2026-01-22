@@ -1,43 +1,46 @@
-import psycopg2
+import os
+import json
 import pandas as pd
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.db import engine
-import os
 
-SERVICE_ACCOUNT_FILE = os.getenv(
-    "GSHEET_CREDENTIALS_FILE",
-    "gspread_key.json"
-)
-
-if not os.path.exists(SERVICE_ACCOUNT_FILE):
-    raise FileNotFoundError(
-        f"Google Sheets credentials not found: {SERVICE_ACCOUNT_FILE}"
-    )
 
 # --------------------
 # CONFIG
 # --------------------
-DATABASE_URL = "postgresql://postgres:StrongPassword123@localhost:5432/wine_prices"
 GOOGLE_SHEET_NAME = "Wine Prices"
 TAB_NAME = "price_records"
-SERVICE_ACCOUNT_FILE = "gspread_key.json"
+
+
+# --------------------
+# GOOGLE SHEETS AUTH
+# --------------------
+GSHEET_CREDENTIALS_JSON = os.getenv("GSHEET_CREDENTIALS_JSON")
+
+if not GSHEET_CREDENTIALS_JSON:
+    raise RuntimeError(
+        "GSHEET_CREDENTIALS_JSON environment variable is not set"
+    )
+
+creds_dict = json.loads(GSHEET_CREDENTIALS_JSON)
+
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+]
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(
+    creds_dict, scope
+)
+
+client = gspread.authorize(creds)
 
 
 def export_to_gsheet():
     # --------------------
-    # GOOGLE SHEETS AUTH
+    # OPEN SHEET
     # --------------------
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/drive",
-    ]
-
-    creds = ServiceAccountCredentials.from_json_keyfile_name(
-        SERVICE_ACCOUNT_FILE, scope
-    )
-    client = gspread.authorize(creds)
-
     sheet = client.open(GOOGLE_SHEET_NAME)
     worksheet = sheet.worksheet(TAB_NAME)
 
@@ -51,8 +54,6 @@ def export_to_gsheet():
     # --------------------
     # DB QUERY
     # --------------------
-    conn = psycopg2.connect(DATABASE_URL)
-
     query = """
     SELECT
         pr.id,
@@ -69,7 +70,6 @@ def export_to_gsheet():
     """
 
     df = pd.read_sql(query, engine)
-    conn.close()
 
     # --------------------
     # FILTER NEW ROWS
@@ -82,7 +82,7 @@ def export_to_gsheet():
         return
 
     # --------------------
-    # WRITE HEADER (once)
+    # WRITE HEADER (if empty)
     # --------------------
     if worksheet.row_count == 0:
         worksheet.append_row(list(new_rows.columns))
@@ -103,6 +103,6 @@ def export_to_gsheet():
     print(f"Appended {len(new_rows)} new rows to Google Sheet.")
 
 
-# Allow manual execution if needed
+# Allow manual execution
 if __name__ == "__main__":
     export_to_gsheet()

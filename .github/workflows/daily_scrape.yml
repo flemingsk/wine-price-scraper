@@ -1,0 +1,37 @@
+name: Daily Wine Price Scrape
+
+on:
+  schedule:
+    - cron: '0 9 * * *'   # 10:00 CET (winter time)
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Restore Google credentials
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" | base64 --decode > gcp.json
+          mkdir -p ~/.config/gcloud
+          mv gcp.json ~/.config/gcloud/application_default_credentials.json
+
+      - name: Run scraper
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GSHEET_ID: ${{ secrets.GSHEET_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: ~/.config/gcloud/application_default_credentials.json
+        run: |
+          python -m src.app

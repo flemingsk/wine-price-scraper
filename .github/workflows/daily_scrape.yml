@@ -34,15 +34,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Write Google Sheets credentials
-        run: |
-          echo "$GSHEET_CREDENTIALS_JSON" > gspread_key.json
-          shell: bash
-
+      
       # 4️⃣ Write Google Sheets credentials JSON
       - name: Write Google Sheets credentials
         run: |
-          echo "${GSHEET_CREDENTIALS_JSON}" > $GSHEET_CREDENTIALS_FILE
+          echo "${{ secrets.GSHEET_CREDENTIALS_JSON }}" > gspread_key.json
 
       # 5️⃣ Run the scraper
       - name: Run scraper

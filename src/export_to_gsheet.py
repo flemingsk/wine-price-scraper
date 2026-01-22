@@ -3,6 +3,17 @@ import pandas as pd
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.db import engine
+import os
+
+SERVICE_ACCOUNT_FILE = os.getenv(
+    "GSHEET_CREDENTIALS_FILE",
+    "gspread_key.json"
+)
+
+if not os.path.exists(SERVICE_ACCOUNT_FILE):
+    raise FileNotFoundError(
+        f"Google Sheets credentials not found: {SERVICE_ACCOUNT_FILE}"
+    )
 
 # --------------------
 # CONFIG

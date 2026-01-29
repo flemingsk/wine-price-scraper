@@ -28,26 +28,21 @@ def scrape_product(product):
         else:
             vintages = [None]
 
-        # -------------------------
-        # Loop over vintages
-        # -------------------------
         for vintage in vintages:
             # Build URL
             if vintage is not None:
                 url = product.url_template.format(vintage=vintage)
-                note = str(vintage)
             else:
                 url = product.product_url
-                note = None
 
             # -------------------------
-            # Per-vintage daily deduplication
+            # Daily deduplication per vintage
             # -------------------------
             existing = (
                 session.query(PriceRecord)
                 .filter(
                     PriceRecord.master_product_id == product.id,
-                    PriceRecord.note == note,
+                    PriceRecord.vintage == vintage,
                     func.date(PriceRecord.fetched_at) == today,
                 )
                 .first()
@@ -57,7 +52,7 @@ def scrape_product(product):
                 continue
 
             # -------------------------
-            # Scrape price
+            # Scrape
             # -------------------------
             try:
                 if product.retailer == "vinatis":
@@ -67,7 +62,7 @@ def scrape_product(product):
                 else:
                     r = requests.get(url, headers=HEADERS, timeout=20)
                     if r.status_code == 404:
-                        continue  # vintage does not exist
+                        continue
                     r.raise_for_status()
 
                     soup = BeautifulSoup(r.text, "html.parser")
@@ -81,21 +76,18 @@ def scrape_product(product):
                     availability = True
 
             except Exception:
-                # Never break the whole product because one vintage failed
                 continue
 
-            # -------------------------
-            # Save record
-            # -------------------------
             record = PriceRecord(
                 master_product_id=product.id,
                 site=product.retailer,
                 url=url,
+                vintage=vintage,
+                wine_color="Rouge",
                 price_amount=price_amount,
                 currency=currency,
                 raw_price_text=raw_price,
                 availability=availability,
-                note=note,
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 

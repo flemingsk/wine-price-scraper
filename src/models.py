@@ -30,7 +30,7 @@ class MasterProduct(Base):
     price_selector = Column(Text, nullable=False)
     availability_selector = Column(Text, nullable=True)
 
-    # Vintage range (NO single vintage here anymore)
+    # Vintage range
     vintage_start = Column(Integer, nullable=False)
     vintage_end = Column(Integer, nullable=False)
 
@@ -39,7 +39,6 @@ class MasterProduct(Base):
     active = Column(Boolean, default=True)
     notes = Column(Text, nullable=True)
 
-    # Relationships
     prices = relationship(
         "PriceRecord",
         back_populates="product",
@@ -51,6 +50,7 @@ class PriceRecord(Base):
     __tablename__ = "price_records"
 
     id = Column(Integer, primary_key=True)
+
     master_product_id = Column(
         Integer,
         ForeignKey("master_products.id", ondelete="CASCADE"),
@@ -60,12 +60,14 @@ class PriceRecord(Base):
     site = Column(String, nullable=False)
     url = Column(Text, nullable=False)
 
+    vintage = Column(Integer, nullable=True)
+    wine_color = Column(String, nullable=False, default="Rouge")
+
     price_amount = Column(Numeric(10, 2))
     currency = Column(String)
     raw_price_text = Column(Text)
     availability = Column(Boolean)
 
-    note = Column(Text, nullable=True)
     fetched_at = Column(DateTime(timezone=True), nullable=False)
 
     product = relationship("MasterProduct", back_populates="prices")

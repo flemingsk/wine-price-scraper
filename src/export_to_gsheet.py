@@ -5,31 +5,21 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.db import engine
 
-# --------------------
-# CONFIG
-# --------------------
 GOOGLE_SHEET_NAME = "Wine Prices"
 TAB_NAME = "price_records"
 
-# --------------------
-# GOOGLE SHEETS AUTH
-# --------------------
 SERVICE_ACCOUNT_FILE = os.getenv("GSHEET_CREDENTIALS_FILE", "gspread_key.json")
 GSHEET_CREDENTIALS_JSON = os.getenv("GSHEET_CREDENTIALS_JSON")
 
-# If the JSON is provided in an environment variable (CI/CD), write it to a file
 if GSHEET_CREDENTIALS_JSON:
     with open(SERVICE_ACCOUNT_FILE, "w") as f:
         f.write(GSHEET_CREDENTIALS_JSON)
 
-# Check if file exists
 if not os.path.exists(SERVICE_ACCOUNT_FILE):
     raise FileNotFoundError(
-        f"Google Sheets credentials not found. "
-        f"Provide either GSHEET_CREDENTIALS_JSON env var or a local file at {SERVICE_ACCOUNT_FILE}"
+        f"Google Sheets credentials not found at {SERVICE_ACCOUNT_FILE}"
     )
 
-# Load credentials
 with open(SERVICE_ACCOUNT_FILE, "r") as f:
     creds_dict = json.load(f)
 
@@ -43,28 +33,21 @@ client = gspread.authorize(creds)
 
 
 def export_to_gsheet():
-    # --------------------
-    # OPEN SHEET
-    # --------------------
     sheet = client.open(GOOGLE_SHEET_NAME)
     worksheet = sheet.worksheet(TAB_NAME)
 
-    # --------------------
-    # FETCH EXISTING IDS
-    # --------------------
     existing_ids = set()
     if worksheet.row_count > 1:
         existing_ids = set(worksheet.col_values(1)[1:])
 
-    # --------------------
-    # DB QUERY
-    # --------------------
     query = """
     SELECT
         pr.id,
         mp.estate_name,
         pr.site,
         pr.url,
+        pr.vintage,
+        pr.wine_color,
         pr.price_amount,
         pr.currency,
         pr.availability,
@@ -73,27 +56,19 @@ def export_to_gsheet():
     JOIN master_products mp ON mp.id = pr.master_product_id
     ORDER BY pr.fetched_at;
     """
-    df = pd.read_sql(query, engine)
 
-    # --------------------
-    # FILTER NEW ROWS
-    # --------------------
+    df = pd.read_sql(query, engine)
     df["id"] = df["id"].astype(str)
+
     new_rows = df[~df["id"].isin(existing_ids)]
 
     if new_rows.empty:
         print("No new rows to append.")
         return
 
-    # --------------------
-    # WRITE HEADER (if empty)
-    # --------------------
     if worksheet.row_count == 0:
         worksheet.append_row(list(new_rows.columns))
 
-    # --------------------
-    # APPEND DATA
-    # --------------------
     new_rows = new_rows.where(pd.notnull(new_rows), "")
     new_rows = new_rows.map(
         lambda x: x.isoformat() if hasattr(x, "isoformat") else x
@@ -107,6 +82,5 @@ def export_to_gsheet():
     print(f"Appended {len(new_rows)} new rows to Google Sheet.")
 
 
-# Allow manual execution
 if __name__ == "__main__":
     export_to_gsheet()

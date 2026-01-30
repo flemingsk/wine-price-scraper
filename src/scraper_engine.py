@@ -6,7 +6,7 @@ from sqlalchemy import func
 from src.models import PriceRecord
 from src.db import SessionLocal
 from src.utils import parse_price
-from src.scrapers.vinatis import scrape_vinatis_price
+from src.scrapers.vinatis import VinatisScraper  # Playwright-based vinatis scraper
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0"
@@ -28,6 +28,9 @@ def scrape_product(product):
         else:
             vintages = [None]
 
+        # -------------------------
+        # Loop over vintages
+        # -------------------------
         for vintage in vintages:
             # Build URL
             if vintage is not None:
@@ -36,7 +39,7 @@ def scrape_product(product):
                 url = product.product_url
 
             # -------------------------
-            # Daily deduplication per vintage
+            # Per-vintage daily deduplication
             # -------------------------
             existing = (
                 session.query(PriceRecord)
@@ -52,17 +55,15 @@ def scrape_product(product):
                 continue
 
             # -------------------------
-            # Scrape
+            # Scrape price
             # -------------------------
             try:
-                if product.retailer == "vinatis":
-                    price_amount, currency, raw_price, availability = (
-                        scrape_vinatis_price(url, product.price_selector)
-                    )
+                if product.retailer.lower() == "vinatis":
+                    price_amount, currency, raw_price, availability = VinatisScraper.scrape_price(url)
                 else:
                     r = requests.get(url, headers=HEADERS, timeout=20)
                     if r.status_code == 404:
-                        continue
+                        continue  # vintage does not exist
                     r.raise_for_status()
 
                     soup = BeautifulSoup(r.text, "html.parser")
@@ -76,18 +77,23 @@ def scrape_product(product):
                     availability = True
 
             except Exception:
+                # Never break the whole product because one vintage failed
                 continue
 
+            # -------------------------
+            # Save record
+            # -------------------------
             record = PriceRecord(
                 master_product_id=product.id,
                 site=product.retailer,
                 url=url,
-                vintage=vintage,
-                wine_color="Rouge",
                 price_amount=price_amount,
                 currency=currency,
                 raw_price_text=raw_price,
                 availability=availability,
+                vintage=vintage,        # NEW: proper vintage column
+                wine_color="Rouge",     # NEW: default color
+                note=None,              # CLEAR old note
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 

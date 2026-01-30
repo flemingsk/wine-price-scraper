@@ -1,3 +1,5 @@
-from .vinatis import scrape_vinatis_price
+from src.scrapers.vinatis import VinatisScraper
 
-__all__ = ["scrape_vinatis_price"]
+SCRAPERS = {
+    "vinatis": VinatisScraper(),
+}

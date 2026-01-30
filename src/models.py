@@ -34,6 +34,9 @@ class MasterProduct(Base):
     vintage_start = Column(Integer, nullable=False)
     vintage_end = Column(Integer, nullable=False)
 
+    # Wine metadata
+    wine_color = Column(String, nullable=False, default="Rouge")
+
     # Metadata
     bottle_size = Column(String, nullable=True)
     active = Column(Boolean, default=True)

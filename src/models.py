@@ -10,6 +10,14 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, relationship
 
+from sqlalchemy import CheckConstraint
+
+__table_args__ = (
+    CheckConstraint(
+        "product_url IS NOT NULL OR url_template IS NOT NULL",
+        name="product_url_or_template_required",
+    ),
+)
 Base = declarative_base()
 
 
@@ -23,7 +31,7 @@ class MasterProduct(Base):
     retailer = Column(String, nullable=False)
 
     # URLs
-    product_url = Column(Text, nullable=False)
+    product_url = Column(Text, nullable=True)
     url_template = Column(Text, nullable=True)
 
     # Scraping

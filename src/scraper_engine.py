@@ -91,9 +91,8 @@ def scrape_product(product):
                 currency=currency,
                 raw_price_text=raw_price,
                 availability=availability,
-                vintage=vintage,        # NEW: proper vintage column
+                vintage=vintage if vintage is not None else 0,        # NEW: proper vintage column
                 wine_color="Rouge",     # NEW: default color
-                note=None,              # CLEAR old note
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 

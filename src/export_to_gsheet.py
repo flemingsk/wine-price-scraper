@@ -91,7 +91,7 @@ def export_to_gsheet():
     # APPEND DATA
     # --------------------
     new_rows = new_rows.where(pd.notnull(new_rows), "")
-    new_rows = new_rows.applymap(lambda x: x.isoformat() if hasattr(x, "isoformat") else x)
+    new_rows = new_rows.map(lambda x: x.isoformat() if hasattr(x, "isoformat") else x)
 
     worksheet.append_rows(
         new_rows.values.tolist(),

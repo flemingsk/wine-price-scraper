@@ -1,4 +1,5 @@
 import requests
+import re
 import datetime
 from bs4 import BeautifulSoup
 from sqlalchemy import func
@@ -11,6 +12,13 @@ from src.scrapers.vinatis import VinatisScraper  # Playwright-based vinatis scra
 HEADERS = {
     "User-Agent": "Mozilla/5.0"
 }
+
+
+def extract_vintage_from_text(text: str | None) -> int:
+    if not text:
+        return 0
+    match = re.search(r"(19|20)\d{2}", text)
+    return int(match.group()) if match else 0
 
 
 def scrape_product(product):
@@ -39,27 +47,15 @@ def scrape_product(product):
                 url = product.product_url
 
             # -------------------------
-            # Per-vintage daily deduplication
-            # -------------------------
-            existing = (
-                session.query(PriceRecord)
-                .filter(
-                    PriceRecord.master_product_id == product.id,
-                    PriceRecord.vintage == vintage,
-                    func.date(PriceRecord.fetched_at) == today,
-                )
-                .first()
-            )
-
-            if existing:
-                continue
-
-            # -------------------------
             # Scrape price
             # -------------------------
             try:
                 if product.retailer.lower() == "vinatis":
-                    price_amount, currency, raw_price, availability = VinatisScraper.scrape_price(url)
+                    price_amount, currency, raw_price, availability = (
+                        VinatisScraper.scrape_price(url)
+                    )
+                    detected_vintage = vintage or 0
+
                 else:
                     r = requests.get(url, headers=HEADERS, timeout=20)
                     if r.status_code == 404:
@@ -76,8 +72,31 @@ def scrape_product(product):
                     price_amount, currency = parse_price(raw_price)
                     availability = True
 
+                    page_text = soup.get_text(" ", strip=True)
+                    detected_vintage = (
+                        vintage
+                        if vintage is not None
+                        else extract_vintage_from_text(page_text)
+                    )
+
             except Exception:
                 # Never break the whole product because one vintage failed
+                continue
+
+            # -------------------------
+            # Correct per-vintage daily deduplication
+            # -------------------------
+            existing = (
+                session.query(PriceRecord)
+                .filter(
+                    PriceRecord.master_product_id == product.id,
+                    PriceRecord.vintage == detected_vintage,
+                    func.date(PriceRecord.fetched_at) == today,
+                )
+                .first()
+            )
+
+            if existing:
                 continue
 
             # -------------------------
@@ -91,8 +110,8 @@ def scrape_product(product):
                 currency=currency,
                 raw_price_text=raw_price,
                 availability=availability,
-                vintage=vintage if vintage is not None else 0,        # NEW: proper vintage column
-                wine_color="Rouge",     # NEW: default color
+                vintage=detected_vintage,
+                wine_color="Rouge",
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 

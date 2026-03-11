@@ -1,46 +1,38 @@
 name: Daily Wine Price Scrape
 
-# Triggers
 on:
   push:
     branches:
       - main
   schedule:
-    - cron: "0 10 * * *"  # daily at 10:00 CET (09:00 UTC)
+    - cron: "0 9 * * *"  # daily at 09:00 UTC (10:00 CET / 11:00 CEST)
 
 jobs:
   scrape-and-export:
     runs-on: ubuntu-latest
 
-    # Environment variables from GitHub Secrets
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       GSHEET_CREDENTIALS_JSON: ${{ secrets.GSHEET_CREDENTIALS_JSON }}
-      GSHEET_CREDENTIALS_FILE: gspread_key.json
+      WINE_SEARCHER_API_KEY: ${{ secrets.WINE_SEARCHER_API_KEY }}  # optional — free 100 calls/day
 
     steps:
-      # 1️⃣ Checkout the repository
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2️⃣ Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.13
+          python-version: "3.13"
+          cache: "pip"
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
-      # 4️⃣ Write Google Sheets credentials JSON
-      - name: Write Google Sheets credentials
-        run: |
-          echo "${{ secrets.GSHEET_CREDENTIALS_JSON }}" > gspread_key.json
 
-      # 5️⃣ Run the scraper
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
       - name: Run scraper
-        run: |
-          python -m src.app
+        run: python -m src.app

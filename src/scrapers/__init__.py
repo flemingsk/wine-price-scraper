@@ -4,6 +4,7 @@ from src.scrapers.jean_merlaut import JeanMerlautScraper
 from src.scrapers.idealwine import IdealwineScraper
 from src.scrapers.lavignery import LaVigneryScraper, VinodisScraper
 from src.scrapers.twil import TwilScraper
+from src.scrapers.twelvebouteilles import TwelveBouteillesScraper
 from src.scrapers.cavissima import CavissimaScraper
 from src.scrapers.wine_searcher import WineSearcherScraper
 
@@ -15,7 +16,7 @@ SCRAPERS = {
     "lavignery":     LaVigneryScraper,
     "vinodis":       VinodisScraper,
     "twil":          TwilScraper,
-    "12bouteilles":  TwilScraper,
+    "12bouteilles":  TwelveBouteillesScraper,
     "cavissima":     CavissimaScraper,
     "wine-searcher": WineSearcherScraper,
 }

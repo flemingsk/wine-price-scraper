@@ -46,21 +46,15 @@ def main():
                 url_template = None
 
             # Idempotent uniqueness check
-            query = session.query(MasterProduct).filter(
-                MasterProduct.retailer == row["retailer"]
-            )
+            # With this — matches the actual unique constraint on the DB:
+            existing = session.query(MasterProduct).filter(
+                MasterProduct.retailer == row["retailer"],
+                MasterProduct.estate_name == row["estate_name"],
+                MasterProduct.vintage_start == (int(row["vintage_start"]) if row.get("vintage_start") else None),
+                MasterProduct.bottle_size == row.get("bottle_size"),
+            ).first()
 
-            if product_url:
-                query = query.filter(
-                    MasterProduct.product_url == product_url
-                )
-            else:
-                query = query.filter(
-                    MasterProduct.product_url.is_(None),
-                    MasterProduct.url_template == url_template,
-                )
-
-            if query.first():
+            if existing:
                 continue
 
             product = MasterProduct(

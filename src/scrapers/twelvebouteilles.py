@@ -1,4 +1,4 @@
-# src/scrapers/jean_merlaut.py
+# src/scrapers/twelvebouteilles.py
 from bs4 import BeautifulSoup
 import requests
 from src.scrapers.base import BaseScraper
@@ -6,7 +6,7 @@ from src.utils import parse_price
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
-class JeanMerlautScraper(BaseScraper):
+class TwelveBouteillesScraper(BaseScraper):
     def scrape(self, vintage=None):
         # Build URL using template or fallback to product_url
         url = self.product.url_template.format(vintage=vintage) if self.product.url_template else self.product.product_url

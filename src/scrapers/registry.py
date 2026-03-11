@@ -14,15 +14,20 @@ from src.scrapers.idealwine import IdealwineScraper
 from src.scrapers.cavissima import CavissimaScraper
 from src.scrapers.lavignery import LaVigneryScraper, VinodisScraper
 from src.scrapers.wine_searcher import WineSearcherScraper
+from src.scrapers.jean_merlaut import JeanMerlautScraper
+from src.scrapers.twil import TwilScraper
 
 REGISTRY: dict[str, type[BaseScraper]] = {
-    "vinatis":       VinatisScraper,
-    "millesima":     MillesimaScraper,
-    "idealwine":     IdealwineScraper,
-    "cavissima":     CavissimaScraper,
-    "lavignery":     LaVigneryScraper,
-    "vinodis":       VinodisScraper,
-    "wine-searcher": WineSearcherScraper,
+    "vinatis":        VinatisScraper,
+    "millesima":      MillesimaScraper,
+    "idealwine":      IdealwineScraper,
+    "cavissima":      CavissimaScraper,
+    "lavignery":      LaVigneryScraper,
+    "vinodis":        VinodisScraper,
+    "wine-searcher":  WineSearcherScraper,
+    "jean_merlaut":   JeanMerlautScraper,
+    "12bouteilles":   TwilScraper,   # placeholder — see note below
+    "twil":           TwilScraper,
 }
 
 

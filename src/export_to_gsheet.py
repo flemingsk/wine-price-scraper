@@ -5,42 +5,29 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from src.db import engine
 
-# --------------------
-# CONFIG
-# --------------------
 GOOGLE_SHEET_NAME = "Wine Prices"
 TAB_NAME = "price_records"
-SERVICE_ACCOUNT_FILE = os.getenv("GSHEET_CREDENTIALS_FILE", "gspread_key.json")
 
 
-# FIX (BUG 4): All authentication logic moved inside the function.
-# Previously this ran at import time, crashing the entire app if credentials
-# were missing — even when only running the scraper without Google Sheets.
 def export_to_gsheet():
 
-    # --------------------
-    # AUTH (lazy — only runs when this function is called)
-    # --------------------
+    # Load credentials directly from env var — no temp file needed
     gsheet_credentials_json = os.getenv("GSHEET_CREDENTIALS_JSON")
-
-    if gsheet_credentials_json:
-        with open(SERVICE_ACCOUNT_FILE, "w") as f:
-            f.write(gsheet_credentials_json)
-
-    if not os.path.exists(SERVICE_ACCOUNT_FILE):
-        raise FileNotFoundError(
-            f"Google Sheets credentials not found. "
-            f"Provide either GSHEET_CREDENTIALS_JSON env var or a local file at {SERVICE_ACCOUNT_FILE}"
+    if not gsheet_credentials_json:
+        raise EnvironmentError(
+            "GSHEET_CREDENTIALS_JSON environment variable is not set. "
+            "Add the service account JSON as a GitHub Secret."
         )
 
-    with open(SERVICE_ACCOUNT_FILE, "r") as f:
-        creds_dict = json.load(f)
+    try:
+        creds_dict = json.loads(gsheet_credentials_json)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"GSHEET_CREDENTIALS_JSON is not valid JSON: {e}")
 
     scope = [
         "https://spreadsheets.google.com/feeds",
         "https://www.googleapis.com/auth/drive",
     ]
-
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
 
@@ -50,22 +37,14 @@ def export_to_gsheet():
     sheet = client.open(GOOGLE_SHEET_NAME)
     worksheet = sheet.worksheet(TAB_NAME)
 
-    # --------------------
-    # FIX (BUG 5): worksheet.row_count returns the total allocated grid rows
-    # (default 1000), not rows with data. Use get_all_values() instead to
-    # correctly detect whether the sheet is empty and get existing IDs.
-    # --------------------
+    # Use get_all_values() — row_count returns allocated grid size (1000), not data rows
     all_values = worksheet.get_all_values()
 
     if len(all_values) == 0:
-        # Sheet is completely empty — header not yet written
         existing_ids = set()
         needs_header = True
     else:
-        # First row is the header; collect IDs from column 1 (index 0)
-        existing_ids = set(
-            row[0] for row in all_values[1:] if row and row[0]
-        )
+        existing_ids = set(row[0] for row in all_values[1:] if row and row[0])
         needs_header = False
 
     # --------------------
@@ -89,9 +68,6 @@ def export_to_gsheet():
     """
     df = pd.read_sql(query, engine)
 
-    # --------------------
-    # FILTER NEW ROWS
-    # --------------------
     df["id"] = df["id"].astype(str)
     new_rows = df[~df["id"].isin(existing_ids)]
 
@@ -99,15 +75,9 @@ def export_to_gsheet():
         print("No new rows to append.")
         return
 
-    # --------------------
-    # WRITE HEADER (only if sheet was empty)
-    # --------------------
     if needs_header:
         worksheet.append_row(list(new_rows.columns))
 
-    # --------------------
-    # APPEND DATA
-    # --------------------
     new_rows = new_rows.where(pd.notnull(new_rows), "")
     new_rows = new_rows.map(
         lambda x: x.isoformat() if hasattr(x, "isoformat") else x

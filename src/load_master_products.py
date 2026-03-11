@@ -4,7 +4,7 @@ import os
 
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
-from .db import get_session
+from .db import SessionLocal
 from .models import MasterProduct
 
 logger = logging.getLogger(__name__)
@@ -51,13 +51,19 @@ def main():
             "notes":                  row.get("notes", "").strip() or None,
         })
 
-    with get_session() as session:
+    session = SessionLocal()
+    try:
         stmt = pg_insert(MasterProduct).values(records)
-        # ON CONFLICT DO NOTHING — skip rows that already match the unique constraint
+        # ON CONFLICT DO NOTHING — skip rows already matching the unique constraint
         # (retailer, estate_name, vintage_start, bottle_size)
         stmt = stmt.on_conflict_do_nothing(constraint="uq_master_product")
         result = session.execute(stmt)
         session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
     inserted = result.rowcount if result.rowcount >= 0 else "unknown"
     skipped = len(records) - (result.rowcount if result.rowcount >= 0 else 0)

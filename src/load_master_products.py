@@ -19,7 +19,7 @@ def main():
         return
 
     rows = []
-    with open(csv_path, newline="", encoding="utf-8") as f:
+    with open(csv_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         headers = reader.fieldnames
         logger.info(f"CSV headers detected: {headers}")

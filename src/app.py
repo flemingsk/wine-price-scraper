@@ -14,10 +14,12 @@ logging.basicConfig(
 
 
 def run_once():
+    # FIX (ISSUE 1): Use a single session for both the product query and the
+    # scraper, passing it into scrape_product() to avoid cross-session issues.
     db: Session = SessionLocal()
 
     try:
-        products = db.query(MasterProduct).all()
+        products = db.query(MasterProduct).filter(MasterProduct.active == True).all()
 
         for product in products:
             logging.info(
@@ -25,7 +27,8 @@ def run_once():
             )
 
             try:
-                records = scrape_product(product)
+                # FIX (ISSUE 1): Pass db session into scrape_product
+                records = scrape_product(product, db)
 
                 if not records:
                     logging.info(
@@ -34,9 +37,11 @@ def run_once():
                     continue
 
                 for record in records:
+                    # FIX (ISSUE 4): Use vintage_label in the log line (was computed
+                    # but then ignored — record.vintage was logged directly instead)
                     vintage_label = record.vintage if record.vintage != 0 else "NV"
                     logging.info(
-                        f"Saved: {product.retailer} | {product.estate_name} | {record.vintage}"
+                        f"Saved: {product.retailer} | {product.estate_name} | {vintage_label} | {record.price_amount} {record.currency}"
                     )
 
             except Exception as e:

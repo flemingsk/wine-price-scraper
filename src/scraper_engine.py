@@ -1,127 +1,101 @@
-import requests
-import re
+"""
+Scraper engine — orchestrates scraping across all retailers.
+
+Uses the scraper registry to dispatch each MasterProduct to the
+correct retailer scraper, then persists results to the database.
+
+Key improvements over v1:
+- Registry pattern: adding a new retailer = one line in registry.py
+- All scrapers return standardised ScrapeResult objects
+- Single session passed through (no cross-session issues)
+- Per-vintage daily deduplication preserved
+- Graceful error isolation: one retailer failing never blocks others
+"""
+import logging
 import datetime
-from bs4 import BeautifulSoup
+
 from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from src.models import PriceRecord
-from src.db import SessionLocal
-from src.utils import parse_price
-from src.scrapers.vinatis import VinatisScraper  # Playwright-based vinatis scraper
+from src.scrapers.registry import get_scraper
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
+logger = logging.getLogger(__name__)
 
 
-def extract_vintage_from_text(text: str | None) -> int:
-    if not text:
-        return 0
-    match = re.search(r"(19|20)\d{2}", text)
-    return int(match.group()) if match else 0
+def scrape_product(product, session: Session) -> list[PriceRecord]:
+    """
+    Scrape all vintages for a MasterProduct using the appropriate retailer scraper.
+    Saves new PriceRecord rows (deduped per vintage per day) and returns them.
+    """
+    today = datetime.datetime.now(datetime.UTC).date()
+    saved_records = []
 
-
-def scrape_product(product):
-    session = SessionLocal()
-    records = []
-
+    # Dispatch to correct scraper via registry
     try:
-        today = datetime.datetime.now(datetime.UTC).date()
+        scraper = get_scraper(product.retailer)
+    except ValueError as e:
+        logger.warning(str(e))
+        return []
 
-        # -------------------------
-        # Determine vintages to scrape
-        # -------------------------
-        if product.url_template and product.vintage_start and product.vintage_end:
-            vintages = range(product.vintage_start, product.vintage_end + 1)
-        else:
-            vintages = [None]
+    # Run the scraper — returns list[ScrapeResult]
+    try:
+        results = scraper.scrape(product)
+    except Exception as e:
+        logger.error(f"Scraper crashed for {product.retailer} | {product.estate_name}: {e}", exc_info=True)
+        return []
 
-        # -------------------------
-        # Loop over vintages
-        # -------------------------
-        for vintage in vintages:
-            # Build URL
-            if vintage is not None:
-                url = product.url_template.format(vintage=vintage)
-            else:
-                url = product.product_url
+    if not results:
+        return []
 
-            # -------------------------
-            # Scrape price
-            # -------------------------
-            try:
-                if product.retailer.lower() == "vinatis":
-                    price_amount, currency, raw_price, availability = (
-                        VinatisScraper.scrape_price(url)
-                    )
-                    detected_vintage = vintage or 0
-
-                else:
-                    r = requests.get(url, headers=HEADERS, timeout=20)
-                    if r.status_code == 404:
-                        continue  # vintage does not exist
-                    r.raise_for_status()
-
-                    soup = BeautifulSoup(r.text, "html.parser")
-                    price_el = soup.select_one(product.price_selector)
-
-                    if not price_el:
-                        continue
-
-                    raw_price = price_el.get_text(strip=True)
-                    price_amount, currency = parse_price(raw_price)
-                    availability = True
-
-                    page_text = soup.get_text(" ", strip=True)
-                    detected_vintage = (
-                        vintage
-                        if vintage is not None
-                        else extract_vintage_from_text(page_text)
-                    )
-
-            except Exception:
-                # Never break the whole product because one vintage failed
-                continue
-
-            # -------------------------
-            # Correct per-vintage daily deduplication
-            # -------------------------
+    # Persist each result with per-vintage daily deduplication
+    for result in results:
+        try:
             existing = (
                 session.query(PriceRecord)
                 .filter(
                     PriceRecord.master_product_id == product.id,
-                    PriceRecord.vintage == detected_vintage,
+                    PriceRecord.vintage == result.vintage,
                     func.date(PriceRecord.fetched_at) == today,
                 )
                 .first()
             )
 
             if existing:
+                logger.debug(
+                    f"Skipping duplicate: {result.retailer} | {product.estate_name} | {result.vintage}"
+                )
                 continue
 
-            # -------------------------
-            # Save record
-            # -------------------------
             record = PriceRecord(
                 master_product_id=product.id,
-                site=product.retailer,
-                url=url,
-                price_amount=price_amount,
-                currency=currency,
-                raw_price_text=raw_price,
-                availability=availability,
-                vintage=detected_vintage,
-                wine_color="Rouge",
+                site=result.retailer,
+                url=result.url,
+                price_amount=result.price_amount,
+                currency=result.currency,
+                raw_price_text=result.raw_price_text,
+                availability=result.availability,
+                vintage=result.vintage,
+                wine_color=product.wine_color or "Rouge",
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 
             session.add(record)
-            records.append(record)
+            saved_records.append(record)
 
-        if records:
+        except Exception as e:
+            logger.error(
+                f"Failed to persist record for {product.estate_name} vintage {result.vintage}: {e}",
+                exc_info=True,
+            )
+            session.rollback()
+            continue
+
+    if saved_records:
+        try:
             session.commit()
+        except Exception as e:
+            logger.error(f"Commit failed for {product.estate_name}: {e}", exc_info=True)
+            session.rollback()
 
-        return records
-
-    finally:
-        session.close()
+    return saved_records

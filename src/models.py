@@ -7,22 +7,23 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Text,
+    CheckConstraint,
 )
 from sqlalchemy.orm import declarative_base, relationship
 
-from sqlalchemy import CheckConstraint
-
-__table_args__ = (
-    CheckConstraint(
-        "product_url IS NOT NULL OR url_template IS NOT NULL",
-        name="product_url_or_template_required",
-    ),
-)
 Base = declarative_base()
 
 
 class MasterProduct(Base):
     __tablename__ = "master_products"
+
+    # FIX (BUG 2): __table_args__ must be inside the class, not at module level
+    __table_args__ = (
+        CheckConstraint(
+            "product_url IS NOT NULL OR url_template IS NOT NULL",
+            name="product_url_or_template_required",
+        ),
+    )
 
     id = Column(Integer, primary_key=True)
 
@@ -38,9 +39,10 @@ class MasterProduct(Base):
     price_selector = Column(Text, nullable=False)
     availability_selector = Column(Text, nullable=True)
 
-    # Vintage range
-    vintage_start = Column(Integer, nullable=False)
-    vintage_end = Column(Integer, nullable=False)
+    # FIX (BUG 3): vintage_start / vintage_end must be nullable=True to match
+    # actual usage — non-vintage wines have no range and the loader inserts None
+    vintage_start = Column(Integer, nullable=True)
+    vintage_end = Column(Integer, nullable=True)
 
     # Wine metadata
     wine_color = Column(String, nullable=False, default="Rouge")

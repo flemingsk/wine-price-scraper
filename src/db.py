@@ -11,8 +11,7 @@ if not DATABASE_URL:
 engine = create_engine(DATABASE_URL, echo=False, future=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
+
 def init_db():
     """Create tables if they don't exist yet"""
     Base.metadata.create_all(bind=engine)
-
-

@@ -45,7 +45,7 @@ def main():
             "availability_selector":  row.get("availability_selector", "").strip() or None,
             "vintage_start":          int(vintage_start) if vintage_start else None,
             "vintage_end":            int(vintage_end) if vintage_end else None,
-            "wine_color":             row.get("wine_color", "").strip() or None,
+            "wine_color":             row.get("wine_color", "").strip() or "Rouge",
             "bottle_size":            row.get("bottle_size", "0.75L").strip(),
             "active":                 active,
             "notes":                  row.get("notes", "").strip() or None,

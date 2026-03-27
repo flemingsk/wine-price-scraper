@@ -38,8 +38,29 @@ class TwilScraper(BaseScraper):
                 r.raise_for_status()
 
                 soup = BeautifulSoup(r.text, "html.parser")
+
+                # --- Diagnostics: log exactly what we get ---
+                logger.debug(f"Twil: price_selector='{product.price_selector}' for {product.estate_name} {vintage}")
+
                 price_el = soup.select_one(product.price_selector) if product.price_selector else None
-                raw_price = price_el.get_text(strip=True) if price_el else None
+
+                logger.debug(f"Twil: price_el type={type(price_el).__name__} value={repr(str(price_el))[:120]}")
+
+                if price_el is None:
+                    logger.warning(f"Twil: no element matched selector '{product.price_selector}' at {url}")
+                    raw_price = None
+                else:
+                    raw_price = price_el.get_text(strip=True)
+                    logger.debug(f"Twil: raw_price='{raw_price}'")
+
+                    # Guard: if raw_price looks like HTML, something is wrong
+                    if raw_price and raw_price.startswith("<"):
+                        logger.error(
+                            f"Twil: raw_price looks like HTML — selector '{product.price_selector}' "
+                            f"may be returning wrong element. raw_price={repr(raw_price)[:120]}"
+                        )
+                        raw_price = None
+
                 price_amount, currency = parse_price(raw_price) if raw_price else (None, None)
 
                 results.append(ScrapeResult(

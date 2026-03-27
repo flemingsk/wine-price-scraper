@@ -39,18 +39,21 @@ class TwilScraper(BaseScraper):
 
                 soup = BeautifulSoup(r.text, "html.parser")
 
-                # TEMP DIAGNOSTICS — remove once bug is identified
-                logger.warning(f"Twil DIAG: selector='{product.price_selector}'")
+                # TEMP DIAG — log page title and first 300 chars to see what we're getting
+                title = soup.find("title")
+                logger.warning(
+                    f"Twil DIAG: status={r.status_code} "
+                    f"title='{title.get_text(strip=True) if title else 'NO TITLE'}' "
+                    f"body_start={repr(soup.get_text(strip=True)[:200])}"
+                )
 
                 price_el = soup.select_one(product.price_selector) if product.price_selector else None
-
-                logger.warning(f"Twil DIAG: price_el type={type(price_el).__name__} repr={repr(str(price_el))[:150]}")
+                logger.warning(f"Twil DIAG: price_el={repr(str(price_el))[:150]}")
 
                 if price_el is None:
                     raw_price = None
                 else:
                     raw_price = price_el.get_text(strip=True)
-                    logger.warning(f"Twil DIAG: raw_price='{raw_price}'")
 
                 price_amount, currency = parse_price(raw_price) if raw_price else (None, None)
 

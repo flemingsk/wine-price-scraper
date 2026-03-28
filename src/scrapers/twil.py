@@ -1,19 +1,29 @@
 # src/scrapers/twil.py
 """
-Twil scraper — temporarily has diagnostics to investigate bot-blocking.
-TODO: once resolved, simplify to:
-    class TwilScraper(GenericStaticScraper):
-        retailer = "twil"
+Twil scraper — requires Playwright (JS-rendered prices).
+The page explicitly blocks non-JS clients:
+  "Le JavaScript semble être désactivé sur votre navigateur"
+Price element: span#totalPrice
 """
 import logging
-import requests
-from bs4 import BeautifulSoup
+
+from playwright.sync_api import sync_playwright
 
 from src.scrapers.base import BaseScraper, ScrapeResult
-from src.scrapers.browser_utils import REQUESTS_HEADERS, polite_delay
+from src.scrapers.browser_utils import get_playwright_context, polite_delay
 from src.utils import parse_price
 
 logger = logging.getLogger(__name__)
+
+OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
+
+PRICE_SELECTORS = [
+    "span#totalPrice",
+    ".prix",
+    "span[itemprop='price']",
+    ".product-price",
+    "span.price",
+]
 
 
 class TwilScraper(BaseScraper):
@@ -28,56 +38,89 @@ class TwilScraper(BaseScraper):
             else [None]
         )
 
-        for vintage in vintages:
+        with sync_playwright() as p:
+            browser, context = get_playwright_context(p)
             try:
-                if vintage and product.url_template:
-                    url = product.url_template.format(vintage=vintage)
-                else:
-                    url = product.product_url
-                if not url:
-                    logger.warning(f"Twil: no URL for {product.estate_name} {vintage}")
-                    continue
+                for vintage in vintages:
+                    try:
+                        if vintage and product.url_template:
+                            url = product.url_template.format(vintage=vintage)
+                        else:
+                            url = product.product_url
+                        if not url:
+                            logger.warning(f"Twil: no URL for {product.estate_name} {vintage}")
+                            continue
 
-                r = requests.get(url, headers=REQUESTS_HEADERS, timeout=20)
-                if r.status_code == 404:
-                    continue
-                r.raise_for_status()
+                        result = self._scrape_page(context, url, vintage or 0, product)
+                        if result:
+                            results.append(result)
+                        polite_delay(2.0, 4.0)
 
-                soup = BeautifulSoup(r.text, "html.parser")
-
-                # TEMP DIAGNOSTICS — remove once bot-blocking is resolved
-                title = soup.find("title")
-                logger.warning(
-                    f"Twil DIAG: status={r.status_code} "
-                    f"title='{title.get_text(strip=True) if title else 'NO TITLE'}' "
-                    f"body_start={repr(soup.get_text(strip=True)[:200])}"
-                )
-
-                price_el = soup.select_one(product.price_selector) if product.price_selector else None
-                logger.warning(f"Twil DIAG: selector='{product.price_selector}' price_el={repr(str(price_el))[:150]}")
-
-                if price_el is None:
-                    raw_price = None
-                else:
-                    raw_price = price_el.get_text(strip=True)
-                    if raw_price.strip().startswith("<"):
-                        logger.error(f"Twil: selector returned HTML — check price_selector for {product.estate_name}")
-                        raw_price = None
-
-                price_amount, currency = parse_price(raw_price) if raw_price else (None, None)
-
-                results.append(ScrapeResult(
-                    vintage=vintage or 0,
-                    price_amount=price_amount,
-                    currency=currency,
-                    raw_price_text=raw_price,
-                    availability=bool(price_el),
-                    url=url,
-                    retailer=self.retailer,
-                ))
-                polite_delay(1.5, 3.0)
-
-            except Exception as e:
-                logger.warning(f"Twil: failed {product.estate_name} {vintage}: {e}")
+                    except Exception as e:
+                        logger.warning(f"Twil: failed {product.estate_name} {vintage}: {e}")
+            finally:
+                browser.close()
 
         return results
+
+    def _scrape_page(self, context, url: str, vintage: int, product) -> ScrapeResult | None:
+        page = context.new_page()
+        try:
+            response = page.goto(url, timeout=60000, wait_until="domcontentloaded")
+
+            if response and response.status == 404:
+                return None
+
+            # Wait for price to render
+            page.wait_for_timeout(3000)
+
+            # Try CSS selectors
+            selectors = []
+            if product.price_selector:
+                selectors.append(product.price_selector)
+            selectors.extend(PRICE_SELECTORS)
+
+            raw_price = None
+            used_selector = None
+            for selector in selectors:
+                el = page.query_selector(selector)
+                if el:
+                    candidate = el.inner_text().strip()
+                    if candidate:
+                        raw_price = candidate
+                        used_selector = selector
+                        break
+
+            if not raw_price:
+                logger.warning(f"Twil: no price found at {url}")
+                return None
+
+            try:
+                price_amount, currency = parse_price(raw_price)
+            except ValueError as e:
+                logger.warning(f"Twil: could not parse '{raw_price}' at {url}: {e}")
+                return None
+
+            availability = True
+            page_text = page.inner_text("body").lower()
+            for phrase in OOS_TEXT:
+                if phrase in page_text:
+                    availability = False
+                    break
+
+            logger.info(
+                f"Twil: {product.estate_name} {vintage} — "
+                f"{price_amount} {currency} (selector: '{used_selector}')"
+            )
+
+            return ScrapeResult(
+                vintage=vintage,
+                price_amount=price_amount,
+                currency=currency,
+                raw_price_text=raw_price,
+                availability=availability,
+                url=url,
+                retailer=self.retailer,
+            )
+        finally:
+            page.close()

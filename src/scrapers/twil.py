@@ -1,4 +1,10 @@
 # src/scrapers/twil.py
+"""
+Twil scraper — temporarily has diagnostics to investigate bot-blocking.
+TODO: once resolved, simplify to:
+    class TwilScraper(GenericStaticScraper):
+        retailer = "twil"
+"""
 import logging
 import requests
 from bs4 import BeautifulSoup
@@ -39,7 +45,7 @@ class TwilScraper(BaseScraper):
 
                 soup = BeautifulSoup(r.text, "html.parser")
 
-                # TEMP DIAG — log page title and first 300 chars to see what we're getting
+                # TEMP DIAGNOSTICS — remove once bot-blocking is resolved
                 title = soup.find("title")
                 logger.warning(
                     f"Twil DIAG: status={r.status_code} "
@@ -48,12 +54,15 @@ class TwilScraper(BaseScraper):
                 )
 
                 price_el = soup.select_one(product.price_selector) if product.price_selector else None
-                logger.warning(f"Twil DIAG: price_el={repr(str(price_el))[:150]}")
+                logger.warning(f"Twil DIAG: selector='{product.price_selector}' price_el={repr(str(price_el))[:150]}")
 
                 if price_el is None:
                     raw_price = None
                 else:
                     raw_price = price_el.get_text(strip=True)
+                    if raw_price.strip().startswith("<"):
+                        logger.error(f"Twil: selector returned HTML — check price_selector for {product.estate_name}")
+                        raw_price = None
 
                 price_amount, currency = parse_price(raw_price) if raw_price else (None, None)
 

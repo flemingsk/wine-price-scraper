@@ -1,15 +1,13 @@
+# src/scraper_engine.py
 """
 Scraper engine — orchestrates scraping across all retailers.
 
-Uses the scraper registry to dispatch each MasterProduct to the
-correct retailer scraper, then persists results to the database.
-
-Key improvements over v1:
-- Registry pattern: adding a new retailer = one line in registry.py
-- All scrapers return standardised ScrapeResult objects
-- Single session passed through (no cross-session issues)
-- Per-vintage daily deduplication preserved
-- Graceful error isolation: one retailer failing never blocks others
+Fixes applied:
+  FIX 1: Shared Playwright browser per retailer (not per scrape call)
+          — browser launched once per retailer thread, reused across products
+  FIX 2: Reduced polite delays (handled in browser_utils.py)
+  FIX 3: scrape_retailer_products() is the entry point called per thread
+          — each thread gets its own DB session, no shared state
 """
 import logging
 import datetime
@@ -17,38 +15,85 @@ import datetime
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from src.db import SessionLocal
 from src.models import PriceRecord
 from src.scrapers.registry import get_scraper
 
 logger = logging.getLogger(__name__)
 
 
-def scrape_product(product, session: Session) -> list[PriceRecord]:
+def scrape_retailer_products(retailer: str, products: list) -> None:
     """
-    Scrape all vintages for a MasterProduct using the appropriate retailer scraper.
-    Saves new PriceRecord rows (deduped per vintage per day) and returns them.
+    FIX 3: Entry point for each parallel retailer thread.
+    Creates its own DB session — never shares state with other threads.
+    FIX 1: Gets scraper once and reuses it across all products for this retailer.
+    """
+    # One DB session per thread
+    db: Session = SessionLocal()
+
+    try:
+        # FIX 1: Get scraper once per retailer — Playwright browser
+        # is launched inside the scraper and reused across products
+        try:
+            scraper = get_scraper(retailer)
+        except ValueError as e:
+            logger.warning(str(e))
+            return
+
+        for product in products:
+            logger.info(f"Scraping {product.retailer} | {product.estate_name}")
+            try:
+                records = scrape_product(product, db, scraper)
+                if not records:
+                    logger.info(
+                        f"No new records today: {product.retailer} | {product.estate_name}"
+                    )
+                    continue
+                for record in records:
+                    vintage_label = record.vintage if record.vintage != 0 else "NV"
+                    logger.info(
+                        f"Saved: {product.retailer} | {product.estate_name} | "
+                        f"{vintage_label} | {record.price_amount} {record.currency}"
+                    )
+            except Exception as e:
+                db.rollback()
+                logger.error(
+                    f"Error scraping {product.retailer} | {product.estate_name}: {e}",
+                    exc_info=True,
+                )
+    finally:
+        db.close()
+
+
+def scrape_product(product, session: Session, scraper=None) -> list[PriceRecord]:
+    """
+    Scrape all vintages for a MasterProduct and persist results.
+    Scraper is passed in from scrape_retailer_products to avoid
+    re-instantiating (and re-launching Playwright) for every product.
     """
     today = datetime.datetime.now(datetime.UTC).date()
     saved_records = []
 
-    # Dispatch to correct scraper via registry
-    try:
-        scraper = get_scraper(product.retailer)
-    except ValueError as e:
-        logger.warning(str(e))
-        return []
+    # Allow scraper to be passed in (FIX 1) or instantiated fresh (backwards compat)
+    if scraper is None:
+        try:
+            scraper = get_scraper(product.retailer)
+        except ValueError as e:
+            logger.warning(str(e))
+            return []
 
-    # Run the scraper — returns list[ScrapeResult]
     try:
         results = scraper.scrape(product)
     except Exception as e:
-        logger.error(f"Scraper crashed for {product.retailer} | {product.estate_name}: {e}", exc_info=True)
+        logger.error(
+            f"Scraper crashed for {product.retailer} | {product.estate_name}: {e}",
+            exc_info=True,
+        )
         return []
 
     if not results:
         return []
 
-    # Persist each result with per-vintage daily deduplication
     for result in results:
         try:
             existing = (
@@ -63,7 +108,8 @@ def scrape_product(product, session: Session) -> list[PriceRecord]:
 
             if existing:
                 logger.debug(
-                    f"Skipping duplicate: {result.retailer} | {product.estate_name} | {result.vintage}"
+                    f"Skipping duplicate: {result.retailer} | "
+                    f"{product.estate_name} | {result.vintage}"
                 )
                 continue
 
@@ -85,7 +131,8 @@ def scrape_product(product, session: Session) -> list[PriceRecord]:
 
         except Exception as e:
             logger.error(
-                f"Failed to persist record for {product.estate_name} vintage {result.vintage}: {e}",
+                f"Failed to persist record for {product.estate_name} "
+                f"vintage {result.vintage}: {e}",
                 exc_info=True,
             )
             session.rollback()
@@ -95,7 +142,10 @@ def scrape_product(product, session: Session) -> list[PriceRecord]:
         try:
             session.commit()
         except Exception as e:
-            logger.error(f"Commit failed for {product.estate_name}: {e}", exc_info=True)
+            logger.error(
+                f"Commit failed for {product.estate_name}: {e}",
+                exc_info=True,
+            )
             session.rollback()
 
     return saved_records

@@ -1,9 +1,11 @@
+# src/app.py
 import logging
-from sqlalchemy.orm import Session
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .db import SessionLocal, init_db
 from .models import MasterProduct
-from .scraper_engine import scrape_product
+from .scraper_engine import scrape_retailer_products
 from .export_to_gsheet import export_to_gsheet
 from .load_master_products import main as load_master_products
 
@@ -12,57 +14,56 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
 )
 
+# FIX 3: Number of retailers to scrape in parallel.
+# Each retailer still scrapes its own products sequentially internally
+# so individual sites are never hammered simultaneously.
+# Revert to sequential: set MAX_WORKERS = 1
+MAX_WORKERS = 4
+
 
 def run_once():
-    # FIX (ISSUE 1): Use a single session for both the product query and the
-    # scraper, passing it into scrape_product() to avoid cross-session issues.
-    db: Session = SessionLocal()
-
+    # Load all active products grouped by retailer
+    db = SessionLocal()
     try:
         products = db.query(MasterProduct).filter(MasterProduct.active == True).all()
-
-        for product in products:
-            logging.info(
-                f"Scraping {product.retailer} | {product.estate_name}"
-            )
-
-            try:
-                # FIX (ISSUE 1): Pass db session into scrape_product
-                records = scrape_product(product, db)
-
-                if not records:
-                    logging.info(
-                        f"No new records today: {product.retailer} | {product.estate_name}"
-                    )
-                    continue
-
-                for record in records:
-                    # FIX (ISSUE 4): Use vintage_label in the log line (was computed
-                    # but then ignored — record.vintage was logged directly instead)
-                    vintage_label = record.vintage if record.vintage != 0 else "NV"
-                    logging.info(
-                        f"Saved: {product.retailer} | {product.estate_name} | {vintage_label} | {record.price_amount} {record.currency}"
-                    )
-
-            except Exception as e:
-                db.rollback()
-                logging.error(
-                    f"Error scraping {product.retailer} | {product.estate_name}: {e}",
-                    exc_info=True,
-                )
-
     finally:
         db.close()
+
+    by_retailer = defaultdict(list)
+    for product in products:
+        by_retailer[product.retailer].append(product)
+
+    logging.info(
+        f"Scraping {len(products)} products across {len(by_retailer)} retailers "
+        f"with up to {MAX_WORKERS} parallel workers"
+    )
+
+    # FIX 3: Run each retailer in its own thread
+    # Each thread gets its own DB session via SessionLocal()
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {
+            executor.submit(
+                scrape_retailer_products,
+                retailer,
+                retailer_products,
+            ): retailer
+            for retailer, retailer_products in by_retailer.items()
+        }
+
+        for future in as_completed(futures):
+            retailer = futures[future]
+            try:
+                future.result()
+            except Exception as e:
+                logging.error(f"Retailer thread failed for {retailer}: {e}", exc_info=True)
 
 
 def main():
     logging.info("Starting daily wine price scraper")
-
     init_db()
     load_master_products()
     run_once()
     export_to_gsheet()
-
     logging.info("Scraper finished successfully")
 
 

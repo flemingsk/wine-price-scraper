@@ -13,6 +13,7 @@ Strategy:
 """
 import logging
 import re
+from urllib.parse import urlencode, urlparse, parse_qs
 
 from playwright.sync_api import sync_playwright
 
@@ -26,6 +27,20 @@ OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
 
 CASE_RE   = re.compile(r'^(\d+)\s*[x×]\s*75\s*cl', re.IGNORECASE)
 SINGLE_RE = re.compile(r'^75\s*cl', re.IGNORECASE)
+
+TRACKING_PARAMS = {"_pos", "_fid", "_ss"}
+
+
+def clean_url(url: str) -> str:
+    """Strip Shopify search tracking params; preserve variant= and other functional params."""
+    parsed = urlparse(url)
+    if not parsed.query:
+        return url
+    filtered = {k: v for k, v in parse_qs(parsed.query, keep_blank_values=True).items()
+                if k not in TRACKING_PARAMS}
+    clean_query = urlencode(filtered, doseq=True)
+    return parsed._replace(query=clean_query).geturl()
+
 
 FALLBACK_SELECTORS = [
     "span.price-item__unit",
@@ -104,6 +119,7 @@ class CavissimaScraper(BaseScraper):
                             logger.warning(f"Cavissima: no URL for {product.estate_name} {vintage}")
                             continue
 
+                        url = clean_url(url)
                         result = self._scrape_page(context, url, vintage or 0, product)
                         if result:
                             results.append(result)

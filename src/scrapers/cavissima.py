@@ -1,27 +1,23 @@
 # src/scrapers/cavissima.py
 """
-Cavissima scraper (cavissima.com) — Shopify-based.
+Cavissima scraper — requires Playwright (JS-rendered prices on Shopify).
 
 Format tiles use <label> elements:
-  <label for="...">
-    6 x 75cl<small>258,00€</small>
-  </label>
+  <label>6 x 75cl<small>258,00€</small></label>
 
-Strategy (mirrors Millesima):
-  1. Find all <label> elements containing "x 75cl" or "75cl"
-  2. Extract bottle count and total price from each
-  3. Pick largest case (12 > 6 > 1) for best unit price
-  4. Divide total by bottle count → unit price
-  5. Fall back to generic CSS selectors if no tiles found
+Strategy:
+  1. Load page with Playwright
+  2. Find all format label tiles matching 75cl
+  3. Pick largest case (12 > 6 > 1), divide total by bottle count
+  4. Fall back to CSS selector if no tiles found
 """
 import logging
 import re
 
-import requests
-from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 from src.scrapers.base import BaseScraper, ScrapeResult
-from src.scrapers.browser_utils import REQUESTS_HEADERS, polite_delay
+from src.scrapers.browser_utils import get_playwright_context, polite_delay
 from src.utils import parse_price
 
 logger = logging.getLogger(__name__)
@@ -35,29 +31,26 @@ FALLBACK_SELECTORS = [
     "span.price-item__unit",
     "[data-product-price]",
     "span.price",
-    ".price",
     "span[itemprop='price']",
 ]
 
 
-def extract_75cl_tiles(soup: BeautifulSoup) -> list[dict]:
+def parse_tiles(page) -> list[dict]:
     """
-    Parse all format label tiles and return only 75cl ones.
-    Each label looks like:
-      <label>6 x 75cl<small>258,00€</small></label>
+    Find all 75cl format tiles on the page via Playwright.
+    Returns list of {label, bottle_count, total_price, unit_price, currency}
     """
     tiles = []
+    labels = page.query_selector_all("label")
 
-    for label in soup.find_all("label"):
-        # Get label text excluding the <small> child
-        small_el = label.find("small")
+    for label in labels:
+        small_el = label.query_selector("small")
         if not small_el:
             continue
 
-        price_text = small_el.get_text(strip=True)
-        # Label text = full text minus the small price text
-        label_text = label.get_text(strip=True).replace(price_text, "").strip()
-        label_text = label_text.replace("\xa0", " ").strip()
+        price_text = small_el.inner_text().strip()
+        full_text  = label.inner_text().strip()
+        label_text = full_text.replace(price_text, "").strip().replace("\xa0", " ")
 
         case_match   = CASE_RE.match(label_text)
         single_match = SINGLE_RE.match(label_text)
@@ -67,17 +60,14 @@ def extract_75cl_tiles(soup: BeautifulSoup) -> list[dict]:
         elif single_match:
             bottle_count = 1
         else:
-            logger.debug(f"Cavissima: ignoring non-75cl tile '{label_text}'")
             continue
 
         try:
             total_price, currency = parse_price(price_text)
         except ValueError:
-            logger.debug(f"Cavissima: could not parse tile price '{price_text}' for '{label_text}'")
             continue
 
         unit_price = round(float(total_price) / bottle_count, 2)
-
         tiles.append({
             "label":        label_text,
             "bottle_count": bottle_count,
@@ -101,99 +91,112 @@ class CavissimaScraper(BaseScraper):
             else [None]
         )
 
-        for vintage in vintages:
+        with sync_playwright() as p:
+            browser, context = get_playwright_context(p)
             try:
-                if vintage and product.url_template:
-                    url = product.url_template.format(vintage=vintage)
-                else:
-                    url = product.product_url
-                if not url:
-                    logger.warning(f"Cavissima: no URL for {product.estate_name} {vintage}")
-                    continue
-
-                r = requests.get(url, headers=REQUESTS_HEADERS, timeout=20)
-                if r.status_code == 404:
-                    continue
-                r.raise_for_status()
-
-                # Force UTF-8 to avoid binary decode errors
-                r.encoding = "utf-8"
-                soup = BeautifulSoup(r.text, "html.parser")
-
-                tiles = extract_75cl_tiles(soup)
-
-                if tiles:
-                    for t in tiles:
-                        logger.debug(
-                            f"Cavissima: [{product.estate_name} {vintage}] "
-                            f"'{t['label']}' total={t['total_price']:.2f} "
-                            f"→ unit={t['unit_price']:.2f} {t['currency']}"
-                        )
-
-                    best = max(tiles, key=lambda t: t["bottle_count"])
-                    price_amount   = best["unit_price"]
-                    currency       = best["currency"]
-                    raw_price_text = (
-                        f"{best['label']} @ {best['total_price']:.2f} {currency} "
-                        f"= {price_amount:.2f} {currency}/bottle"
-                    )
-                    logger.info(
-                        f"Cavissima: {product.estate_name} {vintage} — "
-                        f"'{best['label']}' → unit price {price_amount:.2f} {currency}"
-                    )
-
-                else:
-                    # Fallback to CSS selectors
-                    logger.debug(f"Cavissima: no tiles found at {url}, trying CSS fallback")
-                    selectors = []
-                    if product.price_selector:
-                        selectors.append(product.price_selector)
-                    selectors.extend(FALLBACK_SELECTORS)
-
-                    price_el = None
-                    for sel in selectors:
-                        price_el = soup.select_one(sel)
-                        if price_el:
-                            break
-
-                    if not price_el:
-                        logger.warning(f"Cavissima: no price found at {url}")
-                        polite_delay(1.5, 3.0)
-                        continue
-
-                    raw_price = price_el.get("content") or price_el.get_text(strip=True)
-                    if not raw_price:
-                        polite_delay(1.5, 3.0)
-                        continue
-
+                for vintage in vintages:
                     try:
-                        price_amount, currency = parse_price(raw_price)
-                        raw_price_text = raw_price
-                    except ValueError as e:
-                        logger.warning(f"Cavissima: could not parse '{raw_price}' at {url}: {e}")
-                        polite_delay(1.5, 3.0)
-                        continue
+                        if vintage and product.url_template:
+                            url = product.url_template.format(vintage=vintage)
+                        else:
+                            url = product.product_url
+                        if not url:
+                            logger.warning(f"Cavissima: no URL for {product.estate_name} {vintage}")
+                            continue
 
-                # Availability
-                availability = True
-                page_text = soup.get_text(" ", strip=True).lower()
-                for phrase in OOS_TEXT:
-                    if phrase in page_text:
-                        availability = False
-                        break
+                        result = self._scrape_page(context, url, vintage or 0, product)
+                        if result:
+                            results.append(result)
+                        polite_delay(2.0, 4.0)
 
-                results.append(ScrapeResult(
-                    vintage=vintage or 0,
-                    price_amount=price_amount,
-                    currency=currency,
-                    raw_price_text=raw_price_text,
-                    availability=availability,
-                    url=url,
-                    retailer=self.retailer,
-                ))
-                polite_delay(1.5, 3.0)
-
-            except Exception as e:
-                logger.warning(f"Cavissima: failed {product.estate_name} {vintage}: {e}")
+                    except Exception as e:
+                        logger.warning(f"Cavissima: failed {product.estate_name} {vintage}: {e}")
+            finally:
+                browser.close()
 
         return results
+
+    def _scrape_page(self, context, url: str, vintage: int, product) -> ScrapeResult | None:
+        page = context.new_page()
+        try:
+            response = page.goto(url, timeout=60000, wait_until="domcontentloaded")
+            if response and response.status == 404:
+                return None
+
+            page.wait_for_timeout(3000)
+
+            # --- Try tile-based extraction first ---
+            tiles = parse_tiles(page)
+
+            if tiles:
+                for t in tiles:
+                    logger.debug(
+                        f"Cavissima: [{product.estate_name} {vintage}] "
+                        f"'{t['label']}' total={t['total_price']:.2f} "
+                        f"→ unit={t['unit_price']:.2f} {t['currency']}"
+                    )
+
+                best = max(tiles, key=lambda t: t["bottle_count"])
+                price_amount   = best["unit_price"]
+                currency       = best["currency"]
+                raw_price_text = (
+                    f"{best['label']} @ {best['total_price']:.2f} {currency} "
+                    f"= {price_amount:.2f} {currency}/bottle"
+                )
+                logger.info(
+                    f"Cavissima: {product.estate_name} {vintage} — "
+                    f"'{best['label']}' → unit price {price_amount:.2f} {currency}"
+                )
+
+            else:
+                # --- CSS selector fallback ---
+                selectors = []
+                if product.price_selector:
+                    selectors.append(product.price_selector)
+                selectors.extend(FALLBACK_SELECTORS)
+
+                raw_price = None
+                used_selector = None
+                for selector in selectors:
+                    el = page.query_selector(selector)
+                    if el:
+                        candidate = el.get_attribute("content") or el.inner_text().strip()
+                        if candidate:
+                            raw_price = candidate
+                            used_selector = selector
+                            break
+
+                if not raw_price:
+                    logger.warning(f"Cavissima: no price found at {url}")
+                    return None
+
+                try:
+                    price_amount, currency = parse_price(raw_price)
+                    raw_price_text = raw_price
+                    logger.info(
+                        f"Cavissima: {product.estate_name} {vintage} — "
+                        f"{price_amount} {currency} (selector: '{used_selector}')"
+                    )
+                except ValueError as e:
+                    logger.warning(f"Cavissima: could not parse '{raw_price}' at {url}: {e}")
+                    return None
+
+            # --- Availability ---
+            availability = True
+            page_text = page.inner_text("body").lower()
+            for phrase in OOS_TEXT:
+                if phrase in page_text:
+                    availability = False
+                    break
+
+            return ScrapeResult(
+                vintage=vintage,
+                price_amount=price_amount,
+                currency=currency,
+                raw_price_text=raw_price_text,
+                availability=availability,
+                url=url,
+                retailer=self.retailer,
+            )
+        finally:
+            page.close()

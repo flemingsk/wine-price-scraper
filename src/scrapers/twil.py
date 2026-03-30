@@ -1,9 +1,8 @@
 # src/scrapers/twil.py
 """
 Twil scraper — requires Playwright (JS-rendered prices).
-The page explicitly blocks non-JS clients:
-  "Le JavaScript semble être désactivé sur votre navigateur"
-Price element: span#totalPrice
+Unit price selector: span.price
+(span#totalPrice was the case total — do not use)
 """
 import logging
 
@@ -18,11 +17,9 @@ logger = logging.getLogger(__name__)
 OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
 
 PRICE_SELECTORS = [
-    "span#totalPrice",
-    ".prix",
+    "span.price",           # unit price — use this
     "span[itemprop='price']",
     ".product-price",
-    "span.price",
 ]
 
 
@@ -67,14 +64,11 @@ class TwilScraper(BaseScraper):
         page = context.new_page()
         try:
             response = page.goto(url, timeout=60000, wait_until="domcontentloaded")
-
             if response and response.status == 404:
                 return None
 
-            # Wait for price to render
             page.wait_for_timeout(3000)
 
-            # Try CSS selectors
             selectors = []
             if product.price_selector:
                 selectors.append(product.price_selector)
@@ -85,7 +79,7 @@ class TwilScraper(BaseScraper):
             for selector in selectors:
                 el = page.query_selector(selector)
                 if el:
-                    candidate = el.inner_text().strip()
+                    candidate = el.get_attribute("content") or el.inner_text().strip()
                     if candidate:
                         raw_price = candidate
                         used_selector = selector

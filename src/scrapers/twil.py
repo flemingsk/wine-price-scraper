@@ -1,10 +1,12 @@
 # src/scrapers/twil.py
 """
 Twil scraper — requires Playwright (JS-rendered prices).
-Unit price selector: span.price
-(span#totalPrice was the case total — do not use)
+Price element: span#product-price-{fragment_id} (content attribute)
+Each product URL contains a fragment (e.g. #326562) that maps to the variant.
+span.price and span#totalPrice both return wrong values (basket/0.00€ or case total).
 """
 import logging
+from urllib.parse import urldefrag
 
 from playwright.sync_api import sync_playwright
 
@@ -17,7 +19,7 @@ logger = logging.getLogger(__name__)
 OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
 
 PRICE_SELECTORS = [
-    "span.price",           # unit price — use this
+    # fragment-based selector is built dynamically in _scrape_page
     "span[itemprop='price']",
     ".product-price",
 ]
@@ -69,8 +71,14 @@ class TwilScraper(BaseScraper):
 
             page.wait_for_timeout(3000)
 
+            # Build selector list: fragment-specific first (most reliable),
+            # then CSV selector, then generic fallbacks.
+            # span.price and span#totalPrice are unreliable — see module docstring.
             selectors = []
-            if product.price_selector:
+            _, fragment = urldefrag(url)
+            if fragment:
+                selectors.append(f"span#product-price-{fragment}")
+            if product.price_selector and product.price_selector != "span.price":
                 selectors.append(product.price_selector)
             selectors.extend(PRICE_SELECTORS)
 

@@ -33,12 +33,15 @@ CASE_RE   = re.compile(r'^(\d+)\s*[x×]\s*75\s*cl$', re.IGNORECASE)
 SINGLE_RE = re.compile(r'^75\s*cl$', re.IGNORECASE)
 
 
-def extract_75cl_tiles(soup: BeautifulSoup) -> list[dict]:
+def extract_75cl_tiles(soup: BeautifulSoup) -> tuple[list[dict], bool]:
     """
     Parse all Tile containers and return only 75cl ones.
-    Each result: {label, bottle_count, total_price, unit_price, currency}
+    Returns (tiles, has_any_tiles) where has_any_tiles=True means the Tile
+    structure is present on the page (even if no 75cl variant exists).
+    Each tile dict: {label, bottle_count, total_price, unit_price, currency}
     """
     tiles = []
+    has_any_tiles = False
 
     for container in soup.find_all(class_=re.compile(r'Tile_text__')):
         label_el = container.find(class_=re.compile(r'Tile_paragraph__'))
@@ -48,6 +51,8 @@ def extract_75cl_tiles(soup: BeautifulSoup) -> list[dict]:
 
         label      = label_el.get_text(separator=" ", strip=True).replace("\xa0", " ").strip()
         price_text = price_el.get_text(strip=True)
+
+        has_any_tiles = True
 
         # Determine bottle count — skip non-75cl tiles silently
         case_match = CASE_RE.match(label)
@@ -75,7 +80,7 @@ def extract_75cl_tiles(soup: BeautifulSoup) -> list[dict]:
             "currency":     currency,
         })
 
-    return tiles
+    return tiles, has_any_tiles
 
 
 class MillesimaScraper(BaseScraper):
@@ -115,7 +120,7 @@ class MillesimaScraper(BaseScraper):
         soup = BeautifulSoup(r.text, "html.parser")
 
         # --- Parse 75cl tiles ---
-        tiles = extract_75cl_tiles(soup)
+        tiles, has_any_tiles = extract_75cl_tiles(soup)
 
         if tiles:
             for t in tiles:
@@ -139,9 +144,14 @@ class MillesimaScraper(BaseScraper):
                 f"'{best['label']}' → unit price {price_amount:.2f} {currency}"
             )
 
+        elif has_any_tiles:
+            # Tile structure present but no 75cl variant — product not available in 75cl
+            logger.info(f"Millesima: {product.estate_name} {vintage} — tiles found but no 75cl variant, skipping")
+            return None
+
         else:
-            # --- Regex fallback if no tiles found ---
-            logger.debug(f"Millesima: no 75cl tiles found at {url}, trying regex fallback")
+            # --- Regex fallback: no Tile structure at all (legacy page format) ---
+            logger.debug(f"Millesima: no tiles at {url}, trying regex fallback")
             match = re.search(r'(\d{1,4}[.,]\d{2})\s*(?:€|EUR)', soup.get_text(" ", strip=True))
             if not match:
                 logger.warning(f"Millesima: no price found at {url}")

@@ -7,6 +7,7 @@ python-dotenv==1.0.1
 requests==2.32.3
 beautifulsoup4==4.13.3
 lxml==6.0.2
+brotli==1.1.0
 
 # Scraping — JS-rendered pages (Vinatis, iDealwine)
 playwright==1.57.0

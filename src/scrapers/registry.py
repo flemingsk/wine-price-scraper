@@ -14,6 +14,8 @@ from src.scrapers.wineandco import WineandcoScraper
 from src.scrapers.aries import AriesScraper
 from src.scrapers.wineclub import WineclubScraper
 from src.scrapers.dubecq import DubecqScraper
+from src.scrapers.xovin import XovinScraper
+from src.scrapers.hallesdequercamps import HallesDeQuercampsScraper
 
 REGISTRY: dict[str, type[BaseScraper]] = {
     # Custom scrapers (Playwright or special logic)
@@ -33,6 +35,8 @@ REGISTRY: dict[str, type[BaseScraper]] = {
     "aries":         AriesScraper,
     "wineclub":      WineclubScraper,
     "dubecq":        DubecqScraper,
+    "xovin":         XovinScraper,
+    "hallesdequercamps": HallesDeQuercampsScraper,
 }
 
 

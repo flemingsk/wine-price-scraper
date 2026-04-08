@@ -13,6 +13,8 @@ from src.scrapers.wineandco import WineandcoScraper
 from src.scrapers.aries import AriesScraper
 from src.scrapers.wineclub import WineclubScraper
 from src.scrapers.dubecq import DubecqScraper
+from src.scrapers.xovin import XovinScraper
+from src.scrapers.hallesdequercamps import HallesDeQuercampsScraper
 
 SCRAPERS = {
     # Custom scrapers
@@ -32,4 +34,6 @@ SCRAPERS = {
     "aries":         AriesScraper,
     "wineclub":      WineclubScraper,
     "dubecq":        DubecqScraper,
+    "xovin":         XovinScraper,
+    "hallesdequercamps": HallesDeQuercampsScraper,
 }

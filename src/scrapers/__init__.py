@@ -22,6 +22,9 @@ from src.scrapers.cashvin import CashvinScraper
 from src.scrapers.millesimes import MillesimesScraper
 from src.scrapers.levindevantsoi import LeVinDeVantSoiScraper
 from src.scrapers.labouteilledoree import LaBouteilleDoreeeScraper
+from src.scrapers.vinotheque_bordeaux import VinothequeBordeauxScraper
+from src.scrapers.vin_malin import VinMalinScraper
+from src.scrapers.cercledemartillac import CercleDeMartillacScraper
 
 SCRAPERS = {
     # Custom scrapers
@@ -50,4 +53,7 @@ SCRAPERS = {
     "millesimes":        MillesimesScraper,
     "levindevantsoi":    LeVinDeVantSoiScraper,
     "labouteilledoree":  LaBouteilleDoreeeScraper,
+    "vinotheque_bordeaux": VinothequeBordeauxScraper,
+    "vin_malin":           VinMalinScraper,
+    "cercledemartillac":   CercleDeMartillacScraper,
 }

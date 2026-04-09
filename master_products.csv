@@ -1,32 +1,9 @@
 ﻿estate_name,retailer,product_url,url_template,price_selector,vintage_start,vintage_end,bottle_size,active,notes
-Chateau Latour Martillac,millesima,https://www.millesima.fr/chateau-latour-martillac-2019-cu-cc-1.html,https://www.millesima.fr/chateau-latour-martillac-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works for all vintages
-Chateau Carbonnieux,millesima,https://www.millesima.fr/chateau-carbonnieux-2019-cu-cc-1.html,https://www.millesima.fr/chateau-carbonnieux-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
-Chateau de Fieuzal,millesima,https://www.millesima.fr/chateau-de-fieuzal-2019-cu-cc-1.html,https://www.millesima.fr/chateau-de-fieuzal-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
-Chateau Larrivet Haut-Brion,millesima,https://www.millesima.fr/chateau-larrivet-haut-brion-2019-cu-cc-1.html,https://www.millesima.fr/chateau-larrivet-haut-brion-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
-Chateau Olivier,millesima,https://www.millesima.fr/chateau-olivier-2019-cu-cc-1.html,https://www.millesima.fr/chateau-olivier-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
-Chateau Malartic Lagraviere,millesima,https://www.millesima.fr/chateau-malartic-lagraviere-2019-cu-cc-1.html,https://www.millesima.fr/chateau-malartic-lagraviere-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
-Chateau Latour Martillac,vinatis,https://www.vinatis.com/id-61799-chateau-latour-martillac-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Latour Martillac,vinatis,https://www.vinatis.com/id-61800-chateau-latour-martillac-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Carbonnieux,vinatis,https://www.vinatis.com/id-50554-chateau-carbonnieux-rouge-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Carbonnieux,vinatis,https://www.vinatis.com/81313-chateau-carbonnieux-2022-cru-classe-de-graves,,span.vue-page-price,2022,2022,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau de Fieuzal,vinatis,https://www.vinatis.com/65261-chateau-de-fieuzal-2015-cru-classe-de-graves,,span.vue-page-price,2015,2015,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau de Fieuzal,vinatis,https://www.vinatis.com/80431-chateau-de-fieuzal-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Malartic Lagraviere,vinatis,https://www.vinatis.com/51150-chateau-malartic-lagraviere-2018-cru-classe-de-graves,,span.vue-page-price,2018,2018,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Sociando Mallet,vinatis,https://www.vinatis.com/43964-chateau-sociando-mallet-2018,,span.vue-page-price,2018,2018,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Sociando Mallet,vinatis,https://www.vinatis.com/65227-chateau-sociando-mallet-2020,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Olivier,vinatis,https://www.vinatis.com/32393-chateau-olivier-2015,,span.vue-page-price,2015,2015,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Olivier,vinatis,https://www.vinatis.com/80005-chateau-olivier-rouge-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/4099-chateau-latour-martillac-2015.html,,span.prix_unit,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/1861-chateau-latour-martillac-2018-pessac-leognan-cru-classe.html,,span.prix_unit,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/2339-chateau-latour-martillac-2019-rouge.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/2928-chateau-latour-martillac-2020-rouge.html,,span.prix_unit,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/3701-chateau-latour-martillac-2021.html,,span.prix_unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/4315-chateau-latour-martillac-2022.html,,span.prix_unit,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/2350-chateau-carbonnieux-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/1276-chateau-carbonnieux-2015-rouge.html,,span.prix_unit,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/1616-chateau-carbonnieux-2016-rouge-pessac-leognan-cru-classe.html,,span.prix_unit,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/3203-chateau-carbonnieux-2017.html,,span.prix_unit,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/1893-chateau-carbonnieux-2018.html,,span.prix_unit,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/2350-chateau-carbonnieux-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/2350-chateau-carbonnieux-2019.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/2896-chateau-carbonnieux-2020.html,,span.prix_unit,2020,2020,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/3690-chateau-carbonnieux-2021.html,,span.prix_unit,2021,2021,0.75L,TRUE,Explicit URL
@@ -40,6 +17,12 @@ Chateau Larrivet Haut-Brion,12bouteilles,https://www.12bouteilles.com/fr/chateau
 Chateau Larrivet Haut-Brion,12bouteilles,https://www.12bouteilles.com/fr/chateau-larrivet-haut-brion/2882-chateau-larrivet-haut-brion-2020.html,,span.prix_unit,2020,2020,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,12bouteilles,https://www.12bouteilles.com/fr/chateau-larrivet-haut-brion/4261-chateau-larrivet-haut-brion-2022.html,,span.prix_unit,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,12bouteilles,https://www.12bouteilles.com/fr/chateau-larrivet-haut-brion/5580-chateau-larrivet-haut-brion-2024.html,,span.prix_unit,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/4099-chateau-latour-martillac-2015.html,,span.prix_unit,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/1861-chateau-latour-martillac-2018-pessac-leognan-cru-classe.html,,span.prix_unit,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/2339-chateau-latour-martillac-2019-rouge.html,,span.prix_unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/2928-chateau-latour-martillac-2020-rouge.html,,span.prix_unit,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/3701-chateau-latour-martillac-2021.html,,span.prix_unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,12bouteilles,https://www.12bouteilles.com/fr/chateau-latour-martillac/4315-chateau-latour-martillac-2022.html,,span.prix_unit,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,12bouteilles,https://www.12bouteilles.com/fr/chateau-malartic-lagraviere/4066-chateau-malartic-lagraviere-2015.html,,span.prix_unit,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,12bouteilles,https://www.12bouteilles.com/fr/chateau-malartic-lagraviere/3211-chateau-malartic-lagraviere-2017-rouge.html,,span.prix_unit,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,12bouteilles,https://www.12bouteilles.com/fr/chateau-malartic-lagraviere/1835-chateau-malartic-lagraviere-2018-rouge-pessac-leognan-cru-classe.html,,span.prix_unit,2018,2018,0.75L,TRUE,Explicit URL
@@ -56,14 +39,191 @@ Chateau Sociando Mallet,12bouteilles,https://www.12bouteilles.com/fr/chateau-soc
 Chateau Sociando Mallet,12bouteilles,https://www.12bouteilles.com/fr/chateau-sociando-mallet/3649-chateau-sociando-mallet-2021.html,,span.prix_unit,2021,2021,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,12bouteilles,https://www.12bouteilles.com/fr/chateau-sociando-mallet/4340-chateau-sociando-mallet-2022.html,,span.prix_unit,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,12bouteilles,https://www.12bouteilles.com/fr/chateau-sociando-mallet/5457-chateau-sociando-mallet-2024.html,,span.prix_unit,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2053-chateau-latour-martillac-2017.html,,div.unit-price-cart.small.text-muted.font-italic,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2412-chateau-latour-martillac-rouge-2018.html,,div.unit-price-cart.small.text-muted.font-italic,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2708-chateau-latour-martillac-rouge-2019.html,,div.unit-price-cart.small.text-muted.font-italic,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3054-chateau-latour-martillac-rouge-2020.html,,div.unit-price-cart.small.text-muted.font-italic,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3370-chateau-latour-martillac-rouge-2021.html,,div.unit-price-cart.small.text-muted.font-italic,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3605-chateau-latour-martillac-rouge-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3982-chateau-latour-martillac-rouge-2023.html,,div.unit-price-cart.small.text-muted.font-italic,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/primeurs-2024/4221-chateau-latour-martillac-rouge-2024.html,,div.unit-price-cart.small.text-muted.font-italic,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/4840-chateau-carbonnieux-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/4951-chateau-carbonnieux-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/5221-carbonnieux-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/5471-chateau-carbonnieux-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,aries,https://aries-vins.com/primeurs-2024/5859-chateau-carbonnieux-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/3325-chateau-larrivet-haut-brion-rouge-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/3940-chateau-larrivet-haut-brion-rouge-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/6118-chateau-larrivet-haut-brion-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4472-chateau-larrivet-haut-brion-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4730-chateau-larrivet-haut-brion-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4974-chateau-larrivet-haut-brion-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/5206-chateau-larrivet-haut-brion-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/5566-chateau-larrivet-haut-brion-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/primeurs-2024/5948-chateau-larrivet-haut-brion-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4161-chateau-la-tour-martillac-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4503-chateau-la-tour-martillac-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4740-chateau-latour-martillac-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4985-chateau-latour-martillac-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/5236-chateau-latour-martillac-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/5446-chateau-latour-martillac-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,aries,https://aries-vins.com/primeurs-2024/5968-chateau-latour-martillac-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/3605-chateau-malartic-lagraviere-rouge-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4004-chateau-malartic-lagraviere-rouge-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4170-chateau-malartic-lagraviere-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4443-chateau-malartic-lagraviere-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4737-chateau-malartic-lagraviere-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5013-chateau-malartic-lagraviere-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5201-chateau-malartic-lagraviere-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5494-chateau-malartic-lagraviere-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,aries,https://aries-vins.com/primeurs-2024/5882-chateau-malartic-lagraviere-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/3632-chateau-sociando-mallet-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/3955-chateau-sociando-mallet-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4179-chateau-sociando-mallet-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4430-chateau-sociando-mallet-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4810-chateau-sociando-mallet-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4999-chateau-sociando-mallet-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/5190-chateau-sociando-mallet-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/5465-chateau-sociando-mallet-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,aries,https://aries-vins.com/primeurs-2024/5853-chateau-sociando-mallet-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,cashvin,https://www.cashvin.com/produit/chateau-carbonnieux-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,cashvin,https://www.cashvin.com/produit/chateau-carbonnieux-2021/,,p.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cashvin,https://www.cashvin.com/produit/chateau-latour-martillac-2022/,,p.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Olivier,cashvin,https://www.cashvin.com/produit/chateau-olivier-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Olivier,cashvin,https://www.cashvin.com/produit/chateau-olivier-2020/,,p.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,cashvin,https://www.cashvin.com/produit/chateau-sociando-mallet-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,cave_spirituelle,https://www.cave-spirituelle.com/bouteille-bordeaux-chateau-de-fieuzal-vin-rouge-2015.html,,span.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cave_spirituelle,https://www.cave-spirituelle.com/chateau-latour-martillac-rouge-2020.html,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,cave_spirituelle,https://www.cave-spirituelle.com/bouteille-bordeaux-chateau-sociando-mallet-vin-rouge-2017.html,,span.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2016?_pos=1&_fid=5018eb138&_ss=c,,span.price-item__unit,2016,2016,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2020?_pos=3&_fid=5018eb138&_ss=c,,span.price-item__unit,2020,2020,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2021?_pos=2&_fid=5018eb138&_ss=c,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2022?_pos=4&_fid=5018eb138&_ss=c,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,cavissima,https://www.cavissima.com/products/chateau-larrivet-haut-brion-2021?_pos=1&_fid=3be7dd804&_ss=c&variant=50451509838171,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2016,,span.price-item__unit,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2018,,span.price-item__unit,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2019,,span.price-item__unit,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2022?variant=52474791756123,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2020?variant=52474791821659,,span.price-item__unit,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2024?variant=50451691897179,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2021?_pos=2&_fid=e6ec2800e&_ss=c,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2022?_pos=1&_fid=e6ec2800e&_ss=c&variant=50452284408155,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2024?_pos=3&_fid=e6ec2800e&_ss=c,,span.price-item__unit,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2015?variant=52474958676315,,span.price-item__unit,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2018?variant=50451488375131,,span.price-item__unit,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2021?variant=50451488801115,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-2016-2,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-blanc-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-2016-2,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1136594-chateau-carbonnieux-pessac-leognan-rouge-2020-075?_gl=1*8edk43*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1142256-chateau-carbonnieux-pessac-leognan-rouge-2021-075?_gl=1*1ggm20q*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1147000-chateau-carbonnieux-pessac-leognan-rouge-2022-075?_gl=1*8edk43*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1151638-chateau-carbonnieux-pessac-leognan-rouge-2023-075?_gl=1*1ggm20q*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2023,2023,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1115914-chateau-de-fieuzal-pessac-leognan-rouge-2016-075?_gl=1*1u6tdhv*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1142419-chateau-de-fieuzal-pessac-leognan-rouge-2021-075?_gl=1*1u6tdhv*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1147138-chateau-de-fieuzal-pessac-leognan-rouge-2022-075?_gl=1*d20ml*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateaunet,http://www.chateaunet.com/chateau-malartic-lagraviere-1121954-chateau-malartic-lagraviere-pessac-leognan-rouge-2017-075?_gl=1*1l928g*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateaunet,http://www.chateaunet.com/chateau-malartic-lagraviere-1126634-chateau-malartic-lagraviere-pessac-leognan-rouge-2018-075?_gl=1*1vw49wd*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,chateaunet,https://www.chateaunet.com/chateau-larrivet-haut-brion-1147593-chateau-larrivet-haut-brion-pessac-leognan-rouge-2022-075?_gl=1*1t2363y*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1116451-chateau-latour-martillac-pessac-leognan-rouge-2016-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1121807-chateau-latour-martillac-pessac-leognan-rouge-2017-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1143004-chateau-latour-martillac-pessac-leognan-rouge-2021-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1147611-chateau-latour-martillac-pessac-leognan-rouge-2022-075?_gl=1*1q3tb5*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1152404-chateau-latour-martillac-pessac-leognan-rouge-2023-075?_gl=1*1q3tb5*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2023,2023,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,chateaunet,https://www.chateaunet.com/chateau-olivier-1147805-chateau-olivier-pessac-leognan-rouge-2022-075?_gl=1*1l928g*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Olivier,chateaunet,https://www.chateaunet.com/chateau-olivier-1143233-chateau-olivier-pessac-leognan-rouge-2021-075?_gl=1*1t2363y*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1122341-chateau-sociando-mallet-haut-medoc-rouge-2017-075?_gl=1*1vw49wd*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1138008-chateau-sociando-mallet-haut-medoc-rouge-2020-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1143515-chateau-sociando-mallet-haut-medoc-rouge-2021-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1148027-chateau-sociando-mallet-haut-medoc-rouge-2022-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,dubecq,https://www.dubecq.com/fr/3-catalogue#product-5703,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7073,,span.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8545,,span.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7071,,span.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-5900,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-6683,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7072,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8302,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-3048,,span.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-3610,,span.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-4300,,span.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-6377,,span.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7074,,span.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8303,,span.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-6685,,span.price,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-3619,,span.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-4324,,span.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-5723,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/13761-cht-carbonnieux-2019-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/20798-cht-carbonnieux-2021-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/25083-cht-carbonnieux-cb6-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,hallesdequercamps,https://www.hallesdequercamps.com/20668-cht-fieuzal-2021-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,hallesdequercamps,https://www.hallesdequercamps.com/24987-cht-fieuzal-cb6-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/16035-cht-latour-martillac-cb6-2017-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/17787-cht-latour-martillac-cb6-2020-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/25118-cht-latour-martillac-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/16079-cht-malartic-lagraviere-cb6-2017-pessac-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/13706-cht-malartic-lagraviere-cb6-2018-pessac-rge-75cl-crd.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/16762-cht-malartic-lagraviere-cb6-2020-pessac-rge-75cl-crd.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/20513-cht-malartic-lagraviere-cb-2021-pessac-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/25229-cht-malartic-lagraviere-cb12-2022-pessac-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/12716-cht-sociando-mallet-cb6-2017-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/14992-cht-sociando-mallet-2018-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/20452-cht-sociando-mallet-cb12-2021-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/25096-cht-sociando-mallet-2022-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1747-chateau-carbonnieux-2016.html,,div.unit-price-cart.small.text-muted.font-italic,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2440-chateau-carbonnieux-rouge-2018.html,,div.unit-price-cart.small.text-muted.font-italic,2018,2018,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2725-chateau-carbonnieux-rouge-2019.html,,div.unit-price-cart.small.text-muted.font-italic,2019,2019,0.75L,TRUE,Explicit URL
@@ -82,6 +242,14 @@ Chateau Larrivet Haut-Brion,jean_merlaut,https://jean-merlaut.com/catalogue-des-
 Chateau Larrivet Haut-Brion,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3496-chateau-larrivet-haut-brion-rouge-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3904-chateau-larrivet-haut-brion-rouge-2023.html,,div.unit-price-cart.small.text-muted.font-italic,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,jean_merlaut,https://jean-merlaut.com/primeurs-2024/4165-chateau-larrivet-haut-brion-rouge-2024.html,,div.unit-price-cart.small.text-muted.font-italic,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2053-chateau-latour-martillac-2017.html,,div.unit-price-cart.small.text-muted.font-italic,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2412-chateau-latour-martillac-rouge-2018.html,,div.unit-price-cart.small.text-muted.font-italic,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2708-chateau-latour-martillac-rouge-2019.html,,div.unit-price-cart.small.text-muted.font-italic,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3054-chateau-latour-martillac-rouge-2020.html,,div.unit-price-cart.small.text-muted.font-italic,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3370-chateau-latour-martillac-rouge-2021.html,,div.unit-price-cart.small.text-muted.font-italic,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3605-chateau-latour-martillac-rouge-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3982-chateau-latour-martillac-rouge-2023.html,,div.unit-price-cart.small.text-muted.font-italic,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,jean_merlaut,https://jean-merlaut.com/primeurs-2024/4221-chateau-latour-martillac-rouge-2024.html,,div.unit-price-cart.small.text-muted.font-italic,2024,2024,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1062-chateau-malartic-lagraviere-rouge-2015.html,,div.unit-price-cart.small.text-muted.font-italic,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1727-chateau-malartic-lagraviere-2016.html,,div.unit-price-cart.small.text-muted.font-italic,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2067-chateau-malartic-lagraviere-2017.html,,div.unit-price-cart.small.text-muted.font-italic,2017,2017,0.75L,TRUE,Explicit URL
@@ -112,6 +280,36 @@ Chateau Sociando Mallet,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins
 Chateau Sociando Mallet,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3629-chateau-sociando-mallet-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3967-chateau-sociando-mallet-2023.html,,div.unit-price-cart.small.text-muted.font-italic,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,jean_merlaut,https://jean-merlaut.com/primeurs-2024/4124-chateau-sociando-mallet-2024.html,,div.unit-price-cart.small.text-muted.font-italic,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,labouteilledoree,https://www.labouteilledoree.com/en/pessac-leognan/10107-chateau-carbonnieux-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-de-6-bouteilles.html,,div.current-price,2021,2021,0.75L,TRUE,Case URL (6 btl) scraper divides by 6
+Chateau de Fieuzal,labouteilledoree,https://www.labouteilledoree.com/en/pessac-leognan/9293-chateau-de-fieuzal-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-de-6-bouteilles.html,,div.current-price,2021,2021,0.75L,TRUE,Floating case URL (6 btl) scraper divides by 6
+Chateau Latour Martillac,labouteilledoree,https://www.labouteilledoree.com/fr/pessac-leognan/9316-chateau-latour-martillac-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-6-bouteilles.html,,div.current-price,2020,2020,0.75L,TRUE,Case URL — scraper divides by 6
+Chateau Latour Martillac,levindevantsoi,https://www.levindevantsoi.com/boutique/chateau-latour-martillac-pessac-leognan-2020/,,p.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,millesima,https://www.millesima.fr/chateau-carbonnieux-2019-cu-cc-1.html,https://www.millesima.fr/chateau-carbonnieux-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
+Chateau de Fieuzal,millesima,https://www.millesima.fr/chateau-de-fieuzal-2019-cu-cc-1.html,https://www.millesima.fr/chateau-de-fieuzal-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
+Chateau Larrivet Haut-Brion,millesima,https://www.millesima.fr/chateau-larrivet-haut-brion-2019-cu-cc-1.html,https://www.millesima.fr/chateau-larrivet-haut-brion-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
+Chateau Latour Martillac,millesima,https://www.millesima.fr/chateau-latour-martillac-2019-cu-cc-1.html,https://www.millesima.fr/chateau-latour-martillac-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works for all vintages
+Chateau Malartic Lagraviere,millesima,https://www.millesima.fr/chateau-malartic-lagraviere-2019-cu-cc-1.html,https://www.millesima.fr/chateau-malartic-lagraviere-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
+Chateau Olivier,millesima,https://www.millesima.fr/chateau-olivier-2019-cu-cc-1.html,https://www.millesima.fr/chateau-olivier-{vintage}-cu-cc-1.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Template works
+Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2017_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2018_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2021_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2022_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,millesimes,https://millesimes.com/Latour_martillac_2020_cru_classe_de_graves_Pessac-Leognan_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,millesimes,https://millesimes.com/Malartic_lagraviere_rouge_2019_grand_cru_classe_Graves_vin_rouge,,span.price-current,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,millesimes,https://millesimes.com/Malartic_lagraviere_rouge_2020_grand_cru_classe_Graves_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2018_Haut-Medoc_vin_rouge,,span.price-current,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2020_Haut-Medoc_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2021_Haut-Medoc_vin_rouge,,span.price-current,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1323966,,span.price,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028139,,span.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028142,,span.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028142,,span.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1248949,,span.price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#387858,,span.price,2018,2018,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#571538,,span.price,2019,2019,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1308047,,span.price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1208573,,span.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1258994,,span.price,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#326562,,span.price,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#1308339,,span.price,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#327214,,span.price,2018,2018,0.75L,TRUE,Explicit URL
@@ -119,11 +317,6 @@ Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#325174,,span.price,2020,2020,0.75L,TRUE,Explicit URL
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#951936,,span.price,2021,2021,0.75L,TRUE,Explicit URL
 Chateau Latour Martillac,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-latour-martillac-wine-1693.html#1308075,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1323966,,span.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028139,,span.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028142,,span.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1028142,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-carbonnieux-wine-5740.html#1248949,,span.price,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#1169963,,span.price,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#1169962,,span.price,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#1169963,,span.price,2017,2017,0.75L,TRUE,Explicit URL
@@ -132,11 +325,6 @@ Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leog
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#535180,,span.price,2020,2020,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#1308059,,span.price,2021,2021,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-malartic-lagraviere-wine-1644.html#1249124,,span.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#387858,,span.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#571538,,span.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1308047,,span.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1208573,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-de-fieuzal-wine-1626.html#1258994,,span.price,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Olivier,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-olivier-wine-1639.html#325334,,span.price,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Olivier,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-olivier-wine-1639.html#387980,,span.price,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Olivier,twil,https://www.twil.fr/france/bordeaux/pessac-leognan/chateau-olivier-wine-1639.html#1208206,,span.price,2019,2019,0.75L,TRUE,Explicit URL
@@ -151,31 +339,48 @@ Chateau Sociando Mallet,twil,https://www.twil.fr/france/bordeaux/haut-medoc/chat
 Chateau Sociando Mallet,twil,https://www.twil.fr/france/bordeaux/haut-medoc/chateau-sociando-mallet-wine-1885.html#364570,,span.price,2021,2021,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,twil,https://www.twil.fr/france/bordeaux/haut-medoc/chateau-sociando-mallet-wine-1885.html#646899,,span.price,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,twil,https://www.twil.fr/france/bordeaux/haut-medoc/chateau-sociando-mallet-wine-1885.html#1258933,,span.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1116451-chateau-latour-martillac-pessac-leognan-rouge-2016-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1121807-chateau-latour-martillac-pessac-leognan-rouge-2017-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1143004-chateau-latour-martillac-pessac-leognan-rouge-2021-075?_gl=1*jbs5wv*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1147611-chateau-latour-martillac-pessac-leognan-rouge-2022-075?_gl=1*1q3tb5*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateaunet,http://www.chateaunet.com/chateau-latour-martillac-1152404-chateau-latour-martillac-pessac-leognan-rouge-2023-075?_gl=1*1q3tb5*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2023,2023,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1136594-chateau-carbonnieux-pessac-leognan-rouge-2020-075?_gl=1*8edk43*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1142256-chateau-carbonnieux-pessac-leognan-rouge-2021-075?_gl=1*1ggm20q*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1147000-chateau-carbonnieux-pessac-leognan-rouge-2022-075?_gl=1*8edk43*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateaunet,https://www.chateaunet.com/chateau-carbonnieux-1151638-chateau-carbonnieux-pessac-leognan-rouge-2023-075?_gl=1*1ggm20q*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2023,2023,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1115914-chateau-de-fieuzal-pessac-leognan-rouge-2016-075?_gl=1*1u6tdhv*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1142419-chateau-de-fieuzal-pessac-leognan-rouge-2021-075?_gl=1*1u6tdhv*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateaunet,http://www.chateaunet.com/chateau-de-fieuzal-1147138-chateau-de-fieuzal-pessac-leognan-rouge-2022-075?_gl=1*d20ml*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateaunet,https://www.chateaunet.com/chateau-larrivet-haut-brion-1147593-chateau-larrivet-haut-brion-pessac-leognan-rouge-2022-075?_gl=1*1t2363y*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateaunet,https://www.chateaunet.com/chateau-olivier-1143233-chateau-olivier-pessac-leognan-rouge-2021-075?_gl=1*1t2363y*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateaunet,https://www.chateaunet.com/chateau-olivier-1147805-chateau-olivier-pessac-leognan-rouge-2022-075?_gl=1*1l928g*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateaunet,http://www.chateaunet.com/chateau-malartic-lagraviere-1121954-chateau-malartic-lagraviere-pessac-leognan-rouge-2017-075?_gl=1*1l928g*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateaunet,http://www.chateaunet.com/chateau-malartic-lagraviere-1126634-chateau-malartic-lagraviere-pessac-leognan-rouge-2018-075?_gl=1*1vw49wd*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1122341-chateau-sociando-mallet-haut-medoc-rouge-2017-075?_gl=1*1vw49wd*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1138008-chateau-sociando-mallet-haut-medoc-rouge-2020-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1143515-chateau-sociando-mallet-haut-medoc-rouge-2021-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateaunet,http://www.chateaunet.com/chateau-sociando-mallet-1148027-chateau-sociando-mallet-haut-medoc-rouge-2022-075?_gl=1*7m5ulf*_up*MQ..&gclid=Cj0KCQjw1ZjOBhCmARIsADDuFTBdw7J3MIuO-yjEcSyujbTvEJ9sUFhkWK9aicHlCnqvH5jh7BLVTmkaAiICEALw_wcB&gbraid=0AAAAAD-e95JRQJ1ikkMEFE3lapllyqcLg,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2020/49601,,span.product-price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2021/60463,,span.product-price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2022/62941,,span.product-price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2023/67279,,span.product-price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vinatis,https://www.vinatis.com/id-50554-chateau-carbonnieux-rouge-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Carbonnieux,vinatis,https://www.vinatis.com/81313-chateau-carbonnieux-2022-cru-classe-de-graves,,span.vue-page-price,2022,2022,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau de Fieuzal,vinatis,https://www.vinatis.com/65261-chateau-de-fieuzal-2015-cru-classe-de-graves,,span.vue-page-price,2015,2015,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau de Fieuzal,vinatis,https://www.vinatis.com/80431-chateau-de-fieuzal-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Latour Martillac,vinatis,https://www.vinatis.com/id-61799-chateau-latour-martillac-2019-cru-classe-de-graves,,span.vue-page-price,2019,2019,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Latour Martillac,vinatis,https://www.vinatis.com/id-61800-chateau-latour-martillac-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Malartic Lagraviere,vinatis,https://www.vinatis.com/51150-chateau-malartic-lagraviere-2018-cru-classe-de-graves,,span.vue-page-price,2018,2018,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Olivier,vinatis,https://www.vinatis.com/32393-chateau-olivier-2015,,span.vue-page-price,2015,2015,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Olivier,vinatis,https://www.vinatis.com/80005-chateau-olivier-rouge-2020-cru-classe-de-graves,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Sociando Mallet,vinatis,https://www.vinatis.com/43964-chateau-sociando-mallet-2018,,span.vue-page-price,2018,2018,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Sociando Mallet,vinatis,https://www.vinatis.com/65227-chateau-sociando-mallet-2020,,span.vue-page-price,2020,2020,0.75L,TRUE,Vinatis requires ID per vintage
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/37628.chateau-carbonnieux-2015-pessac-leognan-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/41608.chateau-carbonnieux-2017-pessac-leognan-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/45478.chateau-carbonnieux-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/46885.chateau-carbonnieux-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/50737.chateau-carbonnieux-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/55163.chateau-carbonnieux-2022-pessac-leognan-bordeaux.html,,span.current-price-value,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/58350.chateau-carbonnieux-2023-pessac-leognan-bordeaux.html,,span.current-price-value,2023,2023,0.75L,TRUE,Explicit URL
+Chateau de Fieuzal,vintageandco,https://www.vintageandco.com/51074.chateau-de-fieuzal-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/39467.chateau-larrivet-haut-brion-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/43737.chateau-larrivet-haut-brion-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/53748.chateau-larrivet-haut-brion-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/46902.chateau-larrivet-haut-brion-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/51783.chateau-larrivet-haut-brion-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/54576.chateau-larrivet-haut-brion-2022-pessac-leognan-bordeaux.html,,span.current-price-value,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/42006.chateau-latour-martillac-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/41584.chateau-latour-martillac-2017-pessac-leognan-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/43751.chateau-latour-martillac-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/48257.chateau-latour-martillac-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/47324.chateau-latour-martillac-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/50936.chateau-latour-martillac-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/38093.chateau-malartic-lagraviere-2015-pessac-leognan-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/40190.chateau-malartic-lagraviere-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/46879.chateau-malartic-lagraviere-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Olivier,vintageandco,https://www.vintageandco.com/44126.chateau-olivier-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Olivier,vintageandco,https://www.vintageandco.com/50876.chateau-olivier-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/37567.chateau-sociando-mallet-2015-haut-medoc-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/39492.chateau-sociando-mallet-2016-haut-medoc-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/41570.chateau-sociando-mallet-2017-haut-medoc-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/43700.chateau-sociando-mallet-2018-haut-medoc-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/46931.chateau-sociando-mallet-2020-haut-medoc-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/51121.chateau-sociando-mallet-2021-haut-medoc-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineandco,https://www.wineandco.com/chateau-carbonnieux-2018/28004,,span.product-price,2018,2018,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineandco,https://www.wineandco.com/chateau-carbonnieux-rouge-2022/62966,,span.product-price,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineandco,https://www.wineandco.com/chateau-carbonnieux-rouge-2023/67304,,span.product-price,2023,2023,0.75L,TRUE,Explicit URL
@@ -188,6 +393,10 @@ Chateau de Fieuzal,wineandco,https://www.wineandco.com/chateau-de-fieuzal-blanc-
 Chateau de Fieuzal,wineandco,https://www.wineandco.com/chateau-de-fieuzal-blanc-2024/70619,,span.product-price,2024,2024,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,wineandco,https://www.wineandco.com/chateau-larrivet-haut-brion-rouge-2022/64414,,span.product-price,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Larrivet Haut-Brion,wineandco,https://www.wineandco.com/chateau-larrivet-haut-brion-rouge-2023/67970,,span.product-price,2023,2023,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2020/49601,,span.product-price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2021/60463,,span.product-price,2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2022/62941,,span.product-price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineandco,https://www.wineandco.com/chateau-latour-martillac-rouge-2023/67279,,span.product-price,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2016/21525,,span.product-price,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2017/25714,,span.product-price,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2018/28001,,span.product-price,2018,2018,0.75L,TRUE,Explicit URL
@@ -197,65 +406,6 @@ Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2021/6
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2022/63123,,span.product-price,2022,2022,0.75L,TRUE,Explicit URL
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2023/67459,,span.product-price,2023,2023,0.75L,TRUE,Explicit URL
 Chateau Olivier,wineandco,https://www.wineandco.com/chateau-olivier-rouge-2024/70712,,span.product-price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2016,,span.price-item__unit,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2018,,span.price-item__unit,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2019,,span.price-item__unit,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cavissima,https://www.cavissima.com/products/chateau-latour-martillac-2022?variant=52474791756123,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2016?_pos=1&_fid=5018eb138&_ss=c,,span.price-item__unit,2016,2016,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2020?_pos=3&_fid=5018eb138&_ss=c,,span.price-item__unit,2020,2020,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2021?_pos=2&_fid=5018eb138&_ss=c,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2022?_pos=4&_fid=5018eb138&_ss=c,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2020?variant=52474791821659,,span.price-item__unit,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2024?variant=50451691897179,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,cavissima,https://www.cavissima.com/products/chateau-larrivet-haut-brion-2021?_pos=1&_fid=3be7dd804&_ss=c&variant=50451509838171,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2021?_pos=2&_fid=e6ec2800e&_ss=c,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2022?_pos=1&_fid=e6ec2800e&_ss=c&variant=50452284408155,,span.price-item__unit,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Olivier,cavissima,https://www.cavissima.com/products/chateau-olivier-2024?_pos=3&_fid=e6ec2800e&_ss=c,,span.price-item__unit,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2015?variant=52474958676315,,span.price-item__unit,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2018?variant=50451488375131,,span.price-item__unit,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2021?variant=50451488801115,,span.price-item__unit,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4161-chateau-la-tour-martillac-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4503-chateau-la-tour-martillac-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4740-chateau-latour-martillac-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/4985-chateau-latour-martillac-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/5236-chateau-latour-martillac-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/chateau-latour-martillac-rouge/5446-chateau-latour-martillac-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,aries,https://aries-vins.com/primeurs-2024/5968-chateau-latour-martillac-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/4840-chateau-carbonnieux-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/4951-chateau-carbonnieux-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/5221-carbonnieux-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,aries,https://aries-vins.com/chateau-carbonnieux-rouge/5471-chateau-carbonnieux-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,aries,https://aries-vins.com/primeurs-2024/5859-chateau-carbonnieux-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/3605-chateau-malartic-lagraviere-rouge-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4004-chateau-malartic-lagraviere-rouge-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4170-chateau-malartic-lagraviere-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4443-chateau-malartic-lagraviere-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/4737-chateau-malartic-lagraviere-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5013-chateau-malartic-lagraviere-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5201-chateau-malartic-lagraviere-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/chateau-malartic-lagraviere-rouge/5494-chateau-malartic-lagraviere-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,aries,https://aries-vins.com/primeurs-2024/5882-chateau-malartic-lagraviere-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/3325-chateau-larrivet-haut-brion-rouge-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/3940-chateau-larrivet-haut-brion-rouge-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/6118-chateau-larrivet-haut-brion-rouge-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4472-chateau-larrivet-haut-brion-rouge-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4730-chateau-larrivet-haut-brion-rouge-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/4974-chateau-larrivet-haut-brion-rouge-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/5206-chateau-larrivet-haut-brion-rouge-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/chateau-larrivet-haut-brion-rouge/5566-chateau-larrivet-haut-brion-rouge-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,aries,https://aries-vins.com/primeurs-2024/5948-chateau-larrivet-haut-brion-rouge-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/3632-chateau-sociando-mallet-2015.html,,span.product-unit-price span.font-weight-bold,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/3955-chateau-sociando-mallet-2016.html,,span.product-unit-price span.font-weight-bold,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4179-chateau-sociando-mallet-2017.html,,span.product-unit-price span.font-weight-bold,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4430-chateau-sociando-mallet-2018.html,,span.product-unit-price span.font-weight-bold,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4810-chateau-sociando-mallet-2019.html,,span.product-unit-price span.font-weight-bold,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/4999-chateau-sociando-mallet-2020.html,,span.product-unit-price span.font-weight-bold,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/5190-chateau-sociando-mallet-2021.html,,span.product-unit-price span.font-weight-bold,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/chateau-sociando-mallet/5465-chateau-sociando-mallet-2022.html,,span.product-unit-price span.font-weight-bold,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,aries,https://aries-vins.com/primeurs-2024/5853-chateau-sociando-mallet-2024.html,,span.product-unit-price span.font-weight-bold,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4677-337493-chateau-latour-martillac-2017.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4680-337496-chateau-latour-martillac-2021.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4682-337498-chateau-latour-martillac-2022.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineclub,https://www.lewineclub.com/fr/chateau-carbonnieux/4640-337456-chateau-carbonnieux-2016.html,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineclub,https://www.lewineclub.com/fr/chateau-carbonnieux/4642-337458-chateau-carbonnieux-2017.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,wineclub,https://www.lewineclub.com/fr/chateau-carbonnieux/4643-337459-chateau-carbonnieux-2018.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
@@ -268,13 +418,16 @@ Chateau de Fieuzal,wineclub,https://www.lewineclub.com/fr/chateau-de-fieuzal/465
 Chateau de Fieuzal,wineclub,https://www.lewineclub.com/fr/chateau-de-fieuzal/8859-341507-chateau-de-fieuzal-2019.html,,span[itemprop='price'],2019,2019,0.75L,TRUE,Explicit URL
 Chateau de Fieuzal,wineclub,https://www.lewineclub.com/fr/chateau-de-fieuzal/8860-341508-chateau-de-fieuzal-2020.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
 Chateau de Fieuzal,wineclub,https://www.lewineclub.com/fr/chateau-de-fieuzal/8861-341509-chateau-de-fieuzal-2021.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,wineclub,https://www.lewineclub.com/fr/chateau-larrivet-haut-brion/4675-337492-chateau-larrivet-haut-brion-2020.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4677-337493-chateau-latour-martillac-2017.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4680-337496-chateau-latour-martillac-2021.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,wineclub,https://www.lewineclub.com/fr/chateau-latour-martillac/4682-337498-chateau-latour-martillac-2022.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/4689-337506-chateau-malartic-lagraviere-2015.html,,span[itemprop='price'],2015,2015,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/4690-337507-chateau-malartic-lagraviere-2016.html,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/4692-337509-chateau-malartic-lagraviere-2017.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/4693-337510-chateau-malartic-lagraviere-2018.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/10461-343124-chateau-malartic-lagraviere-2020.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
 Chateau Malartic Lagraviere,wineclub,https://www.lewineclub.com/fr/chateau-malartic-lagraviere/10462-343125-chateau-malartic-lagraviere-2021.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,wineclub,https://www.lewineclub.com/fr/chateau-larrivet-haut-brion/4675-337492-chateau-larrivet-haut-brion-2020.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4274-337057-chateau-sociando-mallet-2015.html,,span[itemprop='price'],2015,2015,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4275-337058-chateau-sociando-mallet-2016.html,,span[itemprop='price'],2016,2016,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4277-337060-chateau-sociando-mallet-2017.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
@@ -283,170 +436,74 @@ Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4281-337064-chateau-sociando-mallet-2020.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4282-337065-chateau-sociando-mallet-2021.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,wineclub,https://www.lewineclub.com/fr/chateau-sociando-mallet/4283-337066-chateau-sociando-mallet-2022.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-5900,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-6683,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7072,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8302,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,dubecq,https://www.dubecq.com/fr/3-catalogue#product-5703,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7073,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-3048,,span.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-3610,,span.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-4300,,span.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-6377,,span.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7074,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8303,,span.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,dubecq,https://www.dubecq.com/fr/3-catalogue#product-8545,,span.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,dubecq,https://www.dubecq.com/fr/3-catalogue#product-7071,,span.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-6685,,span.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-3619,,span.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-4324,,span.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,dubecq,https://www.dubecq.com/fr/recherche?id_category=3&search_query=sociando#product-5723,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,xovin,https://www.xo-vin.fr/rouge/21355-p18100080-chateau-latour-martillac.html,,span.product-price.format-price-xovin,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,xovin,https://www.xo-vin.fr/rouge/28328-p20114500-chateau-larrivet-haut-brion.html,,span.product-price.format-price-xovin,2020,2020,0.75L,TRUE,Explicit URL
 Chateau de Fieuzal,xovin,https://www.xo-vin.fr/rouge/21606-p20006600-chateau-de-fieuzal-3664174033621.html,,span.product-price.format-price-xovin,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Larrivet Haut-Brion,xovin,https://www.xo-vin.fr/rouge/28328-p20114500-chateau-larrivet-haut-brion.html,,span.product-price.format-price-xovin,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,xovin,https://www.xo-vin.fr/rouge/21355-p18100080-chateau-latour-martillac.html,,span.product-price.format-price-xovin,2018,2018,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,xovin,https://www.xo-vin.fr/rouge/20853-001600641-chateau-sociando-mallet.html,,span.product-price.format-price-xovin,2017,2017,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,xovin,https://www.xo-vin.fr/rouge/28332-p20128100-chateau-sociando-mallet.html,,span.product-price.format-price-xovin,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/17787-cht-latour-martillac-cb6-2020-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/16035-cht-latour-martillac-cb6-2017-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,hallesdequercamps,https://www.hallesdequercamps.com/25118-cht-latour-martillac-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/13761-cht-carbonnieux-2019-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/20798-cht-carbonnieux-2021-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,hallesdequercamps,https://www.hallesdequercamps.com/25083-cht-carbonnieux-cb6-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/20513-cht-malartic-lagraviere-cb-2021-pessac-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/16079-cht-malartic-lagraviere-cb6-2017-pessac-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/16762-cht-malartic-lagraviere-cb6-2020-pessac-rge-75cl-crd.html,,span[itemprop='price'],2020,2020,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/25229-cht-malartic-lagraviere-cb12-2022-pessac-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,hallesdequercamps,https://www.hallesdequercamps.com/13706-cht-malartic-lagraviere-cb6-2018-pessac-rge-75cl-crd.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,hallesdequercamps,https://www.hallesdequercamps.com/20668-cht-fieuzal-2021-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,hallesdequercamps,https://www.hallesdequercamps.com/24987-cht-fieuzal-cb6-2022-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/12716-cht-sociando-mallet-cb6-2017-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/14992-cht-sociando-mallet-2018-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/20452-cht-sociando-mallet-cb12-2021-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/25096-cht-sociando-mallet-2022-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/47324.chateau-latour-martillac-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cave_spirituelle,https://www.cave-spirituelle.com/chateau-latour-martillac-rouge-2020.html,,span.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-blanc-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,cashvin,https://www.cashvin.com/produit/chateau-latour-martillac-2022/,,p.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,millesimes,https://millesimes.com/Latour_martillac_2020_cru_classe_de_graves_Pessac-Leognan_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,levindevantsoi,https://www.levindevantsoi.com/boutique/chateau-latour-martillac-pessac-leognan-2020/,,p.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,labouteilledoree,https://www.labouteilledoree.com/fr/pessac-leognan/9316-chateau-latour-martillac-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-6-bouteilles.html,,div.current-price,2020,2020,0.75L,TRUE,Case URL — scraper divides by 6
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/37628.chateau-carbonnieux-2015-pessac-leognan-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/41608.chateau-carbonnieux-2017-pessac-leognan-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/45478.chateau-carbonnieux-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/46885.chateau-carbonnieux-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/50737.chateau-carbonnieux-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/55163.chateau-carbonnieux-2022-pessac-leognan-bordeaux.html,,span.current-price-value,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,vintageandco,https://www.vintageandco.com/58350.chateau-carbonnieux-2023-pessac-leognan-bordeaux.html,,span.current-price-value,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Olivier,vintageandco,https://www.vintageandco.com/44126.chateau-olivier-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Olivier,vintageandco,https://www.vintageandco.com/50876.chateau-olivier-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/39467.chateau-larrivet-haut-brion-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/43737.chateau-larrivet-haut-brion-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/53748.chateau-larrivet-haut-brion-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/46902.chateau-larrivet-haut-brion-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/51783.chateau-larrivet-haut-brion-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,vintageandco,https://www.vintageandco.com/54576.chateau-larrivet-haut-brion-2022-pessac-leognan-bordeaux.html,,span.current-price-value,2022,2022,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,vintageandco,https://www.vintageandco.com/51074.chateau-de-fieuzal-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/37567.chateau-sociando-mallet-2015-haut-medoc-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/39492.chateau-sociando-mallet-2016-haut-medoc-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/41570.chateau-sociando-mallet-2017-haut-medoc-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/43700.chateau-sociando-mallet-2018-haut-medoc-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/46931.chateau-sociando-mallet-2020-haut-medoc-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,vintageandco,https://www.vintageandco.com/51121.chateau-sociando-mallet-2021-haut-medoc-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/38093.chateau-malartic-lagraviere-2015-pessac-leognan-bordeaux.html,,span.current-price-value,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/40190.chateau-malartic-lagraviere-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,vintageandco,https://www.vintageandco.com/46879.chateau-malartic-lagraviere-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,cave_spirituelle,https://www.cave-spirituelle.com/bouteille-bordeaux-chateau-de-fieuzal-vin-rouge-2015.html,,span.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,cave_spirituelle,https://www.cave-spirituelle.com/bouteille-bordeaux-chateau-sociando-mallet-vin-rouge-2017.html,,span.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-2016-2,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,chateauinternet,https://www.chateauinternet.com/chateau-carbonnieux-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Olivier,chateauinternet,https://www.chateauinternet.com/chateau-olivier-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Larrivet Haut-Brion,chateauinternet,https://www.chateauinternet.com/chateau-larrivet-haut-brion-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau de Fieuzal,chateauinternet,https://www.chateauinternet.com/chateau-de-fieuzal-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,chateauinternet,https://www.chateauinternet.com/chateau-sociando-mallet-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-2016-2,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,chateauinternet,https://www.chateauinternet.com/chateau-malartic-lagraviere-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,cashvin,https://www.cashvin.com/produit/chateau-carbonnieux-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,cashvin,https://www.cashvin.com/produit/chateau-carbonnieux-2021/,,p.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Olivier,cashvin,https://www.cashvin.com/produit/chateau-olivier-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Olivier,cashvin,https://www.cashvin.com/produit/chateau-olivier-2020/,,p.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,cashvin,https://www.cashvin.com/produit/chateau-sociando-mallet-2019/,,p.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2017_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2018_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2021_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,millesimes,https://millesimes.com/Carbonnieux_2022_cru_classe_Pessac-Leognan_vin_rouge,,span.price-current,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2018_Haut-Medoc_vin_rouge,,span.price-current,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2020_Haut-Medoc_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Sociando Mallet,millesimes,https://millesimes.com/Sociando_mallet_2021_Haut-Medoc_vin_rouge,,span.price-current,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,millesimes,https://millesimes.com/Malartic_lagraviere_rouge_2019_grand_cru_classe_Graves_vin_rouge,,span.price-current,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Malartic Lagraviere,millesimes,https://millesimes.com/Malartic_lagraviere_rouge_2020_grand_cru_classe_Graves_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Carbonnieux,labouteilledoree,https://www.labouteilledoree.com/en/pessac-leognan/10107-chateau-carbonnieux-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-de-6-bouteilles.html,,div.current-price,2021,2021,0.75L,TRUE,Case URL (6 btl) scraper divides by 6
-Chateau de Fieuzal,labouteilledoree,https://www.labouteilledoree.com/en/pessac-leognan/9293-chateau-de-fieuzal-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-de-6-bouteilles.html,,div.current-price,2021,2021,0.75L,TRUE,Floating case URL (6 btl) scraper divides by 6
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/42006.chateau-latour-martillac-2016-pessac-leognan-bordeaux.html,,span.current-price-value,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/41584.chateau-latour-martillac-2017-pessac-leognan-bordeaux.html,,span.current-price-value,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/43751.chateau-latour-martillac-2018-pessac-leognan-bordeaux.html,,span.current-price-value,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/48257.chateau-latour-martillac-2019-pessac-leognan-bordeaux.html,,span.current-price-value,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/50936.chateau-latour-martillac-2021-pessac-leognan-bordeaux.html,,span.current-price-value,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2015,,div.price,2015,2015,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2016,,div.price,2016,2016,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2017,,div.price,2017,2017,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2018,,div.price,2018,2018,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2019,,div.price,2019,2019,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2021,,div.price,2021,2021,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2022,,div.price,2022,2022,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2023,,div.price,2023,2023,0.75L,TRUE,Explicit URL
-Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-rouge-2024,,div.price,2024,2024,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/2744-62400-chateau-latour-martillac.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/6610-68534-chateau-latour-martillac-.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/3865-82276-chateau-latour-martillac.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/5654-76451-chateau-latour-martillac-.html,,span.price,2019,2019,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/6996-81122-chateau-latour-martillac.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7955-84236-chateau-latour-martillac-.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/9061-89275-chateau-latour-martillac-.html,,span.price,2022,2022,75cl,TRUE,rouge
+Chateau Latour Martillac,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/11865-83367-chateau-latour-martillac-.html,,span.price,2023,2023,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1131-88936-chateau-carbonnieux.html,,span.price,2015,2015,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1090-88448-chateau-carbonnieux-.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/3917-72634-chateau-carbonnieux-.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7698-76566-chateau-carbonnieux-.html,,span.price,2019,2019,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/6862-81195-chateau-carbonnieux-.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7934-82415-chateau-carbonnieux-.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/9039-89295-chateau-carbonnieux-.html,,span.price,2022,2022,75cl,TRUE,rouge
+Chateau Carbonnieux,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/11743-82740-chateau-carbonnieux-.html,,span.price,2023,2023,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1296-115370-chateau-olivier.html,,span.price,2015,2015,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1069-84429-chateau-olivier.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1067-57071-chateau-olivier-.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/5717-72662-chateau-olivier.html,,span.price,2019,2019,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7945-82432-chateau-olivier-.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau Olivier,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/9050-87659-chateau-olivier-.html,,span.price,2022,2022,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/2384-58179-chateau-larrivet-haut-brion.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/4568-84151-chateau-larrivet-haut-brion-.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/6431-68185-chateau-larrivet-haut-brion-.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/5634-76880-chateau-larrivet-haut-brion-.html,,span.price,2019,2019,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/6970-81121-chateau-larrivet-haut-brion-.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7957-82395-chateau-larrivet-haut-brion-.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/9063-89647-chateau-larrivet-haut-brion-.html,,span.price,2022,2022,75cl,TRUE,rouge
+Chateau de Fieuzal,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/4757-62503-chateau-de-fieuzal.html,,span.price,2015,2015,75cl,TRUE,rouge
+Chateau de Fieuzal,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7080-81018-chateau-de-fieuzal-.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau de Fieuzal,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7942-84319-chateau-de-fieuzal-.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau de Fieuzal,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/9047-89430-chateau-de-fieuzal-.html,,span.price,2022,2022,75cl,TRUE,rouge
+Chateau de Fieuzal,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/11858-83326-chateau-de-fieuzal-.html,,span.price,2023,2023,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/2735-57097-chateau-malartic-lagraviere.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/1303-64840-chateau-malartic-lagraviere.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/3460-68182-chateau-malartic-lagraviere.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/5638-78854-chateau-malartic-lagraviere.html,,span.price,2019,2019,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/7939-84204-chateau-malartic-lagraviere.html,,span.price,2021,2021,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vinotheque_bordeaux,https://vinotheque-bordeaux.com/bordeaux/11855-83311-chateau-malartic-lagraviere.html,,span.price,2023,2023,75cl,TRUE,rouge
+Chateau Carbonnieux,vin_malin,https://www.vin-malin.fr/7868-chateau-carbonnieux-2016.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Carbonnieux,vin_malin,https://www.vin-malin.fr/8582-chateau-carbonnieux-rouge-2017.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Carbonnieux,vin_malin,https://www.vin-malin.fr/8820-chateau-carbonnieux-2018.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Carbonnieux,vin_malin,https://www.vin-malin.fr/10227-chateau-carbonnieux-rouge-2020.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Latour Martillac,vin_malin,https://www.vin-malin.fr/8804-chateau-latour-martillac-rouge-2018.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Latour Martillac,vin_malin,https://www.vin-malin.fr/10267-chateau-latour-martillac-rouge-2020.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vin_malin,https://www.vin-malin.fr/7848-chateau-larrivet-haut-brion-2016.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vin_malin,https://www.vin-malin.fr/8594-chateau-larrivet-haut-brion-2017.html,,span.price,2017,2017,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vin_malin,https://www.vin-malin.fr/8793-chateau-larrivet-haut-brion-2018.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Larrivet Haut-Brion,vin_malin,https://www.vin-malin.fr/10250-chateau-larrivet-haut-brion-2020.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau de Fieuzal,vin_malin,https://www.vin-malin.fr/7901-chateau-de-fieuzal-2016.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau de Fieuzal,vin_malin,https://www.vin-malin.fr/8758-chateau-de-fieuzal-2018-3760145421401.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Sociando-Mallet,vin_malin,https://www.vin-malin.fr/7288-chateau-sociando-mallet-2015.html,,span.price,2015,2015,75cl,TRUE,rouge
+Chateau Sociando-Mallet,vin_malin,https://www.vin-malin.fr/7858-chateau-sociando-mallet-2016.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Sociando-Mallet,vin_malin,https://www.vin-malin.fr/8762-chateau-sociando-mallet-2018-3428431801107.html,,span.price,2018,2018,75cl,TRUE,rouge
+Chateau Sociando-Mallet,vin_malin,https://www.vin-malin.fr/10271-chateau-sociando-mallet-2020-3428430000464.html,,span.price,2020,2020,75cl,TRUE,rouge
+Chateau Malartic-Lagraviere,vin_malin,https://www.vin-malin.fr/7899-chateau-malartic-lagraviere-2016.html,,span.price,2016,2016,75cl,TRUE,rouge
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/25-63-chateau-latour-martillac-rouge-2015.html,,span.price,2015,2015,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/23-61-chateau-latour-martillac-rouge-2016.html,,span.price,2016,2016,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/24-62-chateau-latour-martillac-rouge-2017.html,,span.price,2017,2017,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/126-244-chateau-latour-martillac-rouge-2018.html,,span.price,2018,2018,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/165-778-chateau-latour-martillac-rouge-2019.html,,span.price,2019,2019,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/218-620-chateau-latour-martillac-rouge-2020.html,,span.price,2020,2020,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/232-818-chateau-latour-martillac-rouge-2021.html,,span.price,2021,2021,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/293-773-chateau-latour-martillac-rouge-2022.html,,span.price,2022,2022,75cl,TRUE,rouge; estate direct shop
+Chateau Latour Martillac,cercledemartillac,https://www.cercledemartillac.fr/vins-rouges/319-822-chateau-latour-martillac-rouge-2023.html,,span.price,2023,2023,75cl,TRUE,rouge; estate direct shop

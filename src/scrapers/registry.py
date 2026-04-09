@@ -16,6 +16,13 @@ from src.scrapers.wineclub import WineclubScraper
 from src.scrapers.dubecq import DubecqScraper
 from src.scrapers.xovin import XovinScraper
 from src.scrapers.hallesdequercamps import HallesDeQuercampsScraper
+from src.scrapers.vintageandco import VintageAndCoScraper
+from src.scrapers.cave_spirituelle import CaveSpirituellesScraper
+from src.scrapers.chateauinternet import ChateauInternetScraper
+from src.scrapers.cashvin import CashvinScraper
+from src.scrapers.millesimes import MillesimesScraper
+from src.scrapers.levindevantsoi import LeVinDeVantSoiScraper
+from src.scrapers.labouteilledoree import LaBouteilleDoreeeScraper
 
 REGISTRY: dict[str, type[BaseScraper]] = {
     # Custom scrapers (Playwright or special logic)
@@ -37,6 +44,13 @@ REGISTRY: dict[str, type[BaseScraper]] = {
     "dubecq":        DubecqScraper,
     "xovin":         XovinScraper,
     "hallesdequercamps": HallesDeQuercampsScraper,
+    "vintageandco":      VintageAndCoScraper,
+    "cave_spirituelle":  CaveSpirituellesScraper,
+    "chateauinternet":   ChateauInternetScraper,
+    "cashvin":           CashvinScraper,
+    "millesimes":        MillesimesScraper,
+    "levindevantsoi":    LeVinDeVantSoiScraper,
+    "labouteilledoree":  LaBouteilleDoreeeScraper,
 }
 
 

@@ -323,3 +323,10 @@ Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/1271
 Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/14992-cht-sociando-mallet-2018-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2018,2018,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/20452-cht-sociando-mallet-cb12-2021-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2021,2021,0.75L,TRUE,Explicit URL
 Chateau Sociando Mallet,hallesdequercamps,https://www.hallesdequercamps.com/25096-cht-sociando-mallet-2022-ht-medoc-rge-75cl-crd.html,,span[itemprop='price'],2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,vintageandco,https://www.vintageandco.com/47324.chateau-latour-martillac-2020-pessac-leognan-bordeaux.html,,span.current-price-value,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,cave_spirituelle,https://www.cave-spirituelle.com/chateau-latour-martillac-rouge-2020.html,,span.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,chateauinternet,https://www.chateauinternet.com/chateau-latour-martillac-blanc-2020,,div.price,2020,2020,0.75L,TRUE,Explicit URL — blanc
+Chateau Latour Martillac,cashvin,https://www.cashvin.com/produit/chateau-latour-martillac-2022/,,p.price,2022,2022,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,millesimes,https://millesimes.com/Latour_martillac_2020_cru_classe_de_graves_Pessac-Leognan_vin_rouge,,span.price-current,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,levindevantsoi,https://www.levindevantsoi.com/boutique/chateau-latour-martillac-pessac-leognan-2020/,,p.price,2020,2020,0.75L,TRUE,Explicit URL
+Chateau Latour Martillac,labouteilledoree,https://www.labouteilledoree.com/fr/pessac-leognan/9316-chateau-latour-martillac-pessac-leognan-grand-cru-classe-de-graves-rouge-caisse-bois-d-origine-6-bouteilles.html,,div.current-price,2020,2020,0.75L,TRUE,Case URL — scraper divides by 6

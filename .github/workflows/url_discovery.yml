@@ -1,0 +1,101 @@
+name: Daily URL Discovery
+
+on:
+  schedule:
+    - cron: "0 7 * * *"   # 07:00 UTC — 2 h before scraper (09:00 UTC)
+  workflow_dispatch:        # allow manual trigger
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run URL discovery (listing-page crawl + gap report)
+        run: python -m src.url_discovery
+
+      - name: Upload discovery report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: url-discovery-report-${{ github.run_id }}
+          path: url_discovery_report.json
+          retention-days: 30
+
+      - name: Open GitHub Issue if new URLs found
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PYEOF'
+          import json, subprocess, sys
+          from pathlib import Path
+
+          report_path = Path("url_discovery_report.json")
+          if not report_path.exists():
+              print("No report file — skipping issue creation")
+              sys.exit(0)
+
+          report = json.loads(report_path.read_text())
+          items = report.get("action_items", [])
+          if not items:
+              print("No new URLs found — no issue needed")
+              sys.exit(0)
+
+          # Build issue body
+          lines = [
+              f"## URL Discovery — {report['generated_at']}",
+              f"",
+              f"Found **{len(items)} new URL(s)** not yet in `master_products.csv`.",
+              f"",
+              f"### Action items",
+              f"",
+          ]
+          for item in items:
+              lines.append(
+                  f"- **{item['retailer']}** / {item['estate']} "
+                  f"([{item['url']}]({item['url']})) — source: {item['source']}"
+              )
+          lines += [
+              "",
+              "### Next steps",
+              "1. Verify each URL loads a buyable product page",
+              "2. Add confirmed rows to `master_products.csv`",
+              "3. Push to trigger the daily scraper",
+          ]
+          body = "\n".join(lines)
+
+          result = subprocess.run(
+              [
+                  "gh", "issue", "create",
+                  "--title", f"[URL Discovery] {len(items)} new URL(s) found — {report['generated_at']}",
+                  "--body", body,
+                  "--label", "url-discovery",
+              ],
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              # Label may not exist — retry without --label
+              result = subprocess.run(
+                  [
+                      "gh", "issue", "create",
+                      "--title", f"[URL Discovery] {len(items)} new URL(s) found — {report['generated_at']}",
+                      "--body", body,
+                  ],
+                  capture_output=True, text=True
+              )
+          print(result.stdout)
+          PYEOF

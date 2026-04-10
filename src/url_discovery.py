@@ -278,6 +278,7 @@ class KnownProduct:
     estate_name: str
     vintage: int
     url: str
+    wine_color: str = "Rouge"
 
 
 def _strip_tracking_params(url: str) -> str:
@@ -289,25 +290,24 @@ def _strip_tracking_params(url: str) -> str:
 
 
 def load_known_products() -> list[KnownProduct]:
-    """Read master_products.csv and return all active rouge entries."""
+    """Read master_products.csv and return all active entries (rouge + blanc)."""
     products: list[KnownProduct] = []
     with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             if row.get("active", "").upper() != "TRUE":
-                continue
-            notes = row.get("notes", "").lower()
-            if "blanc" in notes:
                 continue
             try:
                 vintage = int(row["vintage_start"])
             except (ValueError, KeyError):
                 continue
             raw_url = row.get("product_url", "").strip()
+            wine_color = (row.get("wine_color") or "").strip() or "Rouge"
             products.append(KnownProduct(
                 retailer=row["retailer"],
                 estate_name=row["estate_name"],
                 vintage=vintage,
                 url=_strip_tracking_params(raw_url),
+                wine_color=wine_color,
             ))
     return products
 
@@ -325,22 +325,24 @@ def _all_estates(products: list[KnownProduct]) -> list[str]:
 class GapReport:
     estate: str
     retailer: str
+    wine_color: str
     known_vintages: list[int]
     missing_vintages: list[int]
 
 
 def coverage_gap_report(products: list[KnownProduct]) -> list[GapReport]:
-    by_key: dict[tuple[str, str], list[int]] = defaultdict(list)
+    by_key: dict[tuple[str, str, str], list[int]] = defaultdict(list)
     for p in products:
-        by_key[(p.retailer, p.estate_name)].append(p.vintage)
+        by_key[(p.retailer, p.estate_name, p.wine_color)].append(p.vintage)
 
     gaps: list[GapReport] = []
-    for (retailer, estate), vintages in sorted(by_key.items()):
+    for (retailer, estate, wine_color), vintages in sorted(by_key.items()):
         known = sorted(vintages)
         missing = [y for y in PROBE_VINTAGES if y not in known]
         gaps.append(GapReport(
             estate=estate,
             retailer=retailer,
+            wine_color=wine_color,
             known_vintages=known,
             missing_vintages=missing,
         ))
@@ -356,6 +358,7 @@ class ListingDiscovery:
     retailer: str
     estate: str
     catalog_url: str
+    wine_color: str = "Rouge"
     new_urls: list[str] = field(default_factory=list)
     error: str | None = None
 
@@ -375,18 +378,24 @@ _LARGE_FORMAT_RE = re.compile(
 )
 
 
-def _is_product_url(href: str, estate: str, link_text: str = "") -> bool:
-    """Return True only if href looks like a rouge single-product 75cl page.
+def _is_product_url(
+    href: str,
+    estate: str,
+    link_text: str = "",
+    wine_color: str = "Rouge",
+) -> bool:
+    """Return True only if href looks like a single-product 75cl page for wine_color.
 
     link_text should be the visible anchor text (if available).  Many
     retailers use opaque numeric product IDs so the URL alone cannot
-    distinguish a 75cl from a magnum; the anchor text usually can.
+    distinguish a 75cl from a magnum, or rouge from blanc; the anchor
+    text usually can.
+
+    For blanc: the URL or anchor text must explicitly contain "blanc" or
+    "white" — ambiguous links are skipped to avoid misclassification.
     """
     # Must contain a tracked vintage year (2015 to last completed year)
     if not any(str(y) in href for y in range(2015, CURRENT_YEAR)):
-        return False
-    # Skip blanc / white wines
-    if re.search(r"\b(blanc|white)\b", href, re.IGNORECASE):
         return False
     # Skip large-format bottles — check both URL and anchor text
     if _LARGE_FORMAT_RE.search(href) or _LARGE_FORMAT_RE.search(link_text):
@@ -404,6 +413,15 @@ def _is_product_url(href: str, estate: str, link_text: str = "") -> bool:
         for seg in path.split("/")
     ):
         return False
+    # Color filtering — check URL and anchor text together
+    combined = href.lower() + " " + link_text.lower()
+    has_blanc = bool(re.search(r"\b(blanc|white)\b", combined))
+    if wine_color.lower() == "rouge":
+        if has_blanc:
+            return False  # blanc product, not rouge
+    else:  # Blanc
+        if not has_blanc:
+            return False  # can't confirm blanc — skip to avoid misclassification
     # Must mention this estate's identifying slug somewhere in the URL
     slug = _estate_filter_slug(estate)
     if slug and slug not in href.lower():
@@ -416,19 +434,24 @@ def crawl_listing_page(
     estate: str,
     catalog_url: str,
     known_urls: set[str],
-) -> ListingDiscovery:
-    """Fetch a catalog page and return product links not already in the CSV."""
-    result = ListingDiscovery(retailer=retailer, estate=estate, catalog_url=catalog_url)
+) -> list[ListingDiscovery]:
+    """Fetch a catalog page once and return per-color discoveries not in the CSV."""
+    discs: dict[str, ListingDiscovery] = {
+        color: ListingDiscovery(
+            retailer=retailer, estate=estate, catalog_url=catalog_url, wine_color=color
+        )
+        for color in ("Rouge", "Blanc")
+    }
     try:
         resp = requests.get(catalog_url, headers=REQUESTS_HEADERS, timeout=20)
         if resp.status_code != 200:
-            result.error = f"HTTP {resp.status_code}"
-            return result
+            for d in discs.values():
+                d.error = f"HTTP {resp.status_code}"
+            return list(discs.values())
         soup = BeautifulSoup(resp.text, "html.parser")
 
         domain = catalog_url.split("/")[2]
         seen: set[str] = set()
-        new: list[str] = []
 
         for a in soup.find_all("a", href=True):
             href: str = a["href"].strip()
@@ -441,14 +464,17 @@ def crawl_listing_page(
                 continue
             seen.add(href)
             link_text = a.get_text(" ", strip=True)
-            if _is_product_url(href, estate, link_text=link_text):
-                new.append(href)
+            for color, disc in discs.items():
+                if _is_product_url(href, estate, link_text=link_text, wine_color=color):
+                    disc.new_urls.append(href)
 
-        result.new_urls = sorted(new)
+        for d in discs.values():
+            d.new_urls = sorted(d.new_urls)
         time.sleep(1.5)
     except Exception as exc:
-        result.error = str(exc)
-    return result
+        for d in discs.values():
+            d.error = str(exc)
+    return [d for d in discs.values() if d.new_urls or d.error]
 
 
 def _build_all_listing_pages(
@@ -481,15 +507,18 @@ def crawl_region_page(
     known_urls: set[str],
 ) -> list[ListingDiscovery]:
     """
-    Fetch a single regional catalog page once and return per-estate discoveries.
+    Fetch a single regional catalog page once and return per-(estate, color) discoveries.
 
     Used for retailers whose catalogue is organised by appellation rather than
     by estate (e.g. labouteilledoree /en/pessac-leognan/).  One HTTP request
-    covers all tracked estates; _is_product_url() filters per estate.
+    covers all tracked estates and both colors.
     """
-    discoveries: dict[str, ListingDiscovery] = {
-        estate: ListingDiscovery(retailer=retailer, estate=estate, catalog_url=region_url)
+    discoveries: dict[tuple[str, str], ListingDiscovery] = {
+        (estate, color): ListingDiscovery(
+            retailer=retailer, estate=estate, catalog_url=region_url, wine_color=color
+        )
         for estate in all_estates
+        for color in ("Rouge", "Blanc")
     }
     try:
         resp = requests.get(region_url, headers=REQUESTS_HEADERS, timeout=20)
@@ -514,9 +543,11 @@ def crawl_region_page(
             seen.add(href)
             link_text = a.get_text(" ", strip=True)
             for estate in all_estates:
-                if _is_product_url(href, estate, link_text=link_text):
-                    if href not in discoveries[estate].new_urls:
-                        discoveries[estate].new_urls.append(href)
+                for color in ("Rouge", "Blanc"):
+                    if _is_product_url(href, estate, link_text=link_text, wine_color=color):
+                        disc = discoveries[(estate, color)]
+                        if href not in disc.new_urls:
+                            disc.new_urls.append(href)
 
         time.sleep(1.5)
     except Exception as exc:
@@ -534,16 +565,15 @@ def run_listing_crawl(products: list[KnownProduct]) -> list[ListingDiscovery]:
     results: list[ListingDiscovery] = []
 
     # Per-estate listing pages (auto-generated + manual)
+    # Each crawl fetches the page once and returns discoveries for both colors.
     for (retailer, estate), catalog_url in sorted(listing_pages.items()):
         logger.info(f"  crawling {retailer} / {estate}")
-        result = crawl_listing_page(retailer, estate, catalog_url, known_urls)
-        results.append(result)
+        results.extend(crawl_listing_page(retailer, estate, catalog_url, known_urls))
 
-    # Region listing pages — one fetch covers all estates
+    # Region listing pages — one fetch covers all estates and both colors
     for retailer, region_url in REGION_LISTING_PAGES.items():
         logger.info(f"  crawling region page {retailer} ({region_url})")
-        region_results = crawl_region_page(retailer, region_url, all_estates, known_urls)
-        results.extend(region_results)
+        results.extend(crawl_region_page(retailer, region_url, all_estates, known_urls))
 
     return results
 
@@ -556,6 +586,7 @@ def run_listing_crawl(products: list[KnownProduct]) -> list[ListingDiscovery]:
 class ProbeDiscovery:
     retailer: str
     estate: str
+    wine_color: str = "Rouge"
     new_urls: list[str] = field(default_factory=list)
 
 
@@ -577,8 +608,11 @@ def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
     estates currently in the CSV.  Any new estate added to the CSV is
     automatically probed on all URL_BUILDER retailers.
     """
-    known_set: set[tuple[str, str, int]] = {
-        (p.retailer, p.estate_name, p.vintage) for p in products
+    # URL probing is rouge-only — blanc slugs vary too much per retailer.
+    # Keying on wine_color ensures we don't skip rouge probes for estates
+    # that already have a blanc row for the same vintage.
+    known_set: set[tuple[str, str, int, str]] = {
+        (p.retailer, p.estate_name, p.vintage, p.wine_color) for p in products
     }
     all_estates = _all_estates(products)
 
@@ -588,9 +622,9 @@ def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
             slug = slug_fn(estate)
             if slug is None:
                 continue  # estate not supported / not yet mapped for this retailer
-            discovery = ProbeDiscovery(retailer=retailer, estate=estate)
+            discovery = ProbeDiscovery(retailer=retailer, estate=estate, wine_color="Rouge")
             for vintage in PROBE_VINTAGES:
-                if (retailer, estate, vintage) in known_set:
+                if (retailer, estate, vintage, "Rouge") in known_set:
                     continue
                 url = url_fn(slug, vintage)
                 logger.info(f"  probing {retailer} / {estate} {vintage}")
@@ -626,7 +660,7 @@ def print_gap_table(gaps: list[GapReport]) -> None:
             print(f"\n  {g.estate}")
             prev_estate = g.estate
         recent = [y for y in g.missing_vintages if y >= CURRENT_YEAR - 2]
-        print(f"    [{g.retailer}]  missing recent: {recent}  |  known: {g.known_vintages}")
+        print(f"    [{g.retailer}] [{g.wine_color}]  missing recent: {recent}  |  known: {g.known_vintages}")
 
 
 def print_listing_results(results: list[ListingDiscovery]) -> None:
@@ -641,7 +675,7 @@ def print_listing_results(results: list[ListingDiscovery]) -> None:
             continue
         if r.new_urls:
             found_any = True
-            print(f"\n  [{r.retailer}] {r.estate} -- {len(r.new_urls)} new URL(s):")
+            print(f"\n  [{r.retailer}] {r.estate} [{r.wine_color}] -- {len(r.new_urls)} new URL(s):")
             for url in r.new_urls:
                 print(f"    {url}")
     if not found_any:
@@ -657,7 +691,7 @@ def print_probe_results(results: list[ProbeDiscovery]) -> None:
         print("  No new URLs found via URL probing.")
         return
     for r in results:
-        print(f"\n  [{r.retailer}] {r.estate} -- {len(r.new_urls)} new URL(s):")
+        print(f"\n  [{r.retailer}] {r.estate} [{r.wine_color}] -- {len(r.new_urls)} new URL(s):")
         for url in r.new_urls:
             print(f"    {url}")
 
@@ -675,6 +709,7 @@ def build_json_report(
             {
                 "retailer": g.retailer,
                 "estate": g.estate,
+                "wine_color": g.wine_color,
                 "known_vintages": g.known_vintages,
                 "missing_in_probe_range": g.missing_vintages,
             }
@@ -760,6 +795,7 @@ def _build_action_items(
                 "estate": r.estate,
                 "url": url,
                 "vintage": vintage,
+                "wine_color": r.wine_color,
                 "price_selector": RETAILER_DEFAULTS.get(r.retailer, "span.price"),
                 "source": "listing_page",
             })
@@ -772,6 +808,7 @@ def _build_action_items(
                 "estate": r.estate,
                 "url": url,
                 "vintage": vintage,
+                "wine_color": r.wine_color,
                 "price_selector": RETAILER_DEFAULTS.get(r.retailer, "div.price"),
                 "source": "url_probe",
             })
@@ -792,17 +829,18 @@ def auto_append_to_csv(items: list[dict]) -> int:
 
     Returns the number of rows appended.
     """
-    existing: set[tuple[str, str, int]] = set()
+    existing: set[tuple[str, str, int, str]] = set()
     with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             try:
                 v = int(row["vintage_start"])
             except (ValueError, KeyError):
                 continue
-            existing.add((row["retailer"].strip(), row["estate_name"].strip(), v))
+            wc = (row.get("wine_color") or "").strip() or "Rouge"
+            existing.add((row["retailer"].strip(), row["estate_name"].strip(), v, wc))
 
     new_rows: list[str] = []
-    seen_this_run: set[tuple[str, str, int]] = set()
+    seen_this_run: set[tuple[str, str, int, str]] = set()
 
     for item in items:
         vintage = item.get("vintage")
@@ -813,7 +851,8 @@ def auto_append_to_csv(items: list[dict]) -> int:
         retailer   = item["retailer"]
         estate_raw = item["estate"]
         estate     = ESTATE_NAME_CANONICAL.get(estate_raw, estate_raw)
-        key        = (retailer, estate, vintage)
+        wine_color = (item.get("wine_color") or "Rouge")
+        key        = (retailer, estate, vintage, wine_color)
 
         if key in existing or key in seen_this_run:
             continue
@@ -826,10 +865,10 @@ def auto_append_to_csv(items: list[dict]) -> int:
 
         row = (
             f"{estate},{retailer},{url},,{selector},"
-            f"{vintage},{vintage},{bottle_size},TRUE,{note}"
+            f"{vintage},{vintage},{bottle_size},TRUE,{wine_color},{note}"
         )
         new_rows.append(row)
-        logger.info(f"auto-append: +{retailer} / {estate} {vintage}  {url}")
+        logger.info(f"auto-append: +{retailer} / {estate} {vintage} [{wine_color}]  {url}")
 
     if new_rows:
         with open(CSV_PATH, "a", encoding="utf-8-sig", newline="\n") as f:
@@ -862,7 +901,9 @@ def main() -> None:
     logger.info("Loading master_products.csv...")
     products = load_known_products()
     estates = _all_estates(products)
-    logger.info(f"  {len(products)} active rouge entries | {len(estates)} estates")
+    rouge_count = sum(1 for p in products if p.wine_color.lower() == "rouge")
+    blanc_count = sum(1 for p in products if p.wine_color.lower() == "blanc")
+    logger.info(f"  {len(products)} active entries ({rouge_count} rouge, {blanc_count} blanc) | {len(estates)} estates")
 
     # Strategy A: gap report (always runs, free)
     gaps = coverage_gap_report(products)

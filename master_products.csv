@@ -1,4 +1,4 @@
-﻿estate_name,retailer,product_url,url_template,price_selector,vintage_start,vintage_end,bottle_size,active,notes
+﻿estate_name,retailer,product_url,url_template,price_selector,vintage_start,vintage_end,bottle_size,active,wine_color,notes
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/1276-chateau-carbonnieux-2015-rouge.html,,span.prix_unit,2015,2015,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/1616-chateau-carbonnieux-2016-rouge-pessac-leognan-cru-classe.html,,span.prix_unit,2016,2016,0.75L,TRUE,Explicit URL
 Chateau Carbonnieux,12bouteilles,https://www.12bouteilles.com/fr/chateau-carbonnieux/3203-chateau-carbonnieux-2017.html,,span.prix_unit,2017,2017,0.75L,TRUE,Explicit URL

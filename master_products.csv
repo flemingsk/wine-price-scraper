@@ -557,3 +557,7 @@ Chateau Larrivet Haut-Brion,cavissima,https://www.cavissima.com/products/chateau
 Chateau de Fieuzal,cavissima,https://www.cavissima.com/products/chateau-de-fieuzal-2025,,span.price-item__unit,2025,2025,0.75L,TRUE,Auto-discovered 2026-04-10
 Chateau Sociando-Mallet,cavissima,https://www.cavissima.com/products/chateau-sociando-mallet-2025,,span.price-item__unit,2025,2025,0.75L,TRUE,Auto-discovered 2026-04-10
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2025,,span.price-item__unit,2025,2025,0.75L,TRUE,Auto-discovered 2026-04-10
+Chateau Lespault-Martillac,millesima,https://www.millesima.fr/chateau-lespault-martillac-2019-c-cc-6.html,https://www.millesima.fr/chateau-lespault-martillac-{vintage}-c-cc-6.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,millesima,https://www.millesima.fr/chateau-la-louviere-2021-d-cb-6.html,https://www.millesima.fr/chateau-la-louviere-{vintage}-d-cb-6.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Seed URL from user
+Chateau Lespault-Martillac,vinatis,https://www.vinatis.com/id-69239-chateau-lespault-martillac-rouge-2016,,span.vue-page-price,2016,2016,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,e_leclerc,https://www.e.leclerc/fp/chateau-la-louviere-2023-pessac-leognan-aop-rouge-75-cl-3338835023107,,,2023,2023,0.75L,TRUE,Seed URL from user

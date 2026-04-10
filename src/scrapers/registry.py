@@ -26,6 +26,7 @@ from src.scrapers.labouteilledoree import LaBouteilleDoreeeScraper
 from src.scrapers.vinotheque_bordeaux import VinothequeBordeauxScraper
 from src.scrapers.vin_malin import VinMalinScraper
 from src.scrapers.cercledemartillac import CercleDeMartillacScraper
+from src.scrapers.e_leclerc import ELeclercScraper
 
 REGISTRY: dict[str, type[BaseScraper]] = {
     # Custom scrapers (Playwright or special logic)
@@ -57,6 +58,7 @@ REGISTRY: dict[str, type[BaseScraper]] = {
     "vinotheque_bordeaux": VinothequeBordeauxScraper,
     "vin_malin":           VinMalinScraper,
     "cercledemartillac":   CercleDeMartillacScraper,
+    "e_leclerc":           ELeclercScraper,
 }
 
 

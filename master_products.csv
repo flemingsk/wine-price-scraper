@@ -563,3 +563,26 @@ Chateau Lespault-Martillac,vinatis,https://www.vinatis.com/id-69239-chateau-lesp
 Chateau La Louviere,e_leclerc,https://www.e.leclerc/fp/chateau-la-louviere-2023-pessac-leognan-aop-rouge-75-cl-3338835023107,,,2023,2023,0.75L,TRUE,Seed URL from user
 Chateau La Garde,millesima,https://www.millesima.fr/chateau-la-garde-2017-c-cb-12.html,https://www.millesima.fr/chateau-la-garde-{vintage}-c-cb-12.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Seed URL from user
 Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3343-chateau-la-louviere-rouge-2021.html,,div.unit-price-cart.small.text-muted.font-italic,2021,2021,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,vinatis,https://www.vinatis.com/id-50594-chateau-bouscaut-2018-cru-classe-de-graves,,span.vue-page-price,2018,2018,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/876-chateau-la-louviere-rouge-2015.html,,div.unit-price-cart.small.text-muted.font-italic,2015,2015,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1635-chateau-la-louviere-2016.html,,div.unit-price-cart.small.text-muted.font-italic,2016,2016,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2069-chateau-la-louviere-2017.html,,div.unit-price-cart.small.text-muted.font-italic,2017,2017,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2321-chateau-la-louviere-rouge-2018.html,,div.unit-price-cart.small.text-muted.font-italic,2018,2018,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2673-chateau-la-louviere-rouge-2019.html,,div.unit-price-cart.small.text-muted.font-italic,2019,2019,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3031-chateau-la-louviere-rouge-2020.html,,div.unit-price-cart.small.text-muted.font-italic,2020,2020,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3583-chateau-la-louviere-rouge-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3979-chateau-la-louviere-rouge-2023.html,,div.unit-price-cart.small.text-muted.font-italic,2023,2023,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/primeurs-2024/4188-chateau-la-louviere-rouge-2024.html,,div.unit-price-cart.small.text-muted.font-italic,2024,2024,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1497-chateau-bouscaut-2015.html,,div.unit-price-cart.small.text-muted.font-italic,2015,2015,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/1570-chateau-bouscaut-2016.html,,div.unit-price-cart.small.text-muted.font-italic,2016,2016,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2130-chateau-bouscaut-2017.html,,div.unit-price-cart.small.text-muted.font-italic,2017,2017,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2394-chateau-bouscaut-rouge-2018.html,,div.unit-price-cart.small.text-muted.font-italic,2018,2018,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/2734-chateau-bouscaut-rouge-2019.html,,div.unit-price-cart.small.text-muted.font-italic,2019,2019,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3027-chateau-bouscaut-rouge-2020.html,,div.unit-price-cart.small.text-muted.font-italic,2020,2020,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3361-chateau-bouscaut-rouge-2021.html,,div.unit-price-cart.small.text-muted.font-italic,2021,2021,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3581-chateau-bouscaut-rouge-2022.html,,div.unit-price-cart.small.text-muted.font-italic,2022,2022,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,chateaunet,https://www.chateaunet.com/chateau-bouscaut-1136491-chateau-bouscaut-pessac-leognan-rouge-2020-075,,span[itemprop='price'],2020,2020,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,chateaunet,https://www.chateaunet.com/chateau-bouscaut-1142158-chateau-bouscaut-pessac-leognan-rouge-2021-075,,span[itemprop='price'],2021,2021,0.75L,TRUE,Seed URL from user
+Chateau Bouscaut,chateaunet,https://www.chateaunet.com/chateau-bouscaut-1146911-chateau-bouscaut-pessac-leognan-rouge-2022-075,,span[itemprop='price'],2022,2022,0.75L,TRUE,Seed URL from user
+Chateau Lespault-Martillac,chateaunet,https://www.chateaunet.com/chateau-lespault-martillac-1147682-chateau-lespault-martillac-pessac-leognan-rouge-2022-075,,span[itemprop='price'],2022,2022,0.75L,TRUE,Seed URL from user
+Chateau Lespault-Martillac,chateaunet,https://www.chateaunet.com/chateau-lespault-martillac-1152491-chateau-lespault-martillac-pessac-leognan-rouge-2023-075,,span[itemprop='price'],2023,2023,0.75L,TRUE,Seed URL from user

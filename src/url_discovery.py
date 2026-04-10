@@ -58,6 +58,10 @@ ESTATES = [
     "Chateau de Fieuzal",
     "Chateau Sociando-Mallet",
     "Chateau Malartic-Lagraviere",
+    "Chateau Lagarde",
+    "Chateau La Louviere",
+    "Chateau Bouscaut",
+    "Chateau Lespault-Martillac",
 ]
 
 # Listing pages: estate catalog pages that can be crawled for product links.
@@ -79,13 +83,9 @@ LISTING_PAGES: dict[tuple[str, str], str] = {
     ("vin_malin", "Chateau Sociando-Mallet"):
         "https://www.vin-malin.fr/169-chateau-sociando-mallet",
 
-    # ── vinotheque-bordeaux.com (PrestaShop estate-filtered pages) ────────────
-    ("vinotheque_bordeaux", "Chateau Latour Martillac"):
-        "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6652-25466-chateau-latour-martillac.html",
-    ("vinotheque_bordeaux", "Chateau Olivier"):
-        "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6590-35833-chateau-olivier.html",
-    ("vinotheque_bordeaux", "Chateau Larrivet Haut-Brion"):
-        "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6648-39555-chateau-larrivet-haut-brion.html",
+    # vinotheque-bordeaux.com estate-filtered listing pages returned HTTP 404
+    # as of 2026-04-10 — their URL structure appears to have changed.
+    # Individual product URLs in master_products.csv still work for scraping.
 
     # ── vintageandco.com (/liste.{slug}.html pattern) ─────────────────────────
     ("vintageandco", "Chateau Latour Martillac"):
@@ -142,19 +142,27 @@ LISTING_PAGES: dict[tuple[str, str], str] = {
         "https://aries-vins.com/114-chateau-la-tour-martillac",
     ("aries", "Chateau Carbonnieux"):
         "https://aries-vins.com/43-chateau-carbonnieux",
-}
 
-# URL probers: (retailer, estate) → function(vintage) → candidate URL
+}
+# NOTE: Chateau Lagarde, La Louviere, Bouscaut, Lespault-Martillac are not carried
+# by cavissima or vintageandco via their standard estate listing-page patterns.
+# They are tracked via URL probing (chateauinternet) and the gap report only.
+
+# URL probers: (retailer, estate) -> function(vintage) -> candidate URL
 # The prober returns None if it cannot construct a URL for this estate.
 # Add new entries here as you discover URL patterns for other retailers.
 CHATEAUINTERNET_SLUGS: dict[str, str] = {
-    "Chateau Latour Martillac":   "chateau-latour-martillac-rouge",
-    "Chateau Carbonnieux":        "chateau-carbonnieux-rouge",
-    "Chateau Olivier":            "chateau-olivier-rouge",
-    "Chateau Larrivet Haut-Brion":"chateau-larrivet-haut-brion-rouge",
-    "Chateau de Fieuzal":         "chateau-de-fieuzal-rouge",
-    "Chateau Sociando-Mallet":    "chateau-sociando-mallet",   # no -rouge
-    "Chateau Malartic-Lagraviere":"chateau-malartic-lagraviere-rouge",
+    "Chateau Latour Martillac":    "chateau-latour-martillac-rouge",
+    "Chateau Carbonnieux":         "chateau-carbonnieux-rouge",
+    "Chateau Olivier":             "chateau-olivier-rouge",
+    "Chateau Larrivet Haut-Brion": "chateau-larrivet-haut-brion-rouge",
+    "Chateau de Fieuzal":          "chateau-de-fieuzal-rouge",
+    "Chateau Sociando-Mallet":     "chateau-sociando-mallet",   # no -rouge
+    "Chateau Malartic-Lagraviere": "chateau-malartic-lagraviere-rouge",
+    "Chateau Lagarde":             "chateau-lagarde-rouge",
+    "Chateau La Louviere":         "chateau-la-louviere-rouge",
+    "Chateau Bouscaut":            "chateau-bouscaut-rouge",
+    "Chateau Lespault-Martillac":  "chateau-lespault-martillac-rouge",
 }
 
 
@@ -177,6 +185,17 @@ class KnownProduct:
     url: str
 
 
+def _strip_tracking_params(url: str) -> str:
+    """Return URL with known retailer tracking query params removed."""
+    if "?" not in url:
+        return url
+    base, qs = url.split("?", 1)
+    # Cavissima: ?_pos=...&_fid=...&_ss=...&variant=...
+    # Chateaunet: ?_gl=...
+    # Keep the base URL only — tracking params are not part of the canonical URL
+    return base
+
+
 def load_known_products() -> list[KnownProduct]:
     """Read master_products.csv and return all active rouge entries."""
     products: list[KnownProduct] = []
@@ -191,11 +210,12 @@ def load_known_products() -> list[KnownProduct]:
                 vintage = int(row["vintage_start"])
             except (ValueError, KeyError):
                 continue
+            raw_url = row.get("product_url", "").strip()
             products.append(KnownProduct(
                 retailer=row["retailer"],
                 estate_name=row["estate_name"],
                 vintage=vintage,
-                url=row["product_url"],
+                url=_strip_tracking_params(raw_url),
             ))
     return products
 
@@ -244,6 +264,55 @@ class ListingDiscovery:
     error: str | None = None
 
 
+_ESTATE_SLUG: dict[str, str] = {
+    "Chateau Latour Martillac":    "latour-martillac",
+    "Chateau Carbonnieux":         "carbonnieux",
+    "Chateau Olivier":             "chateau-olivier",
+    "Chateau Larrivet Haut-Brion": "larrivet-haut-brion",
+    "Chateau de Fieuzal":          "de-fieuzal",
+    "Chateau Sociando-Mallet":     "sociando-mallet",
+    "Chateau Malartic-Lagraviere": "malartic-lagraviere",
+    "Chateau Lagarde":             "lagarde",
+    "Chateau La Louviere":         "la-louviere",
+    "Chateau Bouscaut":            "bouscaut",
+    "Chateau Lespault-Martillac":  "lespault-martillac",
+}
+
+# URL path segments that are never individual product pages
+_NON_PRODUCT_SEGMENTS = {
+    "primeurs", "collections", "coffrets-cadeaux", "gros-formats",
+    "vins-blancs", "promotions", "blog", "actualites",
+}
+
+
+def _is_product_url(href: str, estate: str) -> bool:
+    """Return True only if href looks like a rouge single-product 75cl page for this estate."""
+    # Must contain a tracked vintage year (2015 to CURRENT_YEAR inclusive)
+    if not any(str(y) in href for y in range(2015, CURRENT_YEAR + 1)):
+        return False
+    # Skip blanc / white wines (French and English labels in URL)
+    if re.search(r"\b(blanc|white)\b", href, re.IGNORECASE):
+        return False
+    # Skip large-format bottles
+    if re.search(r"\b(magnum|imperiale|jeroboam|double.magnum|balthazar)\b", href, re.IGNORECASE):
+        return False
+    # Skip second-label / sub-brand wines (e.g. "la-demoiselle-de", "l-abeille-de")
+    if re.search(r"\bl.abeille\b|\bdemoiselle\b|\bdemoiselles\b", href, re.IGNORECASE):
+        return False
+    # Skip ?q= filtered category views (not individual product pages)
+    if "?q=" in href:
+        return False
+    # Skip category / collection pages by segment
+    path = href.split("?")[0].rstrip("/")
+    if any(seg in _NON_PRODUCT_SEGMENTS for seg in path.split("/")):
+        return False
+    # Must mention this estate's slug somewhere in the URL
+    slug = _ESTATE_SLUG.get(estate, "")
+    if slug and slug not in href.lower():
+        return False
+    return True
+
+
 def crawl_listing_page(
     retailer: str,
     estate: str,
@@ -259,9 +328,10 @@ def crawl_listing_page(
             return result
         soup = BeautifulSoup(resp.text, "html.parser")
 
-        # Extract all product <a> links from the page
         domain = catalog_url.split("/")[2]
+        seen: set[str] = set()
         new: list[str] = []
+
         for a in soup.find_all("a", href=True):
             href: str = a["href"].strip()
             # Normalise to absolute URL
@@ -269,15 +339,12 @@ def crawl_listing_page(
                 href = f"https://{domain}{href}"
             if not href.startswith("http"):
                 continue
-            # Skip clearly non-product links (navigation, categories, etc.)
-            if not re.search(r"\d{4}", href):   # must contain a year
+            # Strip URL fragments — different pack-size variants of the same product
+            href = href.split("#")[0].rstrip("/")
+            if href in known_urls or href in seen:
                 continue
-            if href in known_urls:
-                continue
-            # Only count links that contain a recognised vintage year
-            if not any(str(y) in href for y in range(2010, CURRENT_YEAR + 2)):
-                continue
-            if href not in new:
+            seen.add(href)
+            if _is_product_url(href, estate):
                 new.append(href)
 
         result.new_urls = sorted(new)
@@ -523,13 +590,13 @@ def main() -> None:
     print(f"\n{'=' * 70}")
     print(f"SUMMARY: {len(all_new)} new URL(s) to review across all strategies.")
     if all_new:
-        print("  → Add confirmed URLs to master_products.csv and push to trigger scrape.")
+        print("  -> Add confirmed URLs to master_products.csv and push to trigger scrape.")
 
     # Write JSON report
     if not args.no_json:
         report = build_json_report(gaps, listings, probes)
         REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"  → Report written to {REPORT_PATH}")
+        print(f"  -> Report written to {REPORT_PATH}")
 
 
 if __name__ == "__main__":

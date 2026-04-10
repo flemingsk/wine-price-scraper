@@ -11,6 +11,13 @@ logger = logging.getLogger(__name__)
 
 MASTER_PRODUCTS_CSV = os.path.join(os.path.dirname(__file__), "..", "master_products.csv")
 
+# Canonical estate names — normalised at load time so DB stays consistent
+# even if a future CSV edit drifts from the standard spelling.
+ESTATE_NAME_CANONICAL: dict[str, str] = {
+    "Chateau Malartic Lagraviere":  "Chateau Malartic-Lagraviere",
+    "Chateau Sociando Mallet":      "Chateau Sociando-Mallet",
+}
+
 
 def main():
     csv_path = os.path.abspath(MASTER_PRODUCTS_CSV)
@@ -36,8 +43,9 @@ def main():
         vintage_end = row.get("vintage_end", "").strip()
         active = row.get("active", "true").strip().lower() not in ("false", "0", "no")
 
+        raw_name = row["estate_name"].strip()
         records.append({
-            "estate_name":            row["estate_name"].strip(),
+            "estate_name":            ESTATE_NAME_CANONICAL.get(raw_name, raw_name),
             "retailer":               row["retailer"].strip(),
             "product_url":            row.get("product_url", "").strip() or None,
             "url_template":           row.get("url_template", "").strip() or None,

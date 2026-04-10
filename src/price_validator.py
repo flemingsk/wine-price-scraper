@@ -131,9 +131,9 @@ def validate_price(
     Correction is applied when the scraped price appears to be a case total
     rather than a unit bottle price.  All corrections and warnings are logged.
     """
-    price = result.price_amount
-    if price is None or price <= 0:
+    if result.price_amount is None or result.price_amount <= 0:
         return result
+    price = float(result.price_amount)   # Decimal from parse_price() → float for arithmetic
 
     label = f"{result.retailer} | {result.vintage}"
 

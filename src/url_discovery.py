@@ -63,11 +63,13 @@ ESTATES = [
 # Listing pages: estate catalog pages that can be crawled for product links.
 # key = (retailer, estate_name), value = catalog page URL
 LISTING_PAGES: dict[tuple[str, str], str] = {
-    # cercledemartillac.fr — estate's own shop, LTM only
+
+    # ── cercledemartillac.fr ─────────────────────────────────────────────────
+    # Estate's own shop — LTM only
     ("cercledemartillac", "Chateau Latour Martillac"):
         "https://www.cercledemartillac.fr/10-chateau-latour-martillac",
 
-    # vin-malin.fr — known catalog page IDs
+    # ── vin-malin.fr (PrestaShop) ─────────────────────────────────────────────
     ("vin_malin", "Chateau Latour Martillac"):
         "https://www.vin-malin.fr/185-chateau-latour-martillac",
     ("vin_malin", "Chateau Larrivet Haut-Brion"):
@@ -77,13 +79,69 @@ LISTING_PAGES: dict[tuple[str, str], str] = {
     ("vin_malin", "Chateau Sociando-Mallet"):
         "https://www.vin-malin.fr/169-chateau-sociando-mallet",
 
-    # vinotheque-bordeaux.com — estate-filtered listing pages
+    # ── vinotheque-bordeaux.com (PrestaShop estate-filtered pages) ────────────
     ("vinotheque_bordeaux", "Chateau Latour Martillac"):
         "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6652-25466-chateau-latour-martillac.html",
     ("vinotheque_bordeaux", "Chateau Olivier"):
         "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6590-35833-chateau-olivier.html",
     ("vinotheque_bordeaux", "Chateau Larrivet Haut-Brion"):
         "https://www.vinotheque-bordeaux.com/fr/bordeaux/rouge/pessac-leognan/fiche-6648-39555-chateau-larrivet-haut-brion.html",
+
+    # ── vintageandco.com (/liste.{slug}.html pattern) ─────────────────────────
+    ("vintageandco", "Chateau Latour Martillac"):
+        "https://www.vintageandco.com/liste.chateau-latour-martillac.html",
+    ("vintageandco", "Chateau Carbonnieux"):
+        "https://www.vintageandco.com/liste.chateau-carbonnieux.html",
+    ("vintageandco", "Chateau Olivier"):
+        "https://www.vintageandco.com/liste.chateau-olivier.html",
+    ("vintageandco", "Chateau Larrivet Haut-Brion"):
+        "https://www.vintageandco.com/liste.chateau-larrivet-haut-brion.html",
+    ("vintageandco", "Chateau de Fieuzal"):
+        "https://www.vintageandco.com/liste.chateau-de-fieuzal.html",
+    ("vintageandco", "Chateau Sociando-Mallet"):
+        "https://www.vintageandco.com/liste.chateau-sociando-mallet.html",
+    ("vintageandco", "Chateau Malartic-Lagraviere"):
+        "https://www.vintageandco.com/liste.chateau-malartic-lagraviere.html",
+
+    # ── cavissima.com (Shopify /achat-vin/par-regions/bordeaux/{slug}/) ───────
+    ("cavissima", "Chateau Latour Martillac"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-latour-martillac/",
+    ("cavissima", "Chateau Carbonnieux"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-carbonnieux/",
+    ("cavissima", "Chateau Olivier"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-olivier/",
+    ("cavissima", "Chateau Larrivet Haut-Brion"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-larrivet-haut-brion/",
+    ("cavissima", "Chateau de Fieuzal"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-de-fieuzal/",
+    ("cavissima", "Chateau Sociando-Mallet"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-sociando-mallet/",
+    ("cavissima", "Chateau Malartic-Lagraviere"):
+        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-malartic-lagraviere/",
+
+    # ── lewineclub.com (/fr/{id}-{slug} pattern) ─────────────────────────────
+    ("wineclub", "Chateau Latour Martillac"):
+        "https://www.lewineclub.com/en/732-chateau-latour-martillac",
+    ("wineclub", "Chateau Carbonnieux"):
+        "https://www.lewineclub.com/fr/186-chateau-carbonnieux",
+    ("wineclub", "Chateau Malartic-Lagraviere"):
+        "https://www.lewineclub.com/fr/746-chateau-malartic-lagraviere",
+
+    # ── 12bouteilles.com (/en/{id}-{slug} pattern) ───────────────────────────
+    ("12bouteilles", "Chateau Latour Martillac"):
+        "https://www.12bouteilles.com/en/240-chateau-latour-martillac",
+    ("12bouteilles", "Chateau Carbonnieux"):
+        "https://www.12bouteilles.com/en/234-chateau-carbonnieux",
+    ("12bouteilles", "Chateau Sociando-Mallet"):
+        "https://www.12bouteilles.com/en/221-chateau-sociando-mallet",
+    ("12bouteilles", "Chateau Larrivet Haut-Brion"):
+        "https://www.12bouteilles.com/en/232-chateau-larrivet-haut-brion",
+
+    # ── aries-vins.com (/{id}-{slug} pattern) ────────────────────────────────
+    ("aries", "Chateau Latour Martillac"):
+        "https://aries-vins.com/114-chateau-la-tour-martillac",
+    ("aries", "Chateau Carbonnieux"):
+        "https://aries-vins.com/43-chateau-carbonnieux",
 }
 
 # URL probers: (retailer, estate) → function(vintage) → candidate URL

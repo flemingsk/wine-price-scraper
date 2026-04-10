@@ -142,6 +142,8 @@ LISTING_PAGES: dict[tuple[str, str], str] = {
         "https://aries-vins.com/114-chateau-la-tour-martillac",
     ("aries", "Chateau Carbonnieux"):
         "https://aries-vins.com/43-chateau-carbonnieux",
+    ("aries", "Chateau La Louviere"):
+        "https://aries-vins.com/104-chateau-la-louviere",
 
 }
 # NOTE: Chateau Lagarde, La Louviere, Bouscaut, Lespault-Martillac are not carried

@@ -562,3 +562,4 @@ Chateau La Louviere,millesima,https://www.millesima.fr/chateau-la-louviere-2021-
 Chateau Lespault-Martillac,vinatis,https://www.vinatis.com/id-69239-chateau-lespault-martillac-rouge-2016,,span.vue-page-price,2016,2016,0.75L,TRUE,Seed URL from user
 Chateau La Louviere,e_leclerc,https://www.e.leclerc/fp/chateau-la-louviere-2023-pessac-leognan-aop-rouge-75-cl-3338835023107,,,2023,2023,0.75L,TRUE,Seed URL from user
 Chateau La Garde,millesima,https://www.millesima.fr/chateau-la-garde-2017-c-cb-12.html,https://www.millesima.fr/chateau-la-garde-{vintage}-c-cb-12.html,"div[data-rbf=""millesima-price""] span:first-child",2015,2024,0.75L,TRUE,Seed URL from user
+Chateau La Louviere,jean_merlaut,https://jean-merlaut.com/catalogue-des-vins/3343-chateau-la-louviere-rouge-2021.html,,div.unit-price-cart.small.text-muted.font-italic,2021,2021,0.75L,TRUE,Seed URL from user

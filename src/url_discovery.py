@@ -287,8 +287,9 @@ _NON_PRODUCT_SEGMENTS = {
 
 def _is_product_url(href: str, estate: str) -> bool:
     """Return True only if href looks like a rouge single-product 75cl page for this estate."""
-    # Must contain a tracked vintage year (2015 to CURRENT_YEAR inclusive)
-    if not any(str(y) in href for y in range(2015, CURRENT_YEAR + 1)):
+    # Must contain a tracked vintage year: 2015 up to but not including the current year
+    # (exclude the current calendar year — wines that young are at best en-primeur futures)
+    if not any(str(y) in href for y in range(2015, CURRENT_YEAR)):
         return False
     # Skip blanc / white wines (French and English labels in URL)
     if re.search(r"\b(blanc|white)\b", href, re.IGNORECASE):
@@ -302,9 +303,13 @@ def _is_product_url(href: str, estate: str) -> bool:
     # Skip ?q= filtered category views (not individual product pages)
     if "?q=" in href:
         return False
-    # Skip category / collection pages by segment
+    # Skip category / collection pages — match any segment that starts with a known keyword
+    # (e.g. "primeurs-2023" must still be caught by the "primeurs" rule)
     path = href.split("?")[0].rstrip("/")
-    if any(seg in _NON_PRODUCT_SEGMENTS for seg in path.split("/")):
+    if any(
+        any(seg.startswith(kw) for kw in _NON_PRODUCT_SEGMENTS)
+        for seg in path.split("/")
+    ):
         return False
     # Must mention this estate's slug somewhere in the URL
     slug = _ESTATE_SLUG.get(estate, "")
@@ -476,6 +481,7 @@ def build_json_report(
     gaps: list[GapReport],
     listings: list[ListingDiscovery],
     probes: list[ProbeDiscovery],
+    action_items: list[dict] | None = None,
 ) -> dict:
     return {
         "generated_at": date.today().isoformat(),
@@ -508,8 +514,36 @@ def build_json_report(
             }
             for r in probes
         ],
-        "action_items": _build_action_items(listings, probes),
+        "action_items": action_items if action_items is not None else _build_action_items(listings, probes),
     }
+
+
+# Canonical estate names — kept in sync with load_master_products.ESTATE_NAME_CANONICAL.
+# Defined here to avoid importing SQLAlchemy when url_discovery runs standalone.
+ESTATE_NAME_CANONICAL: dict[str, str] = {
+    "Chateau Malartic Lagraviere":  "Chateau Malartic-Lagraviere",
+    "Chateau Sociando Mallet":      "Chateau Sociando-Mallet",
+}
+
+# Default price selectors per retailer — used when auto-appending to CSV.
+RETAILER_DEFAULTS: dict[str, str] = {
+    "cercledemartillac":  "span.price",
+    "vin_malin":          "span.price",
+    "vintageandco":       "span.current-price-value",
+    "cavissima":          "span.price-item__unit",
+    "wineclub":           "span[itemprop='price']",
+    "12bouteilles":       "span.prix_unit",
+    "aries":              "span.product-unit-price span.font-weight-bold",
+    "chateauinternet":    "div.price",
+    "vinotheque_bordeaux":"span.price",
+}
+
+
+def _extract_vintage(url: str) -> int | None:
+    """Return the first vintage year (2015–CURRENT_YEAR) found in the URL, or None."""
+    candidates = [int(m) for m in re.findall(r"\b(20[12]\d)\b", url)]
+    valid = [y for y in candidates if 2015 <= y <= CURRENT_YEAR]
+    return valid[0] if valid else None
 
 
 def _build_action_items(
@@ -520,29 +554,92 @@ def _build_action_items(
     items: list[dict] = []
     for r in listings:
         for url in r.new_urls:
-            items.append({
-                "action": "add_to_csv",
-                "retailer": r.retailer,
-                "estate": r.estate,
-                "url": url,
-                "price_selector": "span.price",
-                "source": "listing_page",
-            })
-    for r in probes:
-        for url in r.new_urls:
-            # Extract vintage from URL
-            m = re.search(r"-(\d{4})$", url)
-            vintage = int(m.group(1)) if m else None
+            vintage = _extract_vintage(url)
             items.append({
                 "action": "add_to_csv",
                 "retailer": r.retailer,
                 "estate": r.estate,
                 "url": url,
                 "vintage": vintage,
-                "price_selector": "div.price",
+                "price_selector": RETAILER_DEFAULTS.get(r.retailer, "span.price"),
+                "source": "listing_page",
+            })
+    for r in probes:
+        for url in r.new_urls:
+            vintage = _extract_vintage(url)
+            items.append({
+                "action": "add_to_csv",
+                "retailer": r.retailer,
+                "estate": r.estate,
+                "url": url,
+                "vintage": vintage,
+                "price_selector": RETAILER_DEFAULTS.get(r.retailer, "div.price"),
                 "source": "url_probe",
             })
     return items
+
+
+# ---------------------------------------------------------------------------
+# Auto-append to CSV
+# ---------------------------------------------------------------------------
+
+def auto_append_to_csv(items: list[dict]) -> int:
+    """
+    Append newly discovered URLs to master_products.csv.
+
+    Skips items where:
+    - vintage cannot be extracted from the URL
+    - (retailer, estate_name, vintage) already exists in the CSV
+
+    Returns the number of rows appended.
+    """
+    # Build existing key set from CSV
+    existing: set[tuple[str, str, int]] = set()
+    with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f):
+            try:
+                v = int(row["vintage_start"])
+            except (ValueError, KeyError):
+                continue
+            existing.add((row["retailer"].strip(), row["estate_name"].strip(), v))
+
+    new_rows: list[str] = []
+    seen_this_run: set[tuple[str, str, int]] = set()
+
+    for item in items:
+        vintage = item.get("vintage")
+        if vintage is None:
+            logger.debug(f"auto-append: skipping {item['url']} — no vintage")
+            continue
+
+        retailer   = item["retailer"]
+        estate_raw = item["estate"]
+        estate     = ESTATE_NAME_CANONICAL.get(estate_raw, estate_raw)  # normalize
+        key        = (retailer, estate, vintage)
+
+        if key in existing or key in seen_this_run:
+            continue
+        seen_this_run.add(key)
+
+        selector = item.get("price_selector") or RETAILER_DEFAULTS.get(retailer, "span.price")
+        url      = item["url"]
+        note     = f"Auto-discovered {date.today().isoformat()}"
+
+        row = (
+            f"{estate},{retailer},{url},,{selector},"
+            f"{vintage},{vintage},0.75L,TRUE,{note}"
+        )
+        new_rows.append(row)
+        logger.info(f"auto-append: +{retailer} / {estate} {vintage}  {url}")
+
+    if new_rows:
+        with open(CSV_PATH, "a", encoding="utf-8-sig", newline="\n") as f:
+            f.write("\n".join(new_rows) + "\n")
+        logger.info(f"auto-append: {len(new_rows)} row(s) written to {CSV_PATH}")
+    else:
+        logger.info("auto-append: nothing new to append")
+
+    return len(new_rows)
 
 
 # ---------------------------------------------------------------------------
@@ -557,6 +654,8 @@ def main() -> None:
                         help="Also run URL-pattern probing (slow, ~100 HTTP requests)")
     parser.add_argument("--no-json", action="store_true",
                         help="Skip writing url_discovery_report.json")
+    parser.add_argument("--auto-append", action="store_true",
+                        help="Automatically append discovered URLs to master_products.csv")
     args = parser.parse_args()
 
     print(f"\nURL Discovery — {date.today()}  (tracking up to {CURRENT_YEAR})")
@@ -584,17 +683,28 @@ def main() -> None:
             probes = run_url_probing(products)
             print_probe_results(probes)
 
-    # Summary of actionable items
+    # Build action items (used by auto-append and JSON report)
+    action_items = _build_action_items(listings, probes)
+
+    # Auto-append to CSV if requested
+    appended = 0
+    if args.auto_append and action_items:
+        logger.info("\nAuto-appending discovered URLs to master_products.csv…")
+        appended = auto_append_to_csv(action_items)
+
+    # Summary
     all_new = [u for r in listings for u in r.new_urls] + \
               [u for r in probes for u in r.new_urls]
     print(f"\n{'=' * 70}")
-    print(f"SUMMARY: {len(all_new)} new URL(s) to review across all strategies.")
-    if all_new:
-        print("  -> Add confirmed URLs to master_products.csv and push to trigger scrape.")
+    print(f"SUMMARY: {len(all_new)} new URL(s) found across all strategies.")
+    if appended:
+        print(f"  -> {appended} row(s) auto-appended to {CSV_PATH}")
+    elif all_new and not args.auto_append:
+        print("  -> Run with --auto-append to write these to master_products.csv")
 
     # Write JSON report
     if not args.no_json:
-        report = build_json_report(gaps, listings, probes)
+        report = build_json_report(gaps, listings, probes, action_items)
         REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"  -> Report written to {REPORT_PATH}")
 

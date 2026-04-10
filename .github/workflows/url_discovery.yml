@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          # Use a token that can push back to the repo
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -24,8 +27,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run URL discovery (listing-page crawl + gap report)
-        run: python -m src.url_discovery
+      - name: Run URL discovery and auto-append to CSV
+        run: python -m src.url_discovery --auto-append
+
+      - name: Commit auto-appended URLs if CSV changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add master_products.csv
+          if git diff --cached --quiet; then
+            echo "CSV unchanged — nothing to commit"
+          else
+            COUNT=$(git diff --cached --numstat master_products.csv | awk '{print $1}')
+            git commit -m "Auto-append ${COUNT} discovered URL(s) to master_products.csv [skip ci]
+
+Appended by url_discovery workflow on $(date -u +%Y-%m-%d).
+The daily scraper at 09:00 UTC will pick up these new rows."
+            git push
+            echo "CSV committed and pushed"
+          fi
 
       - name: Upload discovery report
         uses: actions/upload-artifact@v4
@@ -35,7 +55,7 @@ jobs:
           path: url_discovery_report.json
           retention-days: 30
 
-      - name: Open GitHub Issue if new URLs found
+      - name: Open GitHub Issue if new URLs were found
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,27 +75,41 @@ jobs:
               print("No new URLs found — no issue needed")
               sys.exit(0)
 
-          # Build issue body
+          # Separate auto-appended items (have vintage) from ones that couldn't be appended
+          appended   = [i for i in items if i.get("vintage")]
+          no_vintage = [i for i in items if not i.get("vintage")]
+
           lines = [
               f"## URL Discovery — {report['generated_at']}",
               f"",
-              f"Found **{len(items)} new URL(s)** not yet in `master_products.csv`.",
-              f"",
-              f"### Action items",
+              f"Found **{len(items)} new URL(s)** not in `master_products.csv` at scan time.",
               f"",
           ]
-          for item in items:
-              lines.append(
-                  f"- **{item['retailer']}** / {item['estate']} "
-                  f"([{item['url']}]({item['url']})) — source: {item['source']}"
-              )
-          lines += [
-              "",
-              "### Next steps",
-              "1. Verify each URL loads a buyable product page",
-              "2. Add confirmed rows to `master_products.csv`",
-              "3. Push to trigger the daily scraper",
-          ]
+
+          if appended:
+              lines += [
+                  f"### Auto-appended ({len(appended)} rows written to CSV)",
+                  f"These will be scraped at the next daily run (09:00 UTC).",
+                  f"",
+              ]
+              for item in appended:
+                  lines.append(
+                      f"- **{item['retailer']}** / {item['estate']} {item['vintage']} "
+                      f"([link]({item['url']})) — source: {item['source']}"
+                  )
+              lines.append("")
+
+          if no_vintage:
+              lines += [
+                  f"### Needs manual review ({len(no_vintage)} URLs — vintage not extractable)",
+                  f"",
+              ]
+              for item in no_vintage:
+                  lines.append(
+                      f"- **{item['retailer']}** / {item['estate']} "
+                      f"([{item['url']}]({item['url']})) — source: {item['source']}"
+                  )
+
           body = "\n".join(lines)
 
           result = subprocess.run(

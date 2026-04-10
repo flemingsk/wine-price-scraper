@@ -367,19 +367,29 @@ _NON_PRODUCT_SEGMENTS = {
 }
 
 
-def _is_product_url(href: str, estate: str) -> bool:
-    """Return True only if href looks like a rouge single-product 75cl page."""
+_LARGE_FORMAT_RE = re.compile(
+    r"\b(magnum|imperiale|jeroboam|double[\s-]?magnum|balthazar|"
+    r"mathusalem|nabuchodonosor|rehoboam|melchior|salmanazar|"
+    r"1[,.]5\s*[Ll])\b",
+    re.IGNORECASE,
+)
+
+
+def _is_product_url(href: str, estate: str, link_text: str = "") -> bool:
+    """Return True only if href looks like a rouge single-product 75cl page.
+
+    link_text should be the visible anchor text (if available).  Many
+    retailers use opaque numeric product IDs so the URL alone cannot
+    distinguish a 75cl from a magnum; the anchor text usually can.
+    """
     # Must contain a tracked vintage year (2015 to last completed year)
     if not any(str(y) in href for y in range(2015, CURRENT_YEAR)):
         return False
     # Skip blanc / white wines
     if re.search(r"\b(blanc|white)\b", href, re.IGNORECASE):
         return False
-    # Skip large-format bottles
-    if re.search(
-        r"\b(magnum|imperiale|jeroboam|double.magnum|balthazar)\b",
-        href, re.IGNORECASE
-    ):
+    # Skip large-format bottles — check both URL and anchor text
+    if _LARGE_FORMAT_RE.search(href) or _LARGE_FORMAT_RE.search(link_text):
         return False
     # Skip second-label / sub-brand wines
     if re.search(r"\bl.abeille\b|\bdemoiselle\b|\bdemoiselles\b", href, re.IGNORECASE):
@@ -430,7 +440,8 @@ def crawl_listing_page(
             if href in known_urls or href in seen:
                 continue
             seen.add(href)
-            if _is_product_url(href, estate):
+            link_text = a.get_text(" ", strip=True)
+            if _is_product_url(href, estate, link_text=link_text):
                 new.append(href)
 
         result.new_urls = sorted(new)
@@ -501,8 +512,9 @@ def crawl_region_page(
             if href in known_urls or href in seen:
                 continue
             seen.add(href)
+            link_text = a.get_text(" ", strip=True)
             for estate in all_estates:
-                if _is_product_url(href, estate):
+                if _is_product_url(href, estate, link_text=link_text):
                     if href not in discoveries[estate].new_urls:
                         discoveries[estate].new_urls.append(href)
 

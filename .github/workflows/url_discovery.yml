@@ -28,7 +28,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run URL discovery and auto-append to CSV
-        run: python -m src.url_discovery --auto-append
+        run: python -m src.url_discovery --auto-append --probe
 
       - name: Commit auto-appended URLs if CSV changed
         run: |

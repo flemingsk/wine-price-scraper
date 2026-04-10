@@ -2,21 +2,31 @@
 src/url_discovery.py — Daily new-URL discovery for tracked estates.
 
 Run before the main scraper to surface new product pages not yet in
-master_products.csv. Three complementary strategies:
+master_products.csv.  Three complementary strategies:
 
-  A. Coverage-gap report  — shows (retailer × estate × vintage) holes
-                            across all retailers so you can act on them.
+  A. Coverage-gap report  — shows (retailer x estate x vintage) holes.
   B. Listing-page crawl   — fetches estate catalog pages on retailers that
-                            expose them (cercledemartillac, vin-malin,
-                            vinotheque-bordeaux) and extracts links not in CSV.
-  C. URL-pattern probe    — constructs candidate URLs for missing vintages on
-                            retailers with predictable slug patterns
-                            (chateauinternet) and validates with HTTP GET.
+                            expose predictable listing pages and extracts
+                            links not in CSV.
+  C. URL-pattern probe    — constructs candidate URLs for missing
+                            (estate x vintage) pairs on retailers with
+                            predictable slug patterns and validates with
+                            HTTP GET.
+
+All estates are derived from master_products.csv at runtime — no hardcoded
+list to maintain.  Adding a new estate OR a new retailer to the CSV
+automatically expands the discovery scope on the next run:
+
+  * If a new estate is added to the CSV, strategies B and C will probe it
+    across every retailer that has a known URL pattern on the next run.
+  * If a new retailer is registered in URL_BUILDERS or LISTING_URL_BUILDERS,
+    it will be probed against every estate already in the CSV.
 
 Usage:
-    python -m src.url_discovery              # full report to stdout + JSON
-    python -m src.url_discovery --gaps-only  # gap table only (fast)
-    python -m src.url_discovery --probe      # also run slow URL probing
+    python -m src.url_discovery              # strategies A + B (listing crawl)
+    python -m src.url_discovery --probe      # + strategy C (URL probing, slow)
+    python -m src.url_discovery --auto-append [--probe]  # write new rows to CSV
+    python -m src.url_discovery --gaps-only  # gap table only (no HTTP requests)
 """
 
 from __future__ import annotations
@@ -31,6 +41,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
+from typing import Callable
 
 import requests
 from bs4 import BeautifulSoup
@@ -50,109 +61,36 @@ REPORT_PATH = Path("url_discovery_report.json")
 CURRENT_YEAR = date.today().year
 PROBE_VINTAGES = list(range(2015, CURRENT_YEAR + 1))  # years to probe for
 
-ESTATES = [
-    "Chateau Latour Martillac",
-    "Chateau Carbonnieux",
-    "Chateau Olivier",
-    "Chateau Larrivet Haut-Brion",
-    "Chateau de Fieuzal",
-    "Chateau Sociando-Mallet",
-    "Chateau Malartic-Lagraviere",
-    "Chateau Lagarde",
-    "Chateau La Louviere",
-    "Chateau Bouscaut",
-    "Chateau Lespault-Martillac",
-]
 
-# Listing pages: estate catalog pages that can be crawled for product links.
-# key = (retailer, estate_name), value = catalog page URL
-LISTING_PAGES: dict[tuple[str, str], str] = {
+# ---------------------------------------------------------------------------
+# Slug helpers
+# ---------------------------------------------------------------------------
 
-    # ── cercledemartillac.fr ─────────────────────────────────────────────────
-    # Estate's own shop — LTM only
-    ("cercledemartillac", "Chateau Latour Martillac"):
-        "https://www.cercledemartillac.fr/10-chateau-latour-martillac",
+def _default_slug(estate: str) -> str:
+    """Lowercase, spaces to hyphens: 'Chateau La Louviere' -> 'chateau-la-louviere'."""
+    return estate.lower().replace(" ", "-")
 
-    # ── vin-malin.fr (PrestaShop) ─────────────────────────────────────────────
-    ("vin_malin", "Chateau Latour Martillac"):
-        "https://www.vin-malin.fr/185-chateau-latour-martillac",
-    ("vin_malin", "Chateau Larrivet Haut-Brion"):
-        "https://www.vin-malin.fr/875-chateau-larrivet-haut-brion",
-    ("vin_malin", "Chateau de Fieuzal"):
-        "https://www.vin-malin.fr/182-chateau-de-fieuzal",
-    ("vin_malin", "Chateau Sociando-Mallet"):
-        "https://www.vin-malin.fr/169-chateau-sociando-mallet",
 
-    # vinotheque-bordeaux.com estate-filtered listing pages returned HTTP 404
-    # as of 2026-04-10 — their URL structure appears to have changed.
-    # Individual product URLs in master_products.csv still work for scraping.
+def _estate_filter_slug(estate: str) -> str:
+    """
+    Short identifying substring used to verify a discovered URL is for this
+    estate (not another wine on the same listing page).
 
-    # ── vintageandco.com (/liste.{slug}.html pattern) ─────────────────────────
-    ("vintageandco", "Chateau Latour Martillac"):
-        "https://www.vintageandco.com/liste.chateau-latour-martillac.html",
-    ("vintageandco", "Chateau Carbonnieux"):
-        "https://www.vintageandco.com/liste.chateau-carbonnieux.html",
-    ("vintageandco", "Chateau Olivier"):
-        "https://www.vintageandco.com/liste.chateau-olivier.html",
-    ("vintageandco", "Chateau Larrivet Haut-Brion"):
-        "https://www.vintageandco.com/liste.chateau-larrivet-haut-brion.html",
-    ("vintageandco", "Chateau de Fieuzal"):
-        "https://www.vintageandco.com/liste.chateau-de-fieuzal.html",
-    ("vintageandco", "Chateau Sociando-Mallet"):
-        "https://www.vintageandco.com/liste.chateau-sociando-mallet.html",
-    ("vintageandco", "Chateau Malartic-Lagraviere"):
-        "https://www.vintageandco.com/liste.chateau-malartic-lagraviere.html",
+    Strips the 'Chateau' prefix and returns the identifying portion, e.g.:
+      'Chateau Latour Martillac'  -> 'latour-martillac'
+      'Chateau de Fieuzal'        -> 'de-fieuzal'
+      'Chateau Malartic-Lagraviere' -> 'malartic-lagraviere'
+    """
+    s = re.sub(r"(?i)^chateau\s+(de|la|le|les|du|l')\s+", r"\1 ", estate)
+    s = re.sub(r"(?i)^chateau\s+", "", s)
+    return s.lower().replace(" ", "-")
 
-    # ── cavissima.com (Shopify /achat-vin/par-regions/bordeaux/{slug}/) ───────
-    ("cavissima", "Chateau Latour Martillac"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-latour-martillac/",
-    ("cavissima", "Chateau Carbonnieux"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-carbonnieux/",
-    ("cavissima", "Chateau Olivier"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-olivier/",
-    ("cavissima", "Chateau Larrivet Haut-Brion"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-larrivet-haut-brion/",
-    ("cavissima", "Chateau de Fieuzal"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-de-fieuzal/",
-    ("cavissima", "Chateau Sociando-Mallet"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-sociando-mallet/",
-    ("cavissima", "Chateau Malartic-Lagraviere"):
-        "https://www.cavissima.com/achat-vin/par-regions/bordeaux/chateau-malartic-lagraviere/",
 
-    # ── lewineclub.com (/fr/{id}-{slug} pattern) ─────────────────────────────
-    ("wineclub", "Chateau Latour Martillac"):
-        "https://www.lewineclub.com/en/732-chateau-latour-martillac",
-    ("wineclub", "Chateau Carbonnieux"):
-        "https://www.lewineclub.com/fr/186-chateau-carbonnieux",
-    ("wineclub", "Chateau Malartic-Lagraviere"):
-        "https://www.lewineclub.com/fr/746-chateau-malartic-lagraviere",
+# ---------------------------------------------------------------------------
+# Per-retailer slug maps (only needed where slug != _default_slug(estate))
+# ---------------------------------------------------------------------------
 
-    # ── 12bouteilles.com (/en/{id}-{slug} pattern) ───────────────────────────
-    ("12bouteilles", "Chateau Latour Martillac"):
-        "https://www.12bouteilles.com/en/240-chateau-latour-martillac",
-    ("12bouteilles", "Chateau Carbonnieux"):
-        "https://www.12bouteilles.com/en/234-chateau-carbonnieux",
-    ("12bouteilles", "Chateau Sociando-Mallet"):
-        "https://www.12bouteilles.com/en/221-chateau-sociando-mallet",
-    ("12bouteilles", "Chateau Larrivet Haut-Brion"):
-        "https://www.12bouteilles.com/en/232-chateau-larrivet-haut-brion",
-
-    # ── aries-vins.com (/{id}-{slug} pattern) ────────────────────────────────
-    ("aries", "Chateau Latour Martillac"):
-        "https://aries-vins.com/114-chateau-la-tour-martillac",
-    ("aries", "Chateau Carbonnieux"):
-        "https://aries-vins.com/43-chateau-carbonnieux",
-    ("aries", "Chateau La Louviere"):
-        "https://aries-vins.com/104-chateau-la-louviere",
-
-}
-# NOTE: Chateau Lagarde, La Louviere, Bouscaut, Lespault-Martillac are not carried
-# by cavissima or vintageandco via their standard estate listing-page patterns.
-# They are tracked via URL probing (chateauinternet) and the gap report only.
-
-# URL probers: (retailer, estate) -> function(vintage) -> candidate URL
-# The prober returns None if it cannot construct a URL for this estate.
-# Add new entries here as you discover URL patterns for other retailers.
+# chateauinternet: most estates append '-rouge'; one exception
 CHATEAUINTERNET_SLUGS: dict[str, str] = {
     "Chateau Latour Martillac":    "chateau-latour-martillac-rouge",
     "Chateau Carbonnieux":         "chateau-carbonnieux-rouge",
@@ -168,11 +106,106 @@ CHATEAUINTERNET_SLUGS: dict[str, str] = {
 }
 
 
-def _chateauinternet_url(estate: str, vintage: int) -> str | None:
-    slug = CHATEAUINTERNET_SLUGS.get(estate)
-    if not slug:
-        return None
-    return f"https://www.chateauinternet.com/{slug}-{vintage}"
+# ---------------------------------------------------------------------------
+# Strategy C config: URL-pattern probers
+#
+# Each entry: retailer -> (slug_fn, url_fn)
+#   slug_fn(estate) -> slug string (or None to skip this estate)
+#   url_fn(slug, vintage) -> candidate URL
+#
+# Adding a retailer here causes it to be probed against EVERY estate in the
+# CSV that slug_fn can map.
+# ---------------------------------------------------------------------------
+
+URL_BUILDERS: dict[str, tuple[
+    Callable[[str], str | None],   # slug_fn
+    Callable[[str, int], str],     # url_fn
+]] = {
+    "chateauinternet": (
+        lambda estate: CHATEAUINTERNET_SLUGS.get(estate),
+        lambda slug, v: f"https://www.chateauinternet.com/{slug}-{v}",
+    ),
+    "cashvin": (
+        # slug = lowercase-hyphenated estate name, vintage appended
+        # e.g. 'Chateau Latour Martillac' -> chateau-latour-martillac-2022
+        _default_slug,
+        lambda slug, v: f"https://www.cashvin.com/produit/{slug}-{v}/",
+    ),
+}
+
+
+# ---------------------------------------------------------------------------
+# Strategy B config: Listing-page crawlers
+#
+# Two sub-types:
+#   LISTING_URL_BUILDERS — retailers whose listing page URL can be derived
+#     from the estate name automatically.  Adding a new estate to the CSV
+#     automatically adds it to the crawl for these retailers.
+#
+#   MANUAL_LISTING_PAGES — retailers whose listing page IDs/URLs must be
+#     specified manually (ID-based paths that can't be predicted).
+# ---------------------------------------------------------------------------
+
+# Retailers where listing page URL = f(estate_name)
+# Adding a retailer here triggers a crawl for every estate in the CSV.
+LISTING_URL_BUILDERS: dict[str, Callable[[str], str]] = {
+    "cavissima": (
+        lambda estate:
+            f"https://www.cavissima.com/achat-vin/par-regions/bordeaux/"
+            f"{_default_slug(estate)}/"
+    ),
+    "vintageandco": (
+        lambda estate:
+            f"https://www.vintageandco.com/liste.{_default_slug(estate)}.html"
+    ),
+}
+
+# Retailers whose listing page URLs must be maintained manually (ID-based)
+# Add new (retailer, estate) entries here when you discover the listing page.
+MANUAL_LISTING_PAGES: dict[tuple[str, str], str] = {
+
+    # ── cercledemartillac.fr ─────────────────────────────────────────────────
+    ("cercledemartillac", "Chateau Latour Martillac"):
+        "https://www.cercledemartillac.fr/10-chateau-latour-martillac",
+
+    # ── vin-malin.fr ─────────────────────────────────────────────────────────
+    ("vin_malin", "Chateau Latour Martillac"):
+        "https://www.vin-malin.fr/185-chateau-latour-martillac",
+    ("vin_malin", "Chateau Larrivet Haut-Brion"):
+        "https://www.vin-malin.fr/875-chateau-larrivet-haut-brion",
+    ("vin_malin", "Chateau de Fieuzal"):
+        "https://www.vin-malin.fr/182-chateau-de-fieuzal",
+    ("vin_malin", "Chateau Sociando-Mallet"):
+        "https://www.vin-malin.fr/169-chateau-sociando-mallet",
+
+    # ── lewineclub.com ───────────────────────────────────────────────────────
+    ("wineclub", "Chateau Latour Martillac"):
+        "https://www.lewineclub.com/en/732-chateau-latour-martillac",
+    ("wineclub", "Chateau Carbonnieux"):
+        "https://www.lewineclub.com/fr/186-chateau-carbonnieux",
+    ("wineclub", "Chateau Malartic-Lagraviere"):
+        "https://www.lewineclub.com/fr/746-chateau-malartic-lagraviere",
+
+    # ── 12bouteilles.com ─────────────────────────────────────────────────────
+    ("12bouteilles", "Chateau Latour Martillac"):
+        "https://www.12bouteilles.com/en/240-chateau-latour-martillac",
+    ("12bouteilles", "Chateau Carbonnieux"):
+        "https://www.12bouteilles.com/en/234-chateau-carbonnieux",
+    ("12bouteilles", "Chateau Sociando-Mallet"):
+        "https://www.12bouteilles.com/en/221-chateau-sociando-mallet",
+    ("12bouteilles", "Chateau Larrivet Haut-Brion"):
+        "https://www.12bouteilles.com/en/232-chateau-larrivet-haut-brion",
+
+    # ── aries-vins.com ───────────────────────────────────────────────────────
+    ("aries", "Chateau Latour Martillac"):
+        "https://aries-vins.com/114-chateau-la-tour-martillac",
+    ("aries", "Chateau Carbonnieux"):
+        "https://aries-vins.com/43-chateau-carbonnieux",
+    ("aries", "Chateau La Louviere"):
+        "https://aries-vins.com/104-chateau-la-louviere",
+    # Add other aries estate listing pages here as they are found.
+
+}
 
 
 # ---------------------------------------------------------------------------
@@ -191,10 +224,7 @@ def _strip_tracking_params(url: str) -> str:
     """Return URL with known retailer tracking query params removed."""
     if "?" not in url:
         return url
-    base, qs = url.split("?", 1)
-    # Cavissima: ?_pos=...&_fid=...&_ss=...&variant=...
-    # Chateaunet: ?_gl=...
-    # Keep the base URL only — tracking params are not part of the canonical URL
+    base, _ = url.split("?", 1)
     return base
 
 
@@ -222,6 +252,11 @@ def load_known_products() -> list[KnownProduct]:
     return products
 
 
+def _all_estates(products: list[KnownProduct]) -> list[str]:
+    """Return sorted list of unique estate names from the CSV."""
+    return sorted({p.estate_name for p in products})
+
+
 # ---------------------------------------------------------------------------
 # Strategy A: Coverage gap report
 # ---------------------------------------------------------------------------
@@ -231,11 +266,10 @@ class GapReport:
     estate: str
     retailer: str
     known_vintages: list[int]
-    missing_vintages: list[int]   # in PROBE_VINTAGES range not covered
+    missing_vintages: list[int]
 
 
 def coverage_gap_report(products: list[KnownProduct]) -> list[GapReport]:
-    """For every (retailer × estate) combo, show which vintages are missing."""
     by_key: dict[tuple[str, str], list[int]] = defaultdict(list)
     for p in products:
         by_key[(p.retailer, p.estate_name)].append(p.vintage)
@@ -266,20 +300,6 @@ class ListingDiscovery:
     error: str | None = None
 
 
-_ESTATE_SLUG: dict[str, str] = {
-    "Chateau Latour Martillac":    "latour-martillac",
-    "Chateau Carbonnieux":         "carbonnieux",
-    "Chateau Olivier":             "chateau-olivier",
-    "Chateau Larrivet Haut-Brion": "larrivet-haut-brion",
-    "Chateau de Fieuzal":          "de-fieuzal",
-    "Chateau Sociando-Mallet":     "sociando-mallet",
-    "Chateau Malartic-Lagraviere": "malartic-lagraviere",
-    "Chateau Lagarde":             "lagarde",
-    "Chateau La Louviere":         "la-louviere",
-    "Chateau Bouscaut":            "bouscaut",
-    "Chateau Lespault-Martillac":  "lespault-martillac",
-}
-
 # URL path segments that are never individual product pages
 _NON_PRODUCT_SEGMENTS = {
     "primeurs", "collections", "coffrets-cadeaux", "gros-formats",
@@ -288,33 +308,34 @@ _NON_PRODUCT_SEGMENTS = {
 
 
 def _is_product_url(href: str, estate: str) -> bool:
-    """Return True only if href looks like a rouge single-product 75cl page for this estate."""
-    # Must contain a tracked vintage year: 2015 up to but not including the current year
-    # (exclude the current calendar year — wines that young are at best en-primeur futures)
+    """Return True only if href looks like a rouge single-product 75cl page."""
+    # Must contain a tracked vintage year (2015 to last completed year)
     if not any(str(y) in href for y in range(2015, CURRENT_YEAR)):
         return False
-    # Skip blanc / white wines (French and English labels in URL)
+    # Skip blanc / white wines
     if re.search(r"\b(blanc|white)\b", href, re.IGNORECASE):
         return False
     # Skip large-format bottles
-    if re.search(r"\b(magnum|imperiale|jeroboam|double.magnum|balthazar)\b", href, re.IGNORECASE):
+    if re.search(
+        r"\b(magnum|imperiale|jeroboam|double.magnum|balthazar)\b",
+        href, re.IGNORECASE
+    ):
         return False
-    # Skip second-label / sub-brand wines (e.g. "la-demoiselle-de", "l-abeille-de")
+    # Skip second-label / sub-brand wines
     if re.search(r"\bl.abeille\b|\bdemoiselle\b|\bdemoiselles\b", href, re.IGNORECASE):
         return False
-    # Skip ?q= filtered category views (not individual product pages)
+    # Skip search/filter views
     if "?q=" in href:
         return False
-    # Skip category / collection pages — match any segment that starts with a known keyword
-    # (e.g. "primeurs-2023" must still be caught by the "primeurs" rule)
+    # Skip category / collection pages
     path = href.split("?")[0].rstrip("/")
     if any(
         any(seg.startswith(kw) for kw in _NON_PRODUCT_SEGMENTS)
         for seg in path.split("/")
     ):
         return False
-    # Must mention this estate's slug somewhere in the URL
-    slug = _ESTATE_SLUG.get(estate, "")
+    # Must mention this estate's identifying slug somewhere in the URL
+    slug = _estate_filter_slug(estate)
     if slug and slug not in href.lower():
         return False
     return True
@@ -341,12 +362,10 @@ def crawl_listing_page(
 
         for a in soup.find_all("a", href=True):
             href: str = a["href"].strip()
-            # Normalise to absolute URL
             if href.startswith("/"):
                 href = f"https://{domain}{href}"
             if not href.startswith("http"):
                 continue
-            # Strip URL fragments — different pack-size variants of the same product
             href = href.split("#")[0].rstrip("/")
             if href in known_urls or href in seen:
                 continue
@@ -361,10 +380,35 @@ def crawl_listing_page(
     return result
 
 
+def _build_all_listing_pages(
+    products: list[KnownProduct],
+) -> dict[tuple[str, str], str]:
+    """
+    Combine auto-generated and manual listing page URLs.
+
+    For retailers in LISTING_URL_BUILDERS, a listing page is generated for
+    every estate currently in the CSV.  MANUAL_LISTING_PAGES entries are
+    merged in on top (and can override generated ones if needed).
+    """
+    all_estates = _all_estates(products)
+    pages: dict[tuple[str, str], str] = {}
+
+    # Auto-generated from estate name
+    for retailer, url_fn in LISTING_URL_BUILDERS.items():
+        for estate in all_estates:
+            pages[(retailer, estate)] = url_fn(estate)
+
+    # Manual / ID-based (merges last, so manual overrides auto if both exist)
+    pages.update(MANUAL_LISTING_PAGES)
+    return pages
+
+
 def run_listing_crawl(products: list[KnownProduct]) -> list[ListingDiscovery]:
     known_urls = {p.url for p in products}
+    listing_pages = _build_all_listing_pages(products)
+
     results: list[ListingDiscovery] = []
-    for (retailer, estate), catalog_url in LISTING_PAGES.items():
+    for (retailer, estate), catalog_url in sorted(listing_pages.items()):
         logger.info(f"  crawling {retailer} / {estate}")
         result = crawl_listing_page(retailer, estate, catalog_url, known_urls)
         results.append(result)
@@ -393,28 +437,35 @@ def probe_url(url: str) -> bool:
 
 def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
     """
-    For chateauinternet.com, probe every (estate × missing vintage) combo
-    to see if a page exists that isn't yet in the CSV.
+    For each retailer in URL_BUILDERS, probe every (estate x vintage) pair
+    not already in the CSV.
+
+    Any retailer added to URL_BUILDERS is automatically probed against all
+    estates currently in the CSV.  Any new estate added to the CSV is
+    automatically probed on all URL_BUILDER retailers.
     """
     known_set: set[tuple[str, str, int]] = {
         (p.retailer, p.estate_name, p.vintage) for p in products
     }
+    all_estates = _all_estates(products)
 
     results: list[ProbeDiscovery] = []
-    for estate in ESTATES:
-        discovery = ProbeDiscovery(retailer="chateauinternet", estate=estate)
-        for vintage in PROBE_VINTAGES:
-            if ("chateauinternet", estate, vintage) in known_set:
-                continue
-            url = _chateauinternet_url(estate, vintage)
-            if not url:
-                continue
-            logger.info(f"  probing chateauinternet {estate} {vintage}")
-            if probe_url(url):
-                discovery.new_urls.append(url)
-            time.sleep(0.8)
-        if discovery.new_urls:
-            results.append(discovery)
+    for retailer, (slug_fn, url_fn) in URL_BUILDERS.items():
+        for estate in all_estates:
+            slug = slug_fn(estate)
+            if slug is None:
+                continue  # this retailer doesn't carry this estate
+            discovery = ProbeDiscovery(retailer=retailer, estate=estate)
+            for vintage in PROBE_VINTAGES:
+                if (retailer, estate, vintage) in known_set:
+                    continue
+                url = url_fn(slug, vintage)
+                logger.info(f"  probing {retailer} / {estate} {vintage}")
+                if probe_url(url):
+                    discovery.new_urls.append(url)
+                time.sleep(0.8)
+            if discovery.new_urls:
+                results.append(discovery)
     return results
 
 
@@ -425,10 +476,9 @@ def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
 def print_gap_table(gaps: list[GapReport]) -> None:
     print("\n" + "=" * 70)
     print("COVERAGE GAP REPORT")
-    print("Retailers × estates where vintages are missing from master CSV")
+    print("Retailers x estates where vintages are missing from master CSV")
     print("=" * 70)
 
-    # Only show gaps where something recent (last 2 years) is missing
     recent_missing = [
         g for g in gaps
         if any(y >= CURRENT_YEAR - 2 for y in g.missing_vintages)
@@ -454,11 +504,11 @@ def print_listing_results(results: list[ListingDiscovery]) -> None:
     found_any = False
     for r in results:
         if r.error:
-            print(f"  [{r.retailer}] {r.estate}: ERROR — {r.error}")
+            logger.debug(f"  [{r.retailer}] {r.estate}: {r.error}")
             continue
         if r.new_urls:
             found_any = True
-            print(f"\n  [{r.retailer}] {r.estate} — {len(r.new_urls)} new URL(s):")
+            print(f"\n  [{r.retailer}] {r.estate} -- {len(r.new_urls)} new URL(s):")
             for url in r.new_urls:
                 print(f"    {url}")
     if not found_any:
@@ -467,14 +517,14 @@ def print_listing_results(results: list[ListingDiscovery]) -> None:
 
 def print_probe_results(results: list[ProbeDiscovery]) -> None:
     print("\n" + "=" * 70)
-    print("URL-PATTERN PROBE RESULTS (chateauinternet.com)")
+    print("URL-PATTERN PROBE RESULTS")
     print("New pages that respond 200 for missing vintages")
     print("=" * 70)
     if not results:
         print("  No new URLs found via URL probing.")
         return
     for r in results:
-        print(f"\n  {r.estate} — {len(r.new_urls)} new URL(s):")
+        print(f"\n  [{r.retailer}] {r.estate} -- {len(r.new_urls)} new URL(s):")
         for url in r.new_urls:
             print(f"    {url}")
 
@@ -516,33 +566,37 @@ def build_json_report(
             }
             for r in probes
         ],
-        "action_items": action_items if action_items is not None else _build_action_items(listings, probes),
+        "action_items": (
+            action_items if action_items is not None
+            else _build_action_items(listings, probes)
+        ),
     }
 
 
 # Canonical estate names — kept in sync with load_master_products.ESTATE_NAME_CANONICAL.
 # Defined here to avoid importing SQLAlchemy when url_discovery runs standalone.
 ESTATE_NAME_CANONICAL: dict[str, str] = {
-    "Chateau Malartic Lagraviere":  "Chateau Malartic-Lagraviere",
-    "Chateau Sociando Mallet":      "Chateau Sociando-Mallet",
+    "Chateau Malartic Lagraviere": "Chateau Malartic-Lagraviere",
+    "Chateau Sociando Mallet":     "Chateau Sociando-Mallet",
 }
 
 # Default price selectors per retailer — used when auto-appending to CSV.
 RETAILER_DEFAULTS: dict[str, str] = {
-    "cercledemartillac":  "span.price",
-    "vin_malin":          "span.price",
-    "vintageandco":       "span.current-price-value",
-    "cavissima":          "span.price-item__unit",
-    "wineclub":           "span[itemprop='price']",
-    "12bouteilles":       "span.prix_unit",
-    "aries":              "span.product-unit-price span.font-weight-bold",
-    "chateauinternet":    "div.price",
-    "vinotheque_bordeaux":"span.price",
+    "cercledemartillac":   "span.price",
+    "vin_malin":           "span.price",
+    "vintageandco":        "span.current-price-value",
+    "cavissima":           "span.price-item__unit",
+    "wineclub":            "span[itemprop='price']",
+    "12bouteilles":        "span.prix_unit",
+    "aries":               "span.product-unit-price span.font-weight-bold",
+    "chateauinternet":     "div.price",
+    "cashvin":             "p.price",
+    "vinotheque_bordeaux": "span.price",
 }
 
 
 def _extract_vintage(url: str) -> int | None:
-    """Return the first vintage year (2015–CURRENT_YEAR) found in the URL, or None."""
+    """Return the first vintage year (2015-CURRENT_YEAR) found in the URL."""
     candidates = [int(m) for m in re.findall(r"\b(20[12]\d)\b", url)]
     valid = [y for y in candidates if 2015 <= y <= CURRENT_YEAR]
     return valid[0] if valid else None
@@ -595,7 +649,6 @@ def auto_append_to_csv(items: list[dict]) -> int:
 
     Returns the number of rows appended.
     """
-    # Build existing key set from CSV
     existing: set[tuple[str, str, int]] = set()
     with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
@@ -611,12 +664,12 @@ def auto_append_to_csv(items: list[dict]) -> int:
     for item in items:
         vintage = item.get("vintage")
         if vintage is None:
-            logger.debug(f"auto-append: skipping {item['url']} — no vintage")
+            logger.debug(f"auto-append: skipping {item['url']} -- no vintage")
             continue
 
         retailer   = item["retailer"]
         estate_raw = item["estate"]
-        estate     = ESTATE_NAME_CANONICAL.get(estate_raw, estate_raw)  # normalize
+        estate     = ESTATE_NAME_CANONICAL.get(estate_raw, estate_raw)
         key        = (retailer, estate, vintage)
 
         if key in existing or key in seen_this_run:
@@ -653,18 +706,19 @@ def main() -> None:
     parser.add_argument("--gaps-only", action="store_true",
                         help="Print coverage gap table only (no HTTP requests)")
     parser.add_argument("--probe", action="store_true",
-                        help="Also run URL-pattern probing (slow, ~100 HTTP requests)")
+                        help="Also run URL-pattern probing (slow, ~200+ HTTP requests)")
     parser.add_argument("--no-json", action="store_true",
                         help="Skip writing url_discovery_report.json")
     parser.add_argument("--auto-append", action="store_true",
                         help="Automatically append discovered URLs to master_products.csv")
     args = parser.parse_args()
 
-    print(f"\nURL Discovery — {date.today()}  (tracking up to {CURRENT_YEAR})")
+    print(f"\nURL Discovery -- {date.today()}  (tracking up to {CURRENT_YEAR})")
 
-    logger.info("Loading master_products.csv…")
+    logger.info("Loading master_products.csv...")
     products = load_known_products()
-    logger.info(f"  {len(products)} active rouge entries loaded")
+    estates = _all_estates(products)
+    logger.info(f"  {len(products)} active rouge entries | {len(estates)} estates")
 
     # Strategy A: gap report (always runs, free)
     gaps = coverage_gap_report(products)
@@ -674,24 +728,26 @@ def main() -> None:
     probes: list[ProbeDiscovery] = []
 
     if not args.gaps_only:
-        # Strategy B: listing-page crawl
-        logger.info("\nRunning listing-page crawl…")
+        # Strategy B: listing-page crawl (always runs with HTTP)
+        logger.info(f"\nRunning listing-page crawl ({len(LISTING_URL_BUILDERS)} auto-builders"
+                    f" x {len(estates)} estates + {len(MANUAL_LISTING_PAGES)} manual pages)...")
         listings = run_listing_crawl(products)
         print_listing_results(listings)
 
-        # Strategy C: URL probing (opt-in, slow)
+        # Strategy C: URL probing (opt-in — use --probe flag)
         if args.probe:
-            logger.info("\nRunning URL-pattern probing (chateauinternet)…")
+            retailer_list = list(URL_BUILDERS.keys())
+            logger.info(f"\nRunning URL-pattern probing ({retailer_list})...")
             probes = run_url_probing(products)
             print_probe_results(probes)
 
-    # Build action items (used by auto-append and JSON report)
+    # Build action items
     action_items = _build_action_items(listings, probes)
 
     # Auto-append to CSV if requested
     appended = 0
     if args.auto_append and action_items:
-        logger.info("\nAuto-appending discovered URLs to master_products.csv…")
+        logger.info("\nAuto-appending discovered URLs to master_products.csv...")
         appended = auto_append_to_csv(action_items)
 
     # Summary
@@ -704,10 +760,11 @@ def main() -> None:
     elif all_new and not args.auto_append:
         print("  -> Run with --auto-append to write these to master_products.csv")
 
-    # Write JSON report
     if not args.no_json:
         report = build_json_report(gaps, listings, probes, action_items)
-        REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        REPORT_PATH.write_text(
+            json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
         print(f"  -> Report written to {REPORT_PATH}")
 
 

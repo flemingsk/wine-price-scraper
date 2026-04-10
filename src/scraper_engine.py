@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from src.db import SessionLocal
 from src.models import PriceRecord
+from src.price_validator import validate_price
 from src.scrapers.registry import get_scraper
 
 logger = logging.getLogger(__name__)
@@ -96,6 +97,9 @@ def scrape_product(product, session: Session, scraper=None) -> list[PriceRecord]
 
     for result in results:
         try:
+            # Validate price against historical median; correct case prices
+            result = validate_price(result, product.id, session)
+
             existing = (
                 session.query(PriceRecord)
                 .filter(

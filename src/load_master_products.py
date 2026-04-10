@@ -13,6 +13,9 @@ MASTER_PRODUCTS_CSV = os.path.join(os.path.dirname(__file__), "..", "master_prod
 
 # Canonical estate names — normalised at load time so DB stays consistent
 # even if a future CSV edit drifts from the standard spelling.
+# Only standard 75 cl bottles are tracked — magnums and other formats skew pricing.
+STANDARD_BOTTLE_SIZES = {"0.75l", "75cl", "0.75", "75"}
+
 ESTATE_NAME_CANONICAL: dict[str, str] = {
     "Chateau Malartic Lagraviere":  "Chateau Malartic-Lagraviere",
     "Chateau Sociando Mallet":      "Chateau Sociando-Mallet",
@@ -38,10 +41,20 @@ def main():
         return
 
     records = []
+    skipped_format = 0
     for row in rows:
         vintage_start = row.get("vintage_start", "").strip()
         vintage_end = row.get("vintage_end", "").strip()
         active = row.get("active", "true").strip().lower() not in ("false", "0", "no")
+
+        bottle_size = row.get("bottle_size", "0.75L").strip()
+        if bottle_size.lower() not in STANDARD_BOTTLE_SIZES:
+            logger.warning(
+                f"Skipping non-75cl row: {row.get('estate_name')} "
+                f"{row.get('retailer')} {vintage_start} (bottle_size={bottle_size!r})"
+            )
+            skipped_format += 1
+            continue
 
         raw_name = row["estate_name"].strip()
         records.append({
@@ -75,4 +88,8 @@ def main():
 
     inserted = result.rowcount if result.rowcount >= 0 else "unknown"
     skipped = len(records) - (result.rowcount if result.rowcount >= 0 else 0)
-    logger.info(f"master_products load complete: {inserted} inserted, {skipped} already existed (skipped)")
+    logger.info(
+        f"master_products load complete: {inserted} inserted, "
+        f"{skipped} already existed (skipped)"
+        + (f", {skipped_format} non-75cl rows ignored" if skipped_format else "")
+    )

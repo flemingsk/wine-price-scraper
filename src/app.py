@@ -18,14 +18,21 @@ logging.basicConfig(
 # Each retailer still scrapes its own products sequentially internally
 # so individual sites are never hammered simultaneously.
 # Revert to sequential: set MAX_WORKERS = 1
-MAX_WORKERS = 4
+MAX_WORKERS = 8
 
 
 def run_once():
     # Load all active products grouped by retailer
     db = SessionLocal()
     try:
-        products = db.query(MasterProduct).filter(MasterProduct.active == True).all()
+        products = (
+            db.query(MasterProduct)
+            .filter(
+                MasterProduct.active == True,
+                MasterProduct.bottle_size.in_(["0.75L", "75cl"]),
+            )
+            .all()
+        )
     finally:
         db.close()
 

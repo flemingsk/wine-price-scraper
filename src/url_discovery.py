@@ -239,6 +239,32 @@ MANUAL_LISTING_PAGES: dict[tuple[str, str], str] = {
         "https://aries-vins.com/104-chateau-la-louviere",
     # Add other aries estate listing pages here as they are found.
 
+    # ── vinotheque-bordeaux.com (search endpoint) ─────────────────────────────
+    # Estate listing pages 404; search results work and are filtered by estate
+    # slug via _is_product_url().  One entry per estate using a short search term.
+    ("vinotheque_bordeaux", "Chateau Latour Martillac"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=latour+martillac",
+    ("vinotheque_bordeaux", "Chateau Carbonnieux"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=carbonnieux",
+    ("vinotheque_bordeaux", "Chateau Olivier"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=chateau+olivier",
+    ("vinotheque_bordeaux", "Chateau Larrivet Haut-Brion"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=larrivet",
+    ("vinotheque_bordeaux", "Chateau de Fieuzal"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=fieuzal",
+    ("vinotheque_bordeaux", "Chateau Sociando-Mallet"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=sociando",
+    ("vinotheque_bordeaux", "Chateau Malartic-Lagraviere"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=malartic",
+    ("vinotheque_bordeaux", "Chateau Lagarde"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=lagarde",
+    ("vinotheque_bordeaux", "Chateau La Louviere"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=la+louviere",
+    ("vinotheque_bordeaux", "Chateau Bouscaut"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=bouscaut",
+    ("vinotheque_bordeaux", "Chateau Lespault-Martillac"):
+        "https://vinotheque-bordeaux.com/jolisearch?search_query=lespault",
+
 }
 
 
@@ -676,6 +702,12 @@ ESTATE_NAME_CANONICAL: dict[str, str] = {
 }
 
 # Default price selectors per retailer — used when auto-appending to CSV.
+# Retailers that use a non-standard bottle_size string in master_products.csv.
+# Used by auto_append_to_csv so new rows match existing rows for the unique constraint.
+RETAILER_BOTTLE_SIZE: dict[str, str] = {
+    "vinotheque_bordeaux": "75cl",
+}
+
 RETAILER_DEFAULTS: dict[str, str] = {
     "cercledemartillac":   "span.price",
     "vin_malin":           "span.price",
@@ -775,13 +807,14 @@ def auto_append_to_csv(items: list[dict]) -> int:
             continue
         seen_this_run.add(key)
 
-        selector = item.get("price_selector") or RETAILER_DEFAULTS.get(retailer, "span.price")
-        url      = item["url"]
-        note     = f"Auto-discovered {date.today().isoformat()}"
+        selector    = item.get("price_selector") or RETAILER_DEFAULTS.get(retailer, "span.price")
+        bottle_size = RETAILER_BOTTLE_SIZE.get(retailer, "0.75L")
+        url         = item["url"]
+        note        = f"Auto-discovered {date.today().isoformat()}"
 
         row = (
             f"{estate},{retailer},{url},,{selector},"
-            f"{vintage},{vintage},0.75L,TRUE,{note}"
+            f"{vintage},{vintage},{bottle_size},TRUE,{note}"
         )
         new_rows.append(row)
         logger.info(f"auto-append: +{retailer} / {estate} {vintage}  {url}")

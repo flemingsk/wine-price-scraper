@@ -105,6 +105,17 @@ CHATEAUINTERNET_SLUGS: dict[str, str] = {
     "Chateau Lespault-Martillac":  "chateau-lespault-martillac-rouge",
 }
 
+# millesimes.com: slug derived from estate name, suffix varies by appellation.
+# URL pattern: millesimes.com/{prefix}_{vintage}{suffix}
+# Observed from existing CSV rows — add new estates when URLs are confirmed.
+MILLESIMES_SLUGS: dict[str, tuple[str, str]] = {
+    # estate_name: (url_prefix_before_vintage, url_suffix_after_vintage)
+    "Chateau Carbonnieux":         ("Carbonnieux",          "_cru_classe_Pessac-Leognan_vin_rouge"),
+    "Chateau Latour Martillac":    ("Latour_martillac",     "_cru_classe_de_graves_Pessac-Leognan_vin_rouge"),
+    "Chateau Malartic-Lagraviere": ("Malartic_lagraviere_rouge", "_grand_cru_classe_Graves_vin_rouge"),
+    "Chateau Sociando-Mallet":     ("Sociando_mallet",      "_Haut-Medoc_vin_rouge"),
+}
+
 
 # ---------------------------------------------------------------------------
 # Strategy C config: URL-pattern probers
@@ -118,18 +129,35 @@ CHATEAUINTERNET_SLUGS: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 URL_BUILDERS: dict[str, tuple[
-    Callable[[str], str | None],   # slug_fn
-    Callable[[str, int], str],     # url_fn
+    Callable[[str], str | None],   # slug_fn: returns None to skip this estate
+    Callable[[str, int], str],     # url_fn: builds the candidate URL
 ]] = {
     "chateauinternet": (
         lambda estate: CHATEAUINTERNET_SLUGS.get(estate),
         lambda slug, v: f"https://www.chateauinternet.com/{slug}-{v}",
     ),
     "cashvin": (
-        # slug = lowercase-hyphenated estate name, vintage appended
-        # e.g. 'Chateau Latour Martillac' -> chateau-latour-martillac-2022
+        # /produit/{slug}-{vintage}/ — slug = lowercase-hyphenated estate name
         _default_slug,
         lambda slug, v: f"https://www.cashvin.com/produit/{slug}-{v}/",
+    ),
+    "cavissima": (
+        # /products/{slug}-{vintage} — confirmed from existing CSV rows
+        _default_slug,
+        lambda slug, v: f"https://www.cavissima.com/products/{slug}-{v}",
+    ),
+    "levindevantsoi": (
+        # /boutique/{slug}-pessac-leognan-{vintage}/ — confirmed from CSV
+        # Estates outside Pessac-Léognan (e.g. Sociando-Mallet) will 404 — handled gracefully
+        _default_slug,
+        lambda slug, v: f"https://www.levindevantsoi.com/boutique/{slug}-pessac-leognan-{v}/",
+    ),
+    "millesimes": (
+        # URL pattern varies per estate; only known estates are probed
+        lambda estate: MILLESIMES_SLUGS.get(estate),   # returns None for unknown estates
+        lambda slug_tuple, v: (
+            f"https://millesimes.com/{slug_tuple[0]}_{v}{slug_tuple[1]}"
+        ),
     ),
 }
 
@@ -146,8 +174,9 @@ URL_BUILDERS: dict[str, tuple[
 #     specified manually (ID-based paths that can't be predicted).
 # ---------------------------------------------------------------------------
 
-# Retailers where listing page URL = f(estate_name)
-# Adding a retailer here triggers a crawl for every estate in the CSV.
+# Retailers where listing page URL = f(estate_name) — auto-generated for all
+# estates in the CSV.  Adding a retailer here triggers a crawl for every
+# estate; adding a new estate to the CSV automatically adds it to every builder.
 LISTING_URL_BUILDERS: dict[str, Callable[[str], str]] = {
     "cavissima": (
         lambda estate:
@@ -158,10 +187,33 @@ LISTING_URL_BUILDERS: dict[str, Callable[[str], str]] = {
         lambda estate:
             f"https://www.vintageandco.com/liste.{_default_slug(estate)}.html"
     ),
+    # Product URLs are /fr/{slug}/{id}-product.html — category = /fr/{slug}/
+    "wineclub": (
+        lambda estate: f"https://www.lewineclub.com/fr/{_default_slug(estate)}/"
+    ),
+    # Product URLs are /fr/{slug}/{id}-product.html — category = /fr/{slug}/
+    "12bouteilles": (
+        lambda estate: f"https://www.12bouteilles.com/fr/{_default_slug(estate)}/"
+    ),
+    # Product URLs are /{slug}-{vintage}/{id} — estate listing = /{slug}/
+    "wineandco": (
+        lambda estate: f"https://www.wineandco.com/{_default_slug(estate)}/"
+    ),
 }
 
-# Retailers whose listing page URLs must be maintained manually (ID-based)
-# Add new (retailer, estate) entries here when you discover the listing page.
+# Region listing pages — a single URL covering all tracked estates for a
+# retailer (e.g. a Pessac-Léognan appellation page).  Fetched ONCE per run;
+# _is_product_url() filters links to each estate individually.
+# Format: retailer -> URL
+REGION_LISTING_PAGES: dict[str, str] = {
+    # All tracked estates are Pessac-Léognan or Haut-Médoc — the full catalogue
+    # page lists every wine; estate slug filtering picks out the right rows.
+    "labouteilledoree": "https://www.labouteilledoree.com/en/pessac-leognan/",
+}
+
+# Retailers whose listing page URLs must be maintained manually (ID-based paths
+# that cannot be predicted from the estate name alone).
+# Add new (retailer, estate) entries here when a listing page is discovered.
 MANUAL_LISTING_PAGES: dict[tuple[str, str], str] = {
 
     # ── cercledemartillac.fr ─────────────────────────────────────────────────
@@ -178,25 +230,7 @@ MANUAL_LISTING_PAGES: dict[tuple[str, str], str] = {
     ("vin_malin", "Chateau Sociando-Mallet"):
         "https://www.vin-malin.fr/169-chateau-sociando-mallet",
 
-    # ── lewineclub.com ───────────────────────────────────────────────────────
-    ("wineclub", "Chateau Latour Martillac"):
-        "https://www.lewineclub.com/en/732-chateau-latour-martillac",
-    ("wineclub", "Chateau Carbonnieux"):
-        "https://www.lewineclub.com/fr/186-chateau-carbonnieux",
-    ("wineclub", "Chateau Malartic-Lagraviere"):
-        "https://www.lewineclub.com/fr/746-chateau-malartic-lagraviere",
-
-    # ── 12bouteilles.com ─────────────────────────────────────────────────────
-    ("12bouteilles", "Chateau Latour Martillac"):
-        "https://www.12bouteilles.com/en/240-chateau-latour-martillac",
-    ("12bouteilles", "Chateau Carbonnieux"):
-        "https://www.12bouteilles.com/en/234-chateau-carbonnieux",
-    ("12bouteilles", "Chateau Sociando-Mallet"):
-        "https://www.12bouteilles.com/en/221-chateau-sociando-mallet",
-    ("12bouteilles", "Chateau Larrivet Haut-Brion"):
-        "https://www.12bouteilles.com/en/232-chateau-larrivet-haut-brion",
-
-    # ── aries-vins.com ───────────────────────────────────────────────────────
+    # ── aries-vins.com (ID-based category slugs) ─────────────────────────────
     ("aries", "Chateau Latour Martillac"):
         "https://aries-vins.com/114-chateau-la-tour-martillac",
     ("aries", "Chateau Carbonnieux"):
@@ -403,15 +437,76 @@ def _build_all_listing_pages(
     return pages
 
 
+def crawl_region_page(
+    retailer: str,
+    region_url: str,
+    all_estates: list[str],
+    known_urls: set[str],
+) -> list[ListingDiscovery]:
+    """
+    Fetch a single regional catalog page once and return per-estate discoveries.
+
+    Used for retailers whose catalogue is organised by appellation rather than
+    by estate (e.g. labouteilledoree /en/pessac-leognan/).  One HTTP request
+    covers all tracked estates; _is_product_url() filters per estate.
+    """
+    discoveries: dict[str, ListingDiscovery] = {
+        estate: ListingDiscovery(retailer=retailer, estate=estate, catalog_url=region_url)
+        for estate in all_estates
+    }
+    try:
+        resp = requests.get(region_url, headers=REQUESTS_HEADERS, timeout=20)
+        if resp.status_code != 200:
+            for d in discoveries.values():
+                d.error = f"HTTP {resp.status_code}"
+            return list(discoveries.values())
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        domain = region_url.split("/")[2]
+        seen: set[str] = set()
+
+        for a in soup.find_all("a", href=True):
+            href: str = a["href"].strip()
+            if href.startswith("/"):
+                href = f"https://{domain}{href}"
+            if not href.startswith("http"):
+                continue
+            href = href.split("#")[0].rstrip("/")
+            if href in known_urls or href in seen:
+                continue
+            seen.add(href)
+            for estate in all_estates:
+                if _is_product_url(href, estate):
+                    if href not in discoveries[estate].new_urls:
+                        discoveries[estate].new_urls.append(href)
+
+        time.sleep(1.5)
+    except Exception as exc:
+        for d in discoveries.values():
+            d.error = str(exc)
+
+    return [d for d in discoveries.values() if d.new_urls or d.error]
+
+
 def run_listing_crawl(products: list[KnownProduct]) -> list[ListingDiscovery]:
     known_urls = {p.url for p in products}
+    all_estates = _all_estates(products)
     listing_pages = _build_all_listing_pages(products)
 
     results: list[ListingDiscovery] = []
+
+    # Per-estate listing pages (auto-generated + manual)
     for (retailer, estate), catalog_url in sorted(listing_pages.items()):
         logger.info(f"  crawling {retailer} / {estate}")
         result = crawl_listing_page(retailer, estate, catalog_url, known_urls)
         results.append(result)
+
+    # Region listing pages — one fetch covers all estates
+    for retailer, region_url in REGION_LISTING_PAGES.items():
+        logger.info(f"  crawling region page {retailer} ({region_url})")
+        region_results = crawl_region_page(retailer, region_url, all_estates, known_urls)
+        results.extend(region_results)
+
     return results
 
 
@@ -454,7 +549,7 @@ def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
         for estate in all_estates:
             slug = slug_fn(estate)
             if slug is None:
-                continue  # this retailer doesn't carry this estate
+                continue  # estate not supported / not yet mapped for this retailer
             discovery = ProbeDiscovery(retailer=retailer, estate=estate)
             for vintage in PROBE_VINTAGES:
                 if (retailer, estate, vintage) in known_set:
@@ -592,6 +687,10 @@ RETAILER_DEFAULTS: dict[str, str] = {
     "chateauinternet":     "div.price",
     "cashvin":             "p.price",
     "vinotheque_bordeaux": "span.price",
+    "wineandco":           "span[itemprop='price']",
+    "levindevantsoi":      "p.price",
+    "labouteilledoree":    "div.current-price",
+    "millesimes":          "span.price-current",
 }
 
 
@@ -737,7 +836,12 @@ def main() -> None:
         # Strategy C: URL probing (opt-in — use --probe flag)
         if args.probe:
             retailer_list = list(URL_BUILDERS.keys())
-            logger.info(f"\nRunning URL-pattern probing ({retailer_list})...")
+            n_combos = len(retailer_list) * len(estates) * len(PROBE_VINTAGES)
+            logger.info(
+                f"\nRunning URL-pattern probing: {retailer_list} x "
+                f"{len(estates)} estates x {len(PROBE_VINTAGES)} vintages "
+                f"= up to {n_combos} probes (skipping known)..."
+            )
             probes = run_url_probing(products)
             print_probe_results(probes)
 

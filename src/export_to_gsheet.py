@@ -70,6 +70,7 @@ def export_daily_report():
         pr.original_price,
         pr.price_amount as corrected_price,
         pr.correction_reason,
+        pr.url,
         pr.fetched_at
     FROM price_records pr
     JOIN master_products mp ON mp.id = pr.master_product_id
@@ -100,7 +101,7 @@ def export_daily_report():
         ])
 
     if not corrections.empty:
-        report_rows.append(["", "CORRECTIONS", "Estate", "Retailer", "Vintage", "Original", "Corrected", "Reason"])
+        report_rows.append(["", "CORRECTIONS", "Estate", "Retailer", "Vintage", "Original", "Corrected", "Reason", "URL"])
         for _, corr in corrections.iterrows():
             report_rows.append([
                 "",
@@ -111,6 +112,7 @@ def export_daily_report():
                 f"{corr['original_price']:.2f}",
                 f"{corr['corrected_price']:.2f}",
                 corr["correction_reason"],
+                corr["url"],
             ])
 
     if not report_rows:
@@ -118,12 +120,12 @@ def export_daily_report():
         return
 
     if needs_header:
-        header = ["Date", "Type", "Metric", "Value", "Details", "", "", ""]
+        header = ["Date", "Type", "Metric", "Value", "Details", "", "", "", ""]
         worksheet.append_row(header)
 
     for row in report_rows:
-        # Pad row to 8 columns
-        while len(row) < 8:
+        # Pad row to 9 columns
+        while len(row) < 9:
             row.append("")
         worksheet.append_row(row, value_input_option="USER_ENTERED")
 

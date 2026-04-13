@@ -57,6 +57,7 @@ CASE_SIZES = (6, 12)
 # case price.  3.5× prevents false positives for legitimate premium vintages
 # (even a 2× year-on-year increase would not trigger).
 RATIO_THRESHOLD = 3.5
+RATIO_THRESHOLD_LOWER = 2.0  # Flag 2× outliers for aggressive correction attempt
 
 # After dividing by a case size the corrected price must sit within this band
 # around the historical median to be accepted.
@@ -143,7 +144,11 @@ def validate_price(
     # ── Step 2: median-relative check ────────────────────────────────────────
     if median is not None:
         ratio = price / median
-        if ratio > RATIO_THRESHOLD:
+        # Use aggressive threshold (2×) when we have established history,
+        # since a 2× deviation on a well-tracked product is almost always a case/format error
+        threshold = RATIO_THRESHOLD_LOWER if median > 20 else RATIO_THRESHOLD
+
+        if ratio > threshold:
             correction = _try_case_correction(price, median)
             if correction:
                 corrected, divisor = correction

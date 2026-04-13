@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from .db import SessionLocal, init_db
 from .models import MasterProduct
 from .scraper_engine import scrape_retailer_products
-from .export_to_gsheet import export_to_gsheet
+from .export_to_gsheet import export_to_gsheet, export_daily_report
 from .load_master_products import main as load_master_products
 
 logging.basicConfig(
@@ -71,6 +71,7 @@ def main():
     load_master_products()
     run_once()
     export_to_gsheet()
+    export_daily_report()
     logging.info("Scraper finished successfully")
 
 

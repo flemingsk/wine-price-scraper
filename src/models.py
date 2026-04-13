@@ -81,6 +81,11 @@ class PriceRecord(Base):
     raw_price_text = Column(Text)
     availability = Column(Boolean)
 
+    # Correction tracking
+    price_corrected = Column(Boolean, default=False, nullable=False)
+    original_price = Column(Numeric(10, 2), nullable=True)  # before correction
+    correction_reason = Column(Text, nullable=True)  # e.g., "case price ÷6"
+
     fetched_at = Column(DateTime(timezone=True), nullable=False)
 
     product = relationship("MasterProduct", back_populates="prices")

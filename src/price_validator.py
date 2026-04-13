@@ -125,15 +125,22 @@ def validate_price(
     result: ScrapeResult,
     master_product_id: int,
     session: Session,
-) -> ScrapeResult:
+) -> tuple[ScrapeResult, dict]:
     """
-    Return a (possibly corrected) ScrapeResult.  The original is never mutated.
+    Return (possibly corrected ScrapeResult, metadata dict).
+
+    Metadata dict contains:
+      - 'corrected' (bool): whether a correction was applied
+      - 'original_price' (float or None): price before correction
+      - 'reason' (str or None): explanation of correction
 
     Correction is applied when the scraped price appears to be a case total
     rather than a unit bottle price.  All corrections and warnings are logged.
     """
+    metadata = {"corrected": False, "original_price": None, "reason": None}
+
     if result.price_amount is None or result.price_amount <= 0:
-        return result
+        return result, metadata
     price = float(result.price_amount)   # Decimal from parse_price() → float for arithmetic
 
     label = f"{result.retailer} | {result.vintage}"
@@ -156,17 +163,22 @@ def validate_price(
                     f"[price_validator] {label}: {price:.2f} is {ratio:.1f}x median "
                     f"({median:.2f}) — corrected to {corrected:.2f} (/{divisor})"
                 )
+                metadata = {
+                    "corrected": True,
+                    "original_price": price,
+                    "reason": f"case price ÷{divisor} ({ratio:.1f}x median)"
+                }
                 return dataclasses.replace(
                     result,
                     price_amount=round(corrected, 2),
                     raw_price_text=f"{result.raw_price_text} [corrected /{divisor}]",
-                )
+                ), metadata
             else:
                 logger.warning(
                     f"[price_validator] {label}: {price:.2f} is {ratio:.1f}x median "
                     f"({median:.2f}) — no case-size correction fit; saving as-is"
                 )
-        return result
+        return result, metadata
 
     # ── Step 3: no historical data — use global ceiling ──────────────────────
     if price > GLOBAL_MAX_EUR:
@@ -178,15 +190,20 @@ def validate_price(
                 f"({GLOBAL_MAX_EUR:.0f}) with no history — corrected to "
                 f"{corrected:.2f} (/{divisor})"
             )
+            metadata = {
+                "corrected": True,
+                "original_price": price,
+                "reason": f"exceeds global ceiling ÷{divisor}"
+            }
             return dataclasses.replace(
                 result,
                 price_amount=round(corrected, 2),
                 raw_price_text=f"{result.raw_price_text} [corrected /{divisor}]",
-            )
+            ), metadata
         else:
             logger.warning(
                 f"[price_validator] {label}: {price:.2f} exceeds global ceiling "
                 f"({GLOBAL_MAX_EUR:.0f}) with no history — no correction fit; saving as-is"
             )
 
-    return result
+    return result, metadata

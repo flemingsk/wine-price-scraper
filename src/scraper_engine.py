@@ -98,7 +98,7 @@ def scrape_product(product, session: Session, scraper=None) -> list[PriceRecord]
     for result in results:
         try:
             # Validate price against historical median; correct case prices
-            result = validate_price(result, product.id, session)
+            result, correction_meta = validate_price(result, product.id, session)
 
             existing = (
                 session.query(PriceRecord)
@@ -127,6 +127,9 @@ def scrape_product(product, session: Session, scraper=None) -> list[PriceRecord]
                 availability=result.availability,
                 vintage=result.vintage,
                 wine_color=product.wine_color or "Rouge",
+                price_corrected=correction_meta["corrected"],
+                original_price=correction_meta["original_price"],
+                correction_reason=correction_meta["reason"],
                 fetched_at=datetime.datetime.now(datetime.UTC),
             )
 

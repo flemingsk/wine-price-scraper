@@ -32,12 +32,13 @@ from src.utils import parse_price
 logger = logging.getLogger(__name__)
 
 # Cutoff date: records before this need potential normalization
-# Mar 27, 2026 is when scraper changed from CSS selector (mixed prices) to tile parsing (largest-case)
-NORMALIZATION_CUTOFF = datetime(2026, 3, 27).date()
+# Code was updated during Mar 27 — Mar 27 morning used old logic, Mar 28 morning used new logic
+NORMALIZATION_CUTOFF = datetime(2026, 3, 28).date()
 
-# Mar 26-27 transition is the best proxy for calculating historical single-bottle to case-unit discount
-DISCOUNT_REFERENCE_DATE_BEFORE = datetime(2026, 3, 26).date()
-DISCOUNT_REFERENCE_DATE_AFTER = datetime(2026, 3, 27).date()
+# Best proxy: Mar 27 (old CSS selector) vs Mar 28 (new tile parser with case preference)
+# Code was deployed during Mar 27, so morning Mar 27 run had old logic, Mar 28 run had new logic
+DISCOUNT_REFERENCE_DATE_BEFORE = datetime(2026, 3, 27).date()
+DISCOUNT_REFERENCE_DATE_AFTER = datetime(2026, 3, 28).date()
 
 
 def get_discount_from_transition():

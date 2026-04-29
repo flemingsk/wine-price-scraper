@@ -24,6 +24,9 @@ PRICE_SELECTORS = [
     ".product-price",
 ]
 
+# These selectors are known to return wrong values (basket total, 0.00€, or 6-bottle case total)
+BAD_SELECTORS = {"span.price", "span#totalPrice"}
+
 
 class TwilScraper(BaseScraper):
     retailer = "twil"
@@ -78,7 +81,7 @@ class TwilScraper(BaseScraper):
             _, fragment = urldefrag(url)
             if fragment:
                 selectors.append(f"span#product-price-{fragment}")
-            if product.price_selector and product.price_selector != "span.price":
+            if product.price_selector and product.price_selector not in BAD_SELECTORS:
                 selectors.append(product.price_selector)
             selectors.extend(PRICE_SELECTORS)
 

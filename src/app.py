@@ -1,12 +1,14 @@
 # src/app.py
 import logging
+import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 
 from .db import SessionLocal, init_db
 from .models import MasterProduct
 from .scraper_engine import scrape_retailer_products
-from .export_to_gsheet import export_to_gsheet, export_daily_report
+from .export_to_gsheet import export_to_gsheet, export_daily_report, export_market_analysis, export_run_log
 from .load_master_products import main as load_master_products
 
 logging.basicConfig(
@@ -66,12 +68,19 @@ def run_once():
 
 
 def main():
+    start_time = datetime.now(timezone.utc)
+    t0 = time.monotonic()
+
     logging.info("Starting daily wine price scraper")
     init_db()
     load_master_products()
     run_once()
     export_to_gsheet()
     export_daily_report()
+    export_market_analysis(lookback_days=7)
+
+    duration_seconds = time.monotonic() - t0
+    export_run_log(start_time, duration_seconds)
     logging.info("Scraper finished successfully")
 
 

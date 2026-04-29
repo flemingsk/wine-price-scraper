@@ -26,6 +26,7 @@ from src.scrapers.vinotheque_bordeaux import VinothequeBordeauxScraper
 from src.scrapers.vin_malin import VinMalinScraper
 from src.scrapers.cercledemartillac import CercleDeMartillacScraper
 from src.scrapers.e_leclerc import ELeclercScraper
+from src.scrapers.unjoururvin import UnJourUnVinScraper
 
 SCRAPERS = {
     # Custom scrapers
@@ -58,4 +59,5 @@ SCRAPERS = {
     "vin_malin":           VinMalinScraper,
     "cercledemartillac":   CercleDeMartillacScraper,
     "e_leclerc":           ELeclercScraper,
+    "1jour1vin":           UnJourUnVinScraper,
 }

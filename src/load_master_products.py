@@ -72,12 +72,40 @@ def main():
             "notes":                  row.get("notes", "").strip() or None,
         })
 
+    # Deduplicate: if the CSV has duplicate rows for the same unique key
+    # (retailer, estate_name, vintage_start, bottle_size), keep the last occurrence.
+    # This also prevents "ON CONFLICT DO UPDATE command cannot affect row a second time".
+    seen: dict[tuple, dict] = {}
+    dupes = 0
+    for rec in records:
+        key = (rec["retailer"], rec["estate_name"], rec["vintage_start"], rec["bottle_size"])
+        if key in seen:
+            dupes += 1
+        seen[key] = rec
+    if dupes:
+        logger.warning(f"Deduplicated {dupes} duplicate rows from CSV (kept last occurrence)")
+    records = list(seen.values())
+
     session = SessionLocal()
     try:
         stmt = pg_insert(MasterProduct).values(records)
-        # ON CONFLICT DO NOTHING — skip rows already matching the unique constraint
-        # (retailer, estate_name, vintage_start, bottle_size)
-        stmt = stmt.on_conflict_do_nothing(constraint="uq_master_product")
+        # ON CONFLICT DO UPDATE — keep mutable fields in sync with the CSV so that
+        # fixes to selectors, URLs, active flag, wine_color etc. are applied on
+        # every run.  The unique-key columns (retailer, estate_name, vintage_start,
+        # bottle_size) are never overwritten.
+        stmt = stmt.on_conflict_do_update(
+            constraint="uq_master_product",
+            set_={
+                "product_url":           stmt.excluded.product_url,
+                "url_template":          stmt.excluded.url_template,
+                "price_selector":        stmt.excluded.price_selector,
+                "availability_selector": stmt.excluded.availability_selector,
+                "vintage_end":           stmt.excluded.vintage_end,
+                "wine_color":            stmt.excluded.wine_color,
+                "active":                stmt.excluded.active,
+                "notes":                 stmt.excluded.notes,
+            },
+        )
         result = session.execute(stmt)
         session.commit()
     except Exception:

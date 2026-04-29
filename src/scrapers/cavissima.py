@@ -197,13 +197,16 @@ class CavissimaScraper(BaseScraper):
                     logger.warning(f"Cavissima: could not parse '{raw_price}' at {url}: {e}")
                     return None
 
-            # --- Availability ---
+            # --- Availability — check OOS text and zero price ---
             availability = True
             page_text = page.inner_text("body").lower()
             for phrase in OOS_TEXT:
                 if phrase in page_text:
                     availability = False
                     break
+            if price_amount == 0:
+                availability = False
+                logger.info(f"Cavissima: {product.estate_name} {vintage} — 0 price, marking out of stock")
 
             return ScrapeResult(
                 vintage=vintage,

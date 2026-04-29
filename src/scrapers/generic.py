@@ -121,13 +121,16 @@ class GenericStaticScraper(BaseScraper):
                     polite_delay(1.5, 3.0)
                     continue
 
-                # Availability
+                # Availability — check OOS text and zero price
                 availability = True
                 page_text = soup.get_text(" ", strip=True).lower()
                 for phrase in OOS_TEXT:
                     if phrase in page_text:
                         availability = False
                         break
+                if price_amount == 0:
+                    availability = False
+                    logger.info(f"{self.retailer}: {product.estate_name} {vintage} — 0 price, marking out of stock")
 
                 logger.info(
                     f"{self.retailer}: {product.estate_name} {vintage} — "

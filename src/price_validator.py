@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # Tuning constants
 # ---------------------------------------------------------------------------
 
-CASE_SIZES = (6, 12)
+CASE_SIZES = (3, 6, 12)
 
 # Price must exceed  median * RATIO_THRESHOLD  to be flagged as a potential
 # case price.  3.5× prevents false positives for legitimate premium vintages

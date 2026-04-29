@@ -239,10 +239,11 @@ def export_market_analysis(lookback_days: int = 7):
     ]
 
     # --- 1. Price Trends ---
-    rows.append(["PRICE TRENDS", "Estate", "Vintage", "Retailer", "Direction", "Change %", "First Price", "Last Price", "Days of Data"])
+    rows.append(["PRICE TRENDS", "Color", "Estate", "Vintage", "Retailer", "Direction", "Change %", "First Price", "Last Price", "Days of Data"])
     for t in trends[:30]:
         rows.append([
             "",
+            t["wine_color"],
             t["estate"],
             str(t["vintage"] or ""),
             t["retailer"],
@@ -255,10 +256,11 @@ def export_market_analysis(lookback_days: int = 7):
     rows.append([])
 
     # --- 2. Retailer Spreads ---
-    rows.append(["RETAILER SPREADS", "Estate", "Vintage", "Spread %", "Min Price", "Cheapest", "Max Price", "Most Expensive", "# Retailers"])
+    rows.append(["RETAILER SPREADS", "Color", "Estate", "Vintage", "Spread %", "Min Price", "Cheapest", "Max Price", "Most Expensive", "# Retailers"])
     for s in spreads[:30]:
         rows.append([
             "",
+            s["wine_color"],
             s["estate"],
             str(s["vintage"] or ""),
             f"{s['spread_pct']:.1f}%",
@@ -271,11 +273,12 @@ def export_market_analysis(lookback_days: int = 7):
     rows.append([])
 
     # --- 3. Availability Changes ---
-    rows.append(["AVAILABILITY CHANGES", "Estate", "Vintage", "Retailer", "Change", "Date Range"])
+    rows.append(["AVAILABILITY CHANGES", "Color", "Estate", "Vintage", "Retailer", "Change", "Date Range"])
     if avail:
         for a in avail:
             rows.append([
                 "",
+                a["wine_color"],
                 a["estate"],
                 str(a["vintage"] or ""),
                 a["retailer"],
@@ -283,14 +286,15 @@ def export_market_analysis(lookback_days: int = 7):
                 a["date_range"],
             ])
     else:
-        rows.append(["", "(no changes in period)"])
+        rows.append(["", "", "(no changes in period)"])
     rows.append([])
 
     # --- 4. Price Outliers ---
-    rows.append(["PRICE OUTLIERS", "Estate", "Vintage", "Retailer", "Outlier Price", "Expected Price", "Deviation %", "Z-Score"])
+    rows.append(["PRICE OUTLIERS", "Color", "Estate", "Vintage", "Retailer", "Outlier Price", "Expected Price", "Deviation %", "Z-Score"])
     for o in outliers[:20]:
         rows.append([
             "",
+            o["wine_color"],
             o["estate"],
             str(o["vintage"] or ""),
             o["retailer"],

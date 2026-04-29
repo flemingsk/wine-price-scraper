@@ -42,15 +42,15 @@ class MarketAnalyzer:
         )
 
     def calculate_price_trends(self):
-        """Analyze price trends per estate/retailer"""
+        """Analyze price trends per estate/retailer/wine_color"""
         recent = self.get_recent_prices()
 
-        # Group by estate+retailer+vintage, then by date
+        # Group by estate+retailer+vintage+wine_color, then by date
         by_ref = defaultdict(lambda: defaultdict(list))
 
         for price in recent:
             product = price.product
-            key = (product.estate_name, product.retailer, price.vintage)
+            key = (product.estate_name, product.retailer, price.vintage, price.wine_color or "Rouge")
             date_key = price.fetched_at.date()
 
             if price.price_amount:
@@ -58,13 +58,12 @@ class MarketAnalyzer:
 
         trends = []
 
-        for (estate, retailer, vintage), daily_prices in by_ref.items():
+        for (estate, retailer, vintage, wine_color), daily_prices in by_ref.items():
             if len(daily_prices) < 2:
                 continue  # Need at least 2 days of data
 
             dates = sorted(daily_prices.keys())
 
-            # Calculate daily averages
             daily_avgs = [
                 (date, mean(daily_prices[date]))
                 for date in dates
@@ -75,7 +74,6 @@ class MarketAnalyzer:
             change = last_price - first_price
             change_pct = (change / first_price * 100) if first_price else 0
 
-            # Determine trend direction
             if change_pct > 2:
                 direction = "UP"
             elif change_pct < -2:
@@ -87,6 +85,7 @@ class MarketAnalyzer:
                 'estate': estate,
                 'retailer': retailer,
                 'vintage': vintage,
+                'wine_color': wine_color,
                 'direction': direction,
                 'change_pct': round(change_pct, 2),
                 'first_price': round(first_price, 2),
@@ -98,26 +97,25 @@ class MarketAnalyzer:
         return sorted(trends, key=lambda x: abs(x['change_pct']), reverse=True)
 
     def calculate_retailer_spreads(self):
-        """Analyze price variance between retailers for same product"""
+        """Analyze price variance between retailers for same product (rouge and blanc kept separate)"""
         recent = self.get_recent_prices()
 
-        # Group by estate+vintage
+        # Group by estate+vintage+wine_color so rouge and blanc are never compared
         by_estate_vintage = defaultdict(lambda: defaultdict(list))
 
         for price in recent:
             product = price.product
-            key = (product.estate_name, price.vintage)
+            key = (product.estate_name, price.vintage, price.wine_color or "Rouge")
 
             if price.price_amount:
                 by_estate_vintage[key][product.retailer].append(float(price.price_amount))
 
         spreads = []
 
-        for (estate, vintage), retailers_prices in by_estate_vintage.items():
+        for (estate, vintage, wine_color), retailers_prices in by_estate_vintage.items():
             if len(retailers_prices) < 2:
                 continue  # Need at least 2 retailers
 
-            # Calculate average price per retailer
             retailer_avgs = {
                 retailer: mean(prices)
                 for retailer, prices in retailers_prices.items()
@@ -131,13 +129,13 @@ class MarketAnalyzer:
             max_price = max(retailer_avgs.values())
             spread_pct = (max_price - min_price) / min_price * 100
 
-            # Find cheapest and most expensive retailers
             cheapest = min(retailer_avgs.items(), key=lambda x: x[1])
             most_expensive = max(retailer_avgs.items(), key=lambda x: x[1])
 
             spreads.append({
                 'estate': estate,
                 'vintage': vintage,
+                'wine_color': wine_color,
                 'spread_pct': round(spread_pct, 2),
                 'min_price': round(min_price, 2),
                 'max_price': round(max_price, 2),
@@ -152,25 +150,24 @@ class MarketAnalyzer:
         """Track products going in/out of stock"""
         recent = self.get_recent_prices()
 
-        # Group by estate+retailer+vintage
+        # Group by estate+retailer+vintage+wine_color
         by_ref = defaultdict(list)
 
         for price in recent:
             product = price.product
-            key = (product.estate_name, product.retailer, price.vintage)
+            key = (product.estate_name, product.retailer, price.vintage, price.wine_color or "Rouge")
             by_ref[key].append({
                 'date': price.fetched_at.date(),
-                'available': price.availability is not False,  # Treat None as available
+                'available': price.availability is not False,
                 'price': price.price_amount
             })
 
         changes = []
 
-        for (estate, retailer, vintage), records in by_ref.items():
+        for (estate, retailer, vintage, wine_color), records in by_ref.items():
             if len(records) < 2:
                 continue
 
-            # Check if availability changed
             first_available = records[0]['available']
             last_available = records[-1]['available']
 
@@ -180,6 +177,7 @@ class MarketAnalyzer:
                     'estate': estate,
                     'retailer': retailer,
                     'vintage': vintage,
+                    'wine_color': wine_color,
                     'status_change': status_change,
                     'date_range': f"{records[0]['date']} to {records[-1]['date']}",
                     'records': len(records)
@@ -191,18 +189,18 @@ class MarketAnalyzer:
         """Flag unusual price spikes or drops"""
         recent = self.get_recent_prices()
 
-        # Group by estate+retailer+vintage
+        # Group by estate+retailer+vintage+wine_color
         by_ref = defaultdict(list)
 
         for price in recent:
             product = price.product
-            key = (product.estate_name, product.retailer, price.vintage)
+            key = (product.estate_name, product.retailer, price.vintage, price.wine_color or "Rouge")
             if price.price_amount:
                 by_ref[key].append(float(price.price_amount))
 
         outliers = []
 
-        for (estate, retailer, vintage), prices in by_ref.items():
+        for (estate, retailer, vintage, wine_color), prices in by_ref.items():
             if len(prices) < 3:
                 continue  # Need at least 3 data points
 
@@ -212,7 +210,6 @@ class MarketAnalyzer:
             if std_dev == 0:
                 continue  # No variance
 
-            # Find outliers (>2 std deviations from mean)
             for price in prices:
                 z_score = abs(price - avg) / std_dev
                 if z_score > 2:
@@ -221,6 +218,7 @@ class MarketAnalyzer:
                         'estate': estate,
                         'retailer': retailer,
                         'vintage': vintage,
+                        'wine_color': wine_color,
                         'outlier_price': round(price, 2),
                         'expected_price': round(avg, 2),
                         'deviation_pct': round(deviation_pct, 2),

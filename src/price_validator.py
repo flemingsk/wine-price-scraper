@@ -109,16 +109,22 @@ def _try_case_correction(
 ) -> tuple[float, int] | None:
     """
     Try dividing price by each CASE_SIZE.  Return (corrected_price, divisor)
-    for the first divisor that brings the price into CORRECTION_BAND of the
-    median, or None if no correction is viable.
+    for the candidate closest to the median that still falls within
+    CORRECTION_BAND, or None if no correction is viable.
+
+    Picking closest-to-median (rather than first-in-band) prevents ÷3
+    from winning over ÷6 when a 6-bottle case is presented: both may
+    land in the band, but ÷6 = 1× median beats ÷3 = 2× median.
     """
     lo = median * CORRECTION_BAND_LO
     hi = median * CORRECTION_BAND_HI
+    best: tuple[float, int] | None = None
     for divisor in CASE_SIZES:
         candidate = price / divisor
         if lo <= candidate <= hi:
-            return candidate, divisor
-    return None
+            if best is None or abs(candidate - median) < abs(best[0] - median):
+                best = (candidate, divisor)
+    return best
 
 
 def validate_price(

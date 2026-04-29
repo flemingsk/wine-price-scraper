@@ -140,6 +140,12 @@ def run_audit(csv_path: str):
 
     print(f"\n3. Price mismatches (same ID, value differs): {len(mismatches)}")
     if not mismatches.empty:
+        # Summary by retailer (site column is already in mismatches from db_prices)
+        by_site = mismatches.groupby("site").size().sort_values(ascending=False)
+        print("   Mismatches by retailer:")
+        for site, cnt in by_site.items():
+            print(f"   {site:<22} {cnt}")
+        print()
         # Categorise: likely case-price corrections vs genuine edits
         case6  = mismatches[mismatches["diff"].apply(lambda d: any(abs(d - r["db_price"] * (n-1)) < 0.05 for n in [6, 12] for _, r in mismatches[mismatches["diff"] == d].iterrows()))]
         print("   Top mismatches (largest diff first):")
@@ -149,9 +155,9 @@ def run_audit(csv_path: str):
             ratio = (db_p / gs_p) if gs_p else 0
             hint  = ""
             if abs(ratio - 6) < 0.1:
-                hint = " ← likely 6-bottle case in DB"
+                hint = " ** likely 6-bottle case in DB"
             elif abs(ratio - 12) < 0.1:
-                hint = " ← likely 12-bottle case in DB"
+                hint = " ** likely 12-bottle case in DB"
             corrected_flag = " [DB auto-corrected]" if row.get("price_corrected") else ""
             print(f"   id={row['id']} | {row['estate_name']} @ {row['site']}")
             print(f"     GSheet={gs_p:.2f}  DB={db_p:.2f}  ratio={ratio:.1f}x{hint}{corrected_flag}")
@@ -159,17 +165,17 @@ def run_audit(csv_path: str):
             print(f"   ... and {len(mismatches)-20} more")
 
     # ── 4. High-price DB records still uncorrected ───────────────────────────
-    high_db = db[(db["db_price"] > 80) & (~db["price_corrected"].fillna(False))]
+    high_db = db[(db["price_amount"] > 80) & (~db["price_corrected"].fillna(False))]
     print(f"\n4. DB records >80 EUR not auto-corrected: {len(high_db)}")
     if not high_db.empty:
-        by_ret = high_db.groupby("site")["db_price"].agg(["count", "mean", "max"])
+        by_ret = high_db.groupby("site")["price_amount"].agg(["count", "mean", "max"])
         print("   By retailer:")
         for ret, row in by_ret.sort_values("count", ascending=False).iterrows():
             print(f"   {ret:<22} n={int(row['count'])}  avg={row['mean']:.0f}  max={row['max']:.0f}")
 
         print("   Top individual records:")
-        for _, row in high_db.nlargest(15, "db_price").iterrows():
-            print(f"   {row['db_price']:>8.2f}  {row['site']:<22}  {row['estate_name']}")
+        for _, row in high_db.nlargest(15, "price_amount").iterrows():
+            print(f"   {row['price_amount']:>8.2f}  {row['site']:<22}  {row['estate_name']}")
 
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n{'─'*70}")

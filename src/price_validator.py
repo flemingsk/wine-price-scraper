@@ -51,7 +51,8 @@ logger = logging.getLogger(__name__)
 # Tuning constants
 # ---------------------------------------------------------------------------
 
-CASE_SIZES = (3, 6, 12)
+# 3-bottle cases are very unusual and caused false corrections — removed.
+CASE_SIZES = (12, 6)
 
 # Price must exceed  median * RATIO_THRESHOLD  to be flagged as a potential
 # case price.  3.5× prevents false positives for legitimate premium vintages
@@ -59,10 +60,9 @@ CASE_SIZES = (3, 6, 12)
 RATIO_THRESHOLD = 3.5
 RATIO_THRESHOLD_LOWER = 2.0  # Flag 2× outliers for aggressive correction attempt
 
-# After dividing by a case size the corrected price must sit within this band
-# around the historical median to be accepted.
-CORRECTION_BAND_LO = 0.30   # floor: 30% of median
-CORRECTION_BAND_HI = 3.00   # ceiling: 300% of median
+# After dividing by a case size the corrected price must sit within 1.5x
+# of the historical median to be accepted (tighter than the old 30-300% band).
+CORRECTION_BAND = 1.5   # corrected / median must be in [1/1.5, 1.5] = [0.667, 1.5]
 
 # Fallback global ceiling used when there is no historical data yet.
 # 500 € covers the upper end of tracked Bordeaux estates at 75cl.
@@ -108,23 +108,21 @@ def _try_case_correction(
     median: float,
 ) -> tuple[float, int] | None:
     """
-    Try dividing price by each CASE_SIZE.  Return (corrected_price, divisor)
-    for the candidate closest to the median that still falls within
-    CORRECTION_BAND, or None if no correction is viable.
+    Try ÷12 then ÷6 in order.  Return (corrected_price, divisor) for the
+    first divisor whose result sits within CORRECTION_BAND (1.5×) of the
+    median, or None if neither fits.
 
-    Picking closest-to-median (rather than first-in-band) prevents ÷3
-    from winning over ÷6 when a 6-bottle case is presented: both may
-    land in the band, but ÷6 = 1× median beats ÷3 = 2× median.
+    Order matters: ÷12 is tried first because a 12-bottle case at the
+    correct unit price will always also satisfy ÷6 within the band — we
+    want the largest-case correction to win.
     """
-    lo = median * CORRECTION_BAND_LO
-    hi = median * CORRECTION_BAND_HI
-    best: tuple[float, int] | None = None
-    for divisor in CASE_SIZES:
+    lo = median / CORRECTION_BAND
+    hi = median * CORRECTION_BAND
+    for divisor in CASE_SIZES:          # (12, 6)
         candidate = price / divisor
         if lo <= candidate <= hi:
-            if best is None or abs(candidate - median) < abs(best[0] - median):
-                best = (candidate, divisor)
-    return best
+            return (candidate, divisor)
+    return None
 
 
 def validate_price(
@@ -146,6 +144,10 @@ def validate_price(
     metadata = {"corrected": False, "original_price": None, "reason": None}
 
     if result.price_amount is None or result.price_amount <= 0:
+        # Convert explicit 0 to NULL — 0 is not a valid price, it means the
+        # scraper hit an OOS element and should be stored as NULL not 0.
+        if result.price_amount == 0:
+            result = dataclasses.replace(result, price_amount=None, availability=False)
         return result, metadata
     price = float(result.price_amount)   # Decimal from parse_price() → float for arithmetic
 
@@ -180,10 +182,12 @@ def validate_price(
                     raw_price_text=f"{result.raw_price_text} [corrected /{divisor}]",
                 ), metadata
             else:
-                logger.warning(
-                    f"[price_validator] {label}: {price:.2f} is {ratio:.1f}x median "
-                    f"({median:.2f}) — no case-size correction fit; saving as-is"
+                reason = (
+                    f"REVIEW_NEEDED: {price:.2f} is {ratio:.1f}x median "
+                    f"({median:.2f}), no 12/6-bottle correction within 1.5x"
                 )
+                logger.warning(f"[price_validator] {label}: {reason}")
+                metadata = {"corrected": False, "original_price": None, "reason": reason}
         return result, metadata
 
     # ── Step 3: no historical data — use global ceiling ──────────────────────

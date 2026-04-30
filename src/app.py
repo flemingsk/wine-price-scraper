@@ -9,6 +9,7 @@ from .db import SessionLocal, init_db
 from .models import MasterProduct
 from .scraper_engine import scrape_retailer_products
 from .export_to_gsheet import export_to_gsheet, export_daily_report, export_market_analysis, export_run_log
+from .price_review import export_price_review
 from .load_master_products import main as load_master_products
 
 logging.basicConfig(
@@ -78,6 +79,7 @@ def main():
     export_to_gsheet()
     export_daily_report()
     export_market_analysis(lookback_days=7)
+    export_price_review()
 
     duration_seconds = time.monotonic() - t0
     export_run_log(start_time, duration_seconds)

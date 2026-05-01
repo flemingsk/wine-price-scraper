@@ -210,13 +210,20 @@ def export_audit_to_gsheet(results: list[dict]) -> None:
     sheet  = client.open(GOOGLE_SHEET_NAME)
 
     try:
-        import gspread
         ws = sheet.worksheet(AUDIT_TAB)
         ws.clear()
+        logger.info(f"Cleared existing '{AUDIT_TAB}' tab")
     except Exception:
         ws = sheet.add_worksheet(title=AUDIT_TAB, rows=2000, cols=14)
+        logger.info(f"Created new '{AUDIT_TAB}' tab")
 
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    n_ok           = sum(1 for r in results if r["status"] == "OK")
+    n_case         = sum(1 for r in results if r["status"].startswith("CASE"))
+    n_flag         = sum(1 for r in results if r["status"].startswith("FLAG"))
+    n_unverifiable = sum(1 for r in results if r["status"] == "UNVERIFIABLE")
+
     headers = [
         "id", "estate_name", "vintage", "scrape_date",
         "cavissima_price_€", "other_retailer_median_€", "retailers_used",
@@ -225,12 +232,11 @@ def export_audit_to_gsheet(results: list[dict]) -> None:
     ]
 
     rows = [
-        [f"Cavissima Blanc audit — {generated}  |  "
-         f"{sum(1 for r in results if r['status'] == 'OK')} OK  |  "
-         f"{sum(1 for r in results if r['status'].startswith('CASE'))} case-price corrections  |  "
-         f"{sum(1 for r in results if r['status'].startswith('FLAG'))} flagged  |  "
-         f"{sum(1 for r in results if r['status'] == 'UNVERIFIABLE')} unverifiable"],
-        [],
+        [f"Cavissima Blanc audit — {generated}",
+         f"OK: {n_ok}", f"Case errors: {n_case}",
+         f"Flagged: {n_flag}", f"Unverifiable: {n_unverifiable}",
+         "", "", "", "", "", "", "", ""],
+        [""] * 13,
         headers,
     ]
 
@@ -242,9 +248,8 @@ def export_audit_to_gsheet(results: list[dict]) -> None:
             r["already_fixed"], r["raw_price_text"], r["url"],
         ])
 
-    ws.update(rows, value_input_option="USER_ENTERED")
+    ws.append_rows(rows, value_input_option="USER_ENTERED")
 
-    # Bold and colour the header and status column
     try:
         ws.format("A1:M1", {"textFormat": {"bold": True}})
         ws.format("A3:M3", {"textFormat": {"bold": True}})
@@ -253,7 +258,7 @@ def export_audit_to_gsheet(results: list[dict]) -> None:
 
     logger.info(
         f"Audit results written to '{GOOGLE_SHEET_NAME}' > '{AUDIT_TAB}' "
-        f"({len(results)} rows)"
+        f"({len(results)} data rows)"
     )
 
 

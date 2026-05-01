@@ -263,9 +263,20 @@ def export_audit_to_gsheet(results: list[dict]) -> None:
 
 
 def main() -> None:
+    import traceback
     dry_run = os.getenv("DRY_RUN", "").lower() in ("1", "true", "yes")
-    results = run_audit(dry_run=dry_run)
-    export_audit_to_gsheet(results)
+    print(f"=== audit_cavissima_blanc starting (dry_run={dry_run}) ===", flush=True)
+
+    try:
+        print("Step 1: running DB audit queries...", flush=True)
+        results = run_audit(dry_run=dry_run)
+        print(f"Step 2: writing {len(results)} rows to GSheet...", flush=True)
+        export_audit_to_gsheet(results)
+        print("=== audit_cavissima_blanc complete ===", flush=True)
+    except Exception:
+        print("=== audit_cavissima_blanc FAILED ===", flush=True)
+        traceback.print_exc()
+        raise
 
 
 if __name__ == "__main__":

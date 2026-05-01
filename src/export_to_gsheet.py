@@ -40,98 +40,87 @@ def export_daily_report():
     client = _get_gsheet_client()
     sheet = client.open(GOOGLE_SHEET_NAME)
 
-    # Get or create report tab
     try:
         worksheet = sheet.worksheet(REPORT_TAB_NAME)
     except gspread.exceptions.WorksheetNotFound:
         worksheet = sheet.add_worksheet(title=REPORT_TAB_NAME, rows=1000, cols=10)
 
-    # Get today's date
-    today = datetime.now().date()
+    # Use UTC to match how fetched_at is stored
+    today = datetime.now(timezone.utc).date()
 
-    # Query today's scrape results
-    query = """
-    SELECT
-        DATE(pr.fetched_at) as scrape_date,
-        COUNT(DISTINCT pr.id) as total_records,
-        COUNT(DISTINCT pr.master_product_id) as unique_products,
-        SUM(CASE WHEN pr.price_corrected THEN 1 ELSE 0 END) as corrected_count
-    FROM price_records pr
-    WHERE DATE(pr.fetched_at) = %s
-    GROUP BY DATE(pr.fetched_at);
-    """
+    try:
+        summary = pd.read_sql(
+            """
+            SELECT
+                COUNT(DISTINCT pr.id)                                          AS total_records,
+                COUNT(DISTINCT pr.master_product_id)                           AS unique_products,
+                SUM(CASE WHEN pr.price_corrected THEN 1 ELSE 0 END)::int       AS corrected_count
+            FROM price_records pr
+            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %s
+            """,
+            engine, params=[today],
+        )
+        corrections = pd.read_sql(
+            """
+            SELECT
+                mp.estate_name,
+                pr.site,
+                pr.vintage,
+                pr.original_price,
+                pr.price_amount   AS corrected_price,
+                pr.correction_reason,
+                pr.url,
+                pr.fetched_at
+            FROM price_records pr
+            JOIN master_products mp ON mp.id = pr.master_product_id
+            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %s
+              AND pr.price_corrected = TRUE
+            ORDER BY pr.fetched_at DESC
+            """,
+            engine, params=[today],
+        )
+    except Exception as exc:
+        print(f"export_daily_report: DB query failed for {today}: {exc}")
+        return
 
-    summary = pd.read_sql(query, engine, params=[today])
+    rows_to_append = []
 
-    # Query corrected entries with details
-    corrected_query = """
-    SELECT
-        mp.estate_name,
-        pr.site,
-        pr.vintage,
-        pr.original_price,
-        pr.price_amount as corrected_price,
-        pr.correction_reason,
-        pr.url,
-        pr.fetched_at
-    FROM price_records pr
-    JOIN master_products mp ON mp.id = pr.master_product_id
-    WHERE DATE(pr.fetched_at) = %s AND pr.price_corrected = TRUE
-    ORDER BY pr.fetched_at DESC;
-    """
-
-    corrections = pd.read_sql(corrected_query, engine, params=[today])
-
-    # Check if we have existing data
-    all_values = worksheet.get_all_values()
-    if len(all_values) == 0:
-        needs_header = True
-    else:
-        needs_header = False
-
-    # Build report rows
-    report_rows = []
+    all_values  = worksheet.get_all_values()
+    needs_header = len(all_values) == 0
+    if needs_header:
+        rows_to_append.append(["Date", "Type", "Metric", "Value", "Details", "", "", "", ""])
 
     if not summary.empty:
-        summary_row = summary.iloc[0]
-        report_rows.append([
-            str(today),
-            "SUMMARY",
-            f"Records: {int(summary_row['total_records'])}",
-            f"Products: {int(summary_row['unique_products'])}",
-            f"Corrected: {int(summary_row['corrected_count'])}",
-        ])
+        r = summary.iloc[0]
+        row = [
+            str(today), "SUMMARY",
+            f"Records: {int(r['total_records'])}",
+            f"Products: {int(r['unique_products'])}",
+            f"Corrected: {int(r['corrected_count'])}",
+            "", "", "", "",
+        ]
+        rows_to_append.append(row)
 
     if not corrections.empty:
-        report_rows.append(["", "CORRECTIONS", "Estate", "Retailer", "Vintage", "Original", "Corrected", "Reason", "URL"])
+        rows_to_append.append(["", "CORRECTIONS", "Estate", "Retailer", "Vintage", "Original", "Corrected", "Reason", "URL"])
         for _, corr in corrections.iterrows():
-            report_rows.append([
-                "",
-                "",
+            rows_to_append.append([
+                "", "",
                 corr["estate_name"],
                 corr["site"],
                 str(corr["vintage"]),
-                f"{corr['original_price']:.2f}",
-                f"{corr['corrected_price']:.2f}",
-                corr["correction_reason"],
+                f"{corr['original_price']:.2f}" if corr["original_price"] else "",
+                f"{corr['corrected_price']:.2f}" if corr["corrected_price"] else "",
+                corr["correction_reason"] or "",
                 corr["url"],
             ])
 
-    if not report_rows:
+    if len(rows_to_append) == (1 if needs_header else 0):
         print(f"No report data for {today}.")
         return
 
-    if needs_header:
-        header = ["Date", "Type", "Metric", "Value", "Details", "", "", "", ""]
-        worksheet.append_row(header)
-
-    for row in report_rows:
-        # Pad row to 9 columns
-        while len(row) < 9:
-            row.append("")
-        worksheet.append_row(row, value_input_option="USER_ENTERED")
-
-    print(f"Appended daily report for {today} ({len(report_rows)} rows).")
+    worksheet.append_rows(rows_to_append, value_input_option="USER_ENTERED")
+    print(f"Appended daily report for {today} ({len(rows_to_append)} rows).")
 
 
 def export_to_gsheet():

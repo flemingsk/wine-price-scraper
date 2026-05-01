@@ -53,10 +53,14 @@ def clean_price_records_tab() -> int:
         return 0
 
     header = all_rows[0]
-    try:
-        url_col = header.index("url")
-    except ValueError:
-        raise RuntimeError(f"'url' column not found in price_records header: {header}")
+    # GSheet header uses 'Link' as the URL column name
+    url_col = None
+    for candidate in ("Link", "url", "URL", "link"):
+        if candidate in header:
+            url_col = header.index(candidate)
+            break
+    if url_col is None:
+        raise RuntimeError(f"URL column not found in price_records header: {header}")
 
     # Find row indices (1-based, skipping header) of bad rows
     bad_row_indices = []

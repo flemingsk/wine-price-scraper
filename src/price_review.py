@@ -104,7 +104,10 @@ def _sku_medians(today) -> dict[tuple, float]:
         """,
         engine, params={"today": today},
     )
-    return {(int(r.master_product_id), int(r.vintage)): float(r.median_price) for _, r in df.iterrows()}
+    return {
+        (int(r.master_product_id), None if pd.isna(r.vintage) else int(r.vintage)): float(r.median_price)
+        for _, r in df.iterrows()
+    }
 
 
 def export_price_review() -> None:
@@ -156,14 +159,15 @@ def export_price_review() -> None:
         if reason is None:
             continue
 
-        key    = (int(row["master_product_id"]), int(row["vintage"]))
+        vintage = None if pd.isna(row["vintage"]) else int(row["vintage"])
+        key    = (int(row["master_product_id"]), vintage)
         median = medians.get(key)
         ratio  = round(price / median, 2) if median else None
 
         flagged.append({
             "estate_name":     estate,
             "retailer":        row["retailer"],
-            "vintage":         int(row["vintage"]),
+            "vintage":         vintage if vintage is not None else "",
             "wine_color":      row["wine_color"],
             "price_€":         round(price, 2),
             "flag_reason":     reason,

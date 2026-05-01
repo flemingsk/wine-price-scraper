@@ -36,6 +36,16 @@ INVALID_URLS = [
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2021",
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2022",
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2023",
+    # Fieuzal Blanc 2020–2022 — blanc URL redirects to rouge product page
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2020",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2021",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2022",
+    # Olivier Blanc 2018–2022 — blanc URL redirects to rouge product page
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2018",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2019",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2020",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2021",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2022",
 ]
 
 DRY_RUN = os.getenv("DRY_RUN", "").lower() in ("1", "true", "yes")

@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 PRICE_RECORDS_TAB = "price_records"
 
 INVALID_URLS = {
+    # Original batch: rouge URLs mislabelled as Blanc, and 404 Carbonnieux pages
     "https://www.cavissima.com/products/chateau-de-fieuzal-2015",
     "https://www.cavissima.com/products/chateau-malartic-lagraviere-2025",
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2015",
@@ -32,6 +33,32 @@ INVALID_URLS = {
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2021",
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2022",
     "https://www.cavissima.com/products/chateau-carbonnieux-blanc-2023",
+    # Fieuzal Blanc 2020–2022: blanc product URL (may appear as-is in GSheet Link column)
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2020",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2021",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2022",
+    # Fieuzal: rouge redirect URLs the scraper may have stored after Shopify redirect
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2020",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2020?_pos=3&_fid=5018eb138&_ss=c",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2021",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2021?_pos=2&_fid=5018eb138&_ss=c",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2022",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-2022?_pos=4&_fid=5018eb138&_ss=c",
+    # Olivier Blanc 2018–2022: blanc product URL (may appear as-is in GSheet Link column)
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2018",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2019",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2020",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2021",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2022",
+    # Olivier: rouge redirect URLs the scraper may have stored after Shopify redirect
+    "https://www.cavissima.com/products/chateau-olivier-2018",
+    "https://www.cavissima.com/products/chateau-olivier-2019",
+    "https://www.cavissima.com/products/chateau-olivier-2020",
+    "https://www.cavissima.com/products/chateau-olivier-2021",
+    "https://www.cavissima.com/products/chateau-olivier-2021?_pos=2&_fid=e6ec2800e&_ss=c",
+    "https://www.cavissima.com/products/chateau-olivier-2022",
+    "https://www.cavissima.com/products/chateau-olivier-2022?_pos=1&_fid=e6ec2800e&_ss=c&variant=50452284408155",
+    "https://www.cavissima.com/products/chateau-olivier-2022?variant=50452284408155",
 }
 
 DRY_RUN = os.getenv("DRY_RUN", "").lower() in ("1", "true", "yes")

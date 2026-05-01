@@ -29,9 +29,10 @@ from src.export_to_gsheet import _get_gsheet_client, GOOGLE_SHEET_NAME
 logger = logging.getLogger(__name__)
 
 # ── Thresholds ─────────────────────────────────────────────────────────────
-LOW_PRICE_THRESHOLD  = 25.0
-HIGH_PRICE_THRESHOLD = 70.0
-FAR_DEVIATION_RATIO  = 3.0   # re-flag an approved SKU if price/median exceeds this
+LOW_PRICE_THRESHOLD_ROUGE = 25.0   # Rouge wines rarely legitimately below this
+LOW_PRICE_THRESHOLD_BLANC = 18.0   # Blanc wines (e.g. Carbonnieux) can be €18–25
+HIGH_PRICE_THRESHOLD      = 70.0
+FAR_DEVIATION_RATIO       = 3.0   # re-flag an approved SKU if price/median exceeds this
 
 EXEMPT_ESTATES = {
     "Chateau Lespault-Martillac",
@@ -151,8 +152,10 @@ def export_price_review() -> None:
         estate = row["estate_name"]
         reason = None
 
-        if price < LOW_PRICE_THRESHOLD and estate not in EXEMPT_ESTATES:
-            reason = f"below {LOW_PRICE_THRESHOLD:.0f} € threshold"
+        wine_color = row.get("wine_color", "Rouge")
+        low_threshold = LOW_PRICE_THRESHOLD_BLANC if wine_color == "Blanc" else LOW_PRICE_THRESHOLD_ROUGE
+        if price < low_threshold and estate not in EXEMPT_ESTATES:
+            reason = f"below {low_threshold:.0f} € threshold ({wine_color})"
         elif price > HIGH_PRICE_THRESHOLD:
             reason = f"above {HIGH_PRICE_THRESHOLD:.0f} € threshold"
 

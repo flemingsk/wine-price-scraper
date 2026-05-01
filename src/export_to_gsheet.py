@@ -56,9 +56,9 @@ def export_daily_report():
                 COUNT(DISTINCT pr.master_product_id)                           AS unique_products,
                 SUM(CASE WHEN pr.price_corrected THEN 1 ELSE 0 END)::int       AS corrected_count
             FROM price_records pr
-            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %s
+            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %(today)s
             """,
-            engine, params=[today],
+            engine, params={"today": today},
         )
         corrections = pd.read_sql(
             """
@@ -73,11 +73,11 @@ def export_daily_report():
                 pr.fetched_at
             FROM price_records pr
             JOIN master_products mp ON mp.id = pr.master_product_id
-            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %s
+            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %(today)s
               AND pr.price_corrected = TRUE
             ORDER BY pr.fetched_at DESC
             """,
-            engine, params=[today],
+            engine, params={"today": today},
         )
     except Exception as exc:
         print(f"export_daily_report: DB query failed for {today}: {exc}")
@@ -346,16 +346,16 @@ def export_run_log(start_time: datetime, duration_seconds: float) -> None:
     # ── 2. Successfully scraped today ─────────────────────────────────────────
     scraped_df = pd.read_sql(
         "SELECT COUNT(DISTINCT master_product_id) AS cnt "
-        "FROM price_records WHERE DATE(fetched_at) = %s AND price_amount IS NOT NULL",
-        engine, params=[today],
+        "FROM price_records WHERE DATE(fetched_at) = %(today)s AND price_amount IS NOT NULL",
+        engine, params={"today": today},
     )
     scraped_count = int(scraped_df.iloc[0]["cnt"])
 
     # ── 3. Corrected today ───────────────────────────────────────────────────
     corrected_df = pd.read_sql(
         "SELECT COUNT(*) AS cnt FROM price_records "
-        "WHERE DATE(fetched_at) = %s AND price_corrected = TRUE",
-        engine, params=[today],
+        "WHERE DATE(fetched_at) = %(today)s AND price_corrected = TRUE",
+        engine, params={"today": today},
     )
     corrected_count = int(corrected_df.iloc[0]["cnt"])
 

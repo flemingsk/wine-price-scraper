@@ -95,7 +95,7 @@ def _sku_medians(today) -> dict[tuple, float]:
     df = pd.read_sql(
         """
         SELECT master_product_id, vintage,
-               PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price_amount) AS median
+               PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price_amount) AS median_price
         FROM price_records
         WHERE price_amount > 0
           AND price_amount IS NOT NULL
@@ -104,7 +104,7 @@ def _sku_medians(today) -> dict[tuple, float]:
         """,
         engine, params={"today": today},
     )
-    return {(int(r.master_product_id), int(r.vintage)): float(r.median) for _, r in df.iterrows()}
+    return {(int(r.master_product_id), int(r.vintage)): float(r.median_price) for _, r in df.iterrows()}
 
 
 def export_price_review() -> None:

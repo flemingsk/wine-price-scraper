@@ -25,9 +25,11 @@ from .export_to_gsheet import _get_gsheet_client, GOOGLE_SHEET_NAME
 
 logger = logging.getLogger(__name__)
 
-REPORT_TAB   = "daily_report"
-APPROVED_TAB = "price_review_approved"
-OLD_TABS     = ["daily_reports", "run_log", "market_analysis", "price_review", "cavissima_blanc_audit"]
+REPORT_TAB = "daily_report"
+OLD_TABS   = [
+    "daily_reports", "run_log", "market_analysis", "price_review",
+    "cavissima_blanc_audit", "alerts", "alert_latest",
+]
 
 NCOLS = 10   # all rows padded to this width
 
@@ -35,7 +37,6 @@ NCOLS = 10   # all rows padded to this width
 LOW_ROUGE          = 25.0
 LOW_BLANC          = 18.0
 HIGH_PRICE         = 70.0
-FAR_DEVIATION      = 3.0   # re-flag approved SKU if ratio exceeds this
 OUTLIER_HIGH       = 1.50  # flag if price > 1.5× cross-retailer median
 OUTLIER_LOW        = 0.67  # flag if price < 0.67× cross-retailer median
 BUYING_OPP_MIN_DIS = 0.10  # at least 10% below 30-day median
@@ -72,37 +73,6 @@ def _delete_old_tabs(sheet) -> None:
             pass
         except Exception as exc:
             logger.warning(f"Could not delete tab '{name}': {exc}")
-
-
-def _load_approved(sheet) -> set[tuple]:
-    try:
-        ws = sheet.worksheet(APPROVED_TAB)
-    except gspread.exceptions.WorksheetNotFound:
-        return set()
-
-    rows = ws.get_all_values()
-    if len(rows) < 2:
-        return set()
-
-    headers = [h.strip().lower() for h in rows[0]]
-    try:
-        ie = headers.index("estate_name")
-        ir = headers.index("retailer")
-        iv = headers.index("vintage")
-    except ValueError:
-        return set()
-
-    approved = set()
-    for row in rows[1:]:
-        try:
-            e = row[ie].strip()
-            r = row[ir].strip()
-            v = int(row[iv])
-            if e and r and v:
-                approved.add((e, r, v))
-        except (ValueError, IndexError):
-            continue
-    return approved
 
 
 # ── Section 1: Run Health ─────────────────────────────────────────────────────
@@ -189,7 +159,7 @@ def _run_health(today, start_time: datetime, duration_seconds: float) -> tuple[l
 
 # ── Section 2: Price Flags ────────────────────────────────────────────────────
 
-def _price_flags(today, approved: set) -> tuple[list[list], int]:
+def _price_flags(today) -> tuple[list[list], int]:
     df = pd.read_sql(
         """
         WITH hist AS (
@@ -225,15 +195,15 @@ def _price_flags(today, approved: set) -> tuple[list[list], int]:
     flag_count = 0
 
     for _, r in df.iterrows():
-        price   = float(r["price_amount"])
-        estate  = r["estate_name"]
-        color   = r["wine_color"] or "Rouge"
-        vintage = "" if pd.isna(r["vintage"]) else int(r["vintage"])
+        price    = float(r["price_amount"])
+        estate   = r["estate_name"]
+        color    = r["wine_color"] or "Rouge"
+        vintage  = "" if pd.isna(r["vintage"]) else int(r["vintage"])
         retailer = r["retailer"]
-        median  = float(r["median_price"]) if pd.notna(r.get("median_price")) else None
-        ratio   = float(r["ratio"]) if pd.notna(r.get("ratio")) else None
-        n_ret   = int(r["n_retailers"]) if pd.notna(r.get("n_retailers")) else 0
-        url     = r["url"] or ""
+        median   = float(r["median_price"]) if pd.notna(r.get("median_price")) else None
+        ratio    = float(r["ratio"]) if pd.notna(r.get("ratio")) else None
+        n_ret    = int(r["n_retailers"]) if pd.notna(r.get("n_retailers")) else 0
+        url      = r["url"] or ""
 
         issues = []
         low_threshold = LOW_BLANC if color == "Blanc" else LOW_ROUGE
@@ -249,13 +219,6 @@ def _price_flags(today, approved: set) -> tuple[list[list], int]:
 
         if not issues:
             continue
-
-        # Suppress approved items unless ratio is extreme
-        approved_key = (estate, retailer, vintage if vintage != "" else None)
-        if approved_key in approved:
-            if ratio is None or ratio <= FAR_DEVIATION:
-                continue
-            issues = [f"APPROVED but {ratio:.1f}× median — re-flagged"] + issues
 
         flag_count += 1
         rows.append(_pad([
@@ -299,12 +262,12 @@ def _retailer_spreads(today) -> list[list]:
     for (estate, color, vintage), grp in df.groupby(["estate_name", "wine_color", "vintage"], dropna=False):
         if len(grp["retailer"].unique()) < MIN_RETAILERS:
             continue
-        min_row  = grp.loc[grp["price_amount"].idxmin()]
-        max_row  = grp.loc[grp["price_amount"].idxmax()]
-        min_p    = float(min_row["price_amount"])
-        max_p    = float(max_row["price_amount"])
-        spread   = round((max_p - min_p) / min_p * 100, 1) if min_p > 0 else 0
-        n        = grp["retailer"].nunique()
+        min_row = grp.loc[grp["price_amount"].idxmin()]
+        max_row = grp.loc[grp["price_amount"].idxmax()]
+        min_p   = float(min_row["price_amount"])
+        max_p   = float(max_row["price_amount"])
+        spread  = round((max_p - min_p) / min_p * 100, 1) if min_p > 0 else 0
+        n       = grp["retailer"].nunique()
         vintage_str = "" if pd.isna(vintage) else int(vintage)
         groups.append((estate, color, vintage_str, min_p, min_row["retailer"], min_row["url"] or "",
                        max_p, max_row["retailer"], spread, n))
@@ -478,13 +441,11 @@ def export_daily_report(start_time: datetime, duration_seconds: float) -> None:
     except gspread.exceptions.WorksheetNotFound:
         ws = sheet.add_worksheet(title=REPORT_TAB, rows=2000, cols=NCOLS)
 
-    approved = _load_approved(sheet)
-
-    health_rows, stats  = _run_health(today, start_time, duration_seconds)
-    flag_rows, n_flags  = _price_flags(today, approved)
-    spread_rows         = _retailer_spreads(today)
-    trend_rows          = _price_trends(today)
-    opp_rows            = _buying_opps(today)
+    health_rows, stats = _run_health(today, start_time, duration_seconds)
+    flag_rows, n_flags = _price_flags(today)
+    spread_rows        = _retailer_spreads(today)
+    trend_rows         = _price_trends(today)
+    opp_rows           = _buying_opps(today)
 
     # ── Narrative headline ────────────────────────────────────────────────────
     best_opp = ""

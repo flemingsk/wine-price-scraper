@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 REPORT_TAB   = "daily_report"
 APPROVED_TAB = "price_review_approved"
-OLD_TABS     = ["daily_reports", "run_log", "market_analysis", "price_review"]
+OLD_TABS     = ["daily_reports", "run_log", "market_analysis", "price_review", "cavissima_blanc_audit"]
 
 NCOLS = 10   # all rows padded to this width
 

@@ -1,0 +1,43 @@
+name: Deactivate Invalid Master Product Entry
+
+on:
+  workflow_dispatch:
+    inputs:
+      invalid_url:
+        description: "Product URL to deactivate and clean up"
+        required: true
+        default: "https://www.vintageandco.com/46961.chateau-carbonnieux-2018-pessac-leognan-bordeaux.html"
+      dry_run:
+        description: "Dry run (count only, no changes)"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+jobs:
+  deactivate:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      GSHEET_CREDENTIALS_JSON: ${{ secrets.GSHEET_CREDENTIALS_JSON }}
+      INVALID_URL: ${{ inputs.invalid_url }}
+      DRY_RUN: ${{ inputs.dry_run }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Deactivate entry and clean up records
+        run: python -m src.deactivate_invalid_entry

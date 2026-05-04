@@ -263,7 +263,7 @@ Chateau Malartic-Lagraviere,dubecq,https://www.dubecq.com/fr/catalogue/7074-chat
 Chateau Malartic-Lagraviere,dubecq,https://www.dubecq.com/fr/catalogue/8303-chateau-malartic-lagraviere-grand-cru-classe-2023-la-bouteille-75cl.html,,span.price,2023,2023,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Sociando-Mallet,dubecq,https://www.dubecq.com/fr/catalogue/6685-chateau-sociando-mallet-rouge-2016-la-bouteille-75cl.html,,span.price,2016,2016,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Sociando-Mallet,dubecq,https://www.dubecq.com/fr/catalogue/3619-chateau-sociando-mallet-rouge-2017-la-bouteille-75cl.html,,span.price,2017,2017,0.75L,TRUE,Rouge,Explicit URL,
-Chateau Sociando-Mallet,dubecq,https://www.dubecq.com/fr/catalogue/4324-chateau-sociando-mallet-rouge-2018-la-bouteille-75cl.html,,span.price,2018,2018,0.75L,TRUE,Rouge,Explicit URL,
+Chateau Sociando-Mallet,dubecq,https://www.dubecq.com/fr/catalogue/4324-chateau-sociando-mallet-rouge-2018-la-bouteille-75cl.html,,span.price,2018,2018,0.75L,FALSE,Rouge,Explicit URL — INVALID: magnum despite 75cl in slug,
 Chateau Sociando-Mallet,dubecq,https://www.dubecq.com/fr/catalogue/5723-chateau-sociando-mallet-rouge-2020-la-bouteille-75cl.html,,span.price,2020,2020,0.75L,TRUE,Rouge,Explicit URL,
 Chateau La Louviere,e_leclerc,https://www.e.leclerc/fp/chateau-la-louviere-2023-pessac-leognan-aop-rouge-75-cl-3338835023107,,,2023,2023,0.75L,TRUE,Rouge,Seed URL from user,
 Chateau Bouscaut,hallesdequercamps,https://www.hallesdequercamps.com/10949-cht-bouscaut-cb6-2017-pessac-leognan-rge-75cl-crd.html,,span[itemprop='price'],2017,2017,0.75L,TRUE,Rouge,Seed URL from user; cb6=case of 6 (price validator will correct),

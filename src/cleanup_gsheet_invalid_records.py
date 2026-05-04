@@ -59,6 +59,10 @@ INVALID_URLS = {
     "https://www.cavissima.com/products/chateau-olivier-2022",
     "https://www.cavissima.com/products/chateau-olivier-2022?_pos=1&_fid=e6ec2800e&_ss=c&variant=50452284408155",
     "https://www.cavissima.com/products/chateau-olivier-2022?variant=50452284408155",
+    # Fieuzal Blanc 2019/2023 and Olivier Blanc 2023 — all 404 pages
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2019",
+    "https://www.cavissima.com/products/chateau-de-fieuzal-blanc-2023",
+    "https://www.cavissima.com/products/chateau-olivier-blanc-2023",
 }
 
 DRY_RUN = os.getenv("DRY_RUN", "").lower() in ("1", "true", "yes")

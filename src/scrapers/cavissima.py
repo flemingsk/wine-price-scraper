@@ -152,7 +152,9 @@ class CavissimaScraper(BaseScraper):
                         f"→ unit={t['unit_price']:.2f} {t['currency']}"
                     )
 
-                best = max(tiles, key=lambda t: t["bottle_count"])
+                # Prefer single-bottle tile for fair cross-retailer comparison;
+                # fall back to smallest available case if no single-bottle tile.
+                best = min(tiles, key=lambda t: t["bottle_count"])
                 price_amount   = best["unit_price"]
                 currency       = best["currency"]
                 raw_price_text = (

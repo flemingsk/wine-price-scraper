@@ -112,7 +112,7 @@ Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2019,,span.price-item__unit,2019,2019,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2020?variant=52474791821659,,span.price-item__unit,2020,2020,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2025,,span.price-item__unit,2020,2020,0.75L,FALSE,Blanc,Explicit URL — INVALID: rouge URL not blanc,
-Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2024?variant=50451691897179,,span.price-item__unit,2021,2021,0.75L,TRUE,Rouge,Explicit URL,
+Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2024?variant=50451691897179,,span.price-item__unit,2021,2021,0.75L,TRUE,Rouge,Explicit URL — cavissima slug uses listing ID 2024 not vintage; variant locks to 75cl bottle,
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2022,,span.price-item__unit,2022,2022,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2023,,span.price-item__unit,2023,2023,0.75L,TRUE,Rouge,Explicit URL,
 Chateau Malartic-Lagraviere,cavissima,https://www.cavissima.com/products/chateau-malartic-lagraviere-2024,,span.price-item__unit,2024,2024,0.75L,TRUE,Rouge,Explicit URL,

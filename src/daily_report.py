@@ -279,7 +279,7 @@ def _price_flags(today, approved: set) -> tuple[list[list], int]:
 def _retailer_spreads(today) -> list[list]:
     df = pd.read_sql(
         """
-        SELECT mp.estate_name, mp.wine_color, pr.vintage, mp.retailer, pr.price_amount
+        SELECT mp.estate_name, mp.wine_color, pr.vintage, mp.retailer, pr.price_amount, pr.url
         FROM price_records pr
         JOIN master_products mp ON mp.id = pr.master_product_id
         WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %(today)s
@@ -288,7 +288,7 @@ def _retailer_spreads(today) -> list[list]:
         engine, params={"today": today},
     )
 
-    rows = [_cols("Estate", "Color", "Vintage", "Min €", "Cheapest Retailer",
+    rows = [_cols("Estate", "Color", "Vintage", "Min €", "Cheapest Retailer", "Cheapest URL",
                   "Max €", "Priciest Retailer", "Spread %", "N Retailers")]
 
     if df.empty:
@@ -306,15 +306,15 @@ def _retailer_spreads(today) -> list[list]:
         spread   = round((max_p - min_p) / min_p * 100, 1) if min_p > 0 else 0
         n        = grp["retailer"].nunique()
         vintage_str = "" if pd.isna(vintage) else int(vintage)
-        groups.append((estate, color, vintage_str, min_p, min_row["retailer"],
+        groups.append((estate, color, vintage_str, min_p, min_row["retailer"], min_row["url"] or "",
                        max_p, max_row["retailer"], spread, n))
 
-    groups.sort(key=lambda x: x[7], reverse=True)
+    groups.sort(key=lambda x: x[8], reverse=True)
 
     for g in groups:
-        estate, color, vintage, min_p, cheap, max_p, pricey, spread, n = g
+        estate, color, vintage, min_p, cheap, cheap_url, max_p, pricey, spread, n = g
         rows.append(_pad([estate, color, vintage,
-                          f"€{min_p:.2f}", cheap,
+                          f"€{min_p:.2f}", cheap, cheap_url,
                           f"€{max_p:.2f}", pricey,
                           f"{spread:.1f}%", n]))
 
@@ -342,14 +342,14 @@ def _price_trends(today, days: int = 7, min_pct: float = 5.0) -> list[list]:
         ),
         today AS (
             SELECT DISTINCT ON (pr.master_product_id, pr.vintage)
-                pr.master_product_id, pr.vintage, pr.price_amount AS today_price
+                pr.master_product_id, pr.vintage, pr.price_amount AS today_price, pr.url
             FROM price_records pr
             WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %(today)s
               AND pr.price_amount IS NOT NULL AND pr.price_amount > 0
             ORDER BY pr.master_product_id, pr.vintage, pr.fetched_at DESC
         )
         SELECT mp.estate_name, mp.wine_color, t.vintage, mp.retailer,
-               r.ref_price, t.today_price,
+               r.ref_price, t.today_price, t.url,
                ROUND(((t.today_price - r.ref_price) / r.ref_price * 100)::numeric, 1) AS pct_change
         FROM today t
         JOIN ref r ON r.master_product_id = t.master_product_id
@@ -364,7 +364,7 @@ def _price_trends(today, days: int = 7, min_pct: float = 5.0) -> list[list]:
     )
 
     rows = [_cols("Estate", "Color", "Vintage", "Retailer",
-                  f"Price {days}d Ago €", "Price Today €", "Δ%", "Direction")]
+                  f"Price {days}d Ago €", "Price Today €", "Δ%", "Direction", "URL")]
 
     if df.empty:
         rows.append(_pad([f"No price changes > {min_pct:.0f}% in the past {days} days."]))
@@ -379,6 +379,7 @@ def _price_trends(today, days: int = 7, min_pct: float = 5.0) -> list[list]:
             f"€{float(r['today_price']):.2f}",
             f"{pct:+.1f}%",
             "↑" if pct > 0 else "↓",
+            r["url"] or "",
         ]))
 
     return rows

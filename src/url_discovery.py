@@ -289,12 +289,17 @@ def _strip_tracking_params(url: str) -> str:
     return base
 
 
-def load_known_products() -> list[KnownProduct]:
-    """Read master_products.csv and return all active entries (rouge + blanc)."""
+def load_known_products(active_only: bool = True) -> list[KnownProduct]:
+    """Read master_products.csv and return entries (rouge + blanc).
+
+    active_only=True  → only active entries (used for scraping / probing logic)
+    active_only=False → all entries including inactive (used to build dedup sets
+                        so retired URLs are never re-appended by discovery)
+    """
     products: list[KnownProduct] = []
     with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
-            if row.get("active", "").upper() != "TRUE":
+            if active_only and row.get("active", "").upper() != "TRUE":
                 continue
             try:
                 vintage = int(row["vintage_start"])
@@ -558,7 +563,9 @@ def crawl_region_page(
 
 
 def run_listing_crawl(products: list[KnownProduct]) -> list[ListingDiscovery]:
-    known_urls = {p.url for p in products}
+    # Include inactive entries so retired URLs are never re-appended
+    all_products = load_known_products(active_only=False)
+    known_urls = {p.url for p in all_products}
     all_estates = _all_estates(products)
     listing_pages = _build_all_listing_pages(products)
 
@@ -611,8 +618,11 @@ def run_url_probing(products: list[KnownProduct]) -> list[ProbeDiscovery]:
     # URL probing is rouge-only — blanc slugs vary too much per retailer.
     # Keying on wine_color ensures we don't skip rouge probes for estates
     # that already have a blanc row for the same vintage.
+    # Include inactive entries so retired (retailer, estate, vintage, color)
+    # combos are never re-probed and re-appended by discovery.
+    all_products = load_known_products(active_only=False)
     known_set: set[tuple[str, str, int, str]] = {
-        (p.retailer, p.estate_name, p.vintage, p.wine_color) for p in products
+        (p.retailer, p.estate_name, p.vintage, p.wine_color) for p in all_products
     }
     all_estates = _all_estates(products)
 

@@ -83,9 +83,11 @@ def _ensure_flags_tab(sheet):
         if not ws.get_all_values():
             ws.append_row(FLAGS_HEADER)
     except gspread.exceptions.WorksheetNotFound:
-        # cols=26 ensures columns up to Z exist for the README sidebar
         ws = sheet.add_worksheet(title=FLAGS_TAB, rows=2000, cols=26)
         ws.append_row(FLAGS_HEADER)
+    # Expand columns if tab was created before the README sidebar was added
+    if ws.col_count < 26:
+        ws.resize(rows=max(ws.row_count, 2000), cols=26)
     _write_flags_readme(ws)
     _set_flags_validation(ws)
     return ws

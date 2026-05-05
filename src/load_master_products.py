@@ -22,6 +22,78 @@ ESTATE_NAME_CANONICAL: dict[str, str] = {
 }
 
 
+def _fix_wrong_estate_names(session) -> None:
+    """
+    Detect and fix any master_products rows whose estate_name is not canonical.
+    Runs before the CSV upsert so the unique-key collision never happens.
+
+    When the CSV corrects a typo the unique constraint (which includes estate_name)
+    means the loader would INSERT a new row instead of updating the old one. This
+    function catches that: it renames orphaned wrong-named rows and, when a
+    correctly-named row already exists, merges their price_records and deletes
+    the orphan.
+    """
+    from sqlalchemy import text as sa_text
+
+    for wrong_name, correct_name in ESTATE_NAME_CANONICAL.items():
+        wrong_rows = session.execute(
+            sa_text("SELECT id, retailer, vintage_start, bottle_size"
+                    " FROM master_products WHERE estate_name = :name"),
+            {"name": wrong_name},
+        ).fetchall()
+
+        for row in wrong_rows:
+            wrong_id = row.id
+            correct_row = session.execute(
+                sa_text("""
+                    SELECT id FROM master_products
+                    WHERE estate_name = :name AND retailer = :ret
+                      AND vintage_start IS NOT DISTINCT FROM :vs
+                      AND bottle_size = :bs
+                """),
+                {"name": correct_name, "ret": row.retailer,
+                 "vs": row.vintage_start, "bs": row.bottle_size},
+            ).fetchone()
+
+            if correct_row:
+                # Correct row already exists — merge price_records then delete orphan
+                correct_id = correct_row.id
+                session.execute(sa_text("""
+                    UPDATE price_records pr
+                    SET master_product_id = :cid
+                    WHERE master_product_id = :wid
+                      AND NOT EXISTS (
+                        SELECT 1 FROM price_records pr2
+                        WHERE pr2.master_product_id = :cid
+                          AND pr2.vintage IS NOT DISTINCT FROM pr.vintage
+                          AND DATE(pr2.fetched_at AT TIME ZONE 'UTC')
+                              = DATE(pr.fetched_at AT TIME ZONE 'UTC')
+                      )
+                """), {"cid": correct_id, "wid": wrong_id})
+                session.execute(
+                    sa_text("DELETE FROM price_records WHERE master_product_id = :id"),
+                    {"id": wrong_id},
+                )
+                session.execute(
+                    sa_text("DELETE FROM master_products WHERE id = :id"),
+                    {"id": wrong_id},
+                )
+                logger.info(
+                    f"estate_name fix: merged '{wrong_name}' (id={wrong_id})"
+                    f" into '{correct_name}' (id={correct_id})"
+                )
+            else:
+                # No correct row — rename in place (no price_records disruption)
+                session.execute(
+                    sa_text("UPDATE master_products SET estate_name = :name WHERE id = :id"),
+                    {"name": correct_name, "id": wrong_id},
+                )
+                logger.info(
+                    f"estate_name fix: renamed '{wrong_name}' (id={wrong_id})"
+                    f" → '{correct_name}'"
+                )
+
+
 def main():
     csv_path = os.path.abspath(MASTER_PRODUCTS_CSV)
     if not os.path.exists(csv_path):
@@ -88,6 +160,10 @@ def main():
 
     session = SessionLocal()
     try:
+        # Fix any wrong-named rows BEFORE upserting so the unique key never collides
+        _fix_wrong_estate_names(session)
+        session.commit()
+
         stmt = pg_insert(MasterProduct).values(records)
         # ON CONFLICT DO UPDATE — keep mutable fields in sync with the CSV so that
         # fixes to selectors, URLs, active flag, wine_color etc. are applied on

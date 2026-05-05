@@ -22,6 +22,7 @@ from sqlalchemy import text
 
 from .db import engine
 from .export_to_gsheet import _get_gsheet_client, GOOGLE_SHEET_NAME
+from .process_flags import FLAGS_TAB, FLAGS_HEADER
 
 logger = logging.getLogger(__name__)
 
@@ -73,6 +74,52 @@ def _delete_old_tabs(sheet) -> None:
             pass
         except Exception as exc:
             logger.warning(f"Could not delete tab '{name}': {exc}")
+
+
+def _ensure_flags_tab(sheet):
+    """Get or create the 'flags' worksheet with the correct header row."""
+    try:
+        ws = sheet.worksheet(FLAGS_TAB)
+        if not ws.get_all_values():
+            ws.append_row(FLAGS_HEADER)
+    except gspread.exceptions.WorksheetNotFound:
+        ws = sheet.add_worksheet(title=FLAGS_TAB, rows=2000, cols=len(FLAGS_HEADER))
+        ws.append_row(FLAGS_HEADER)
+    return ws
+
+
+def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
+    """Append auto-detected price flags to the flags tab, deduped by (url, date)."""
+    if not detected_items:
+        return
+    today_str = str(today)
+    existing = ws.get_all_values()
+    header = existing[0] if existing else FLAGS_HEADER
+    url_col  = header.index("current_url")   if "current_url"   in header else None
+    date_col = header.index("date_flagged")  if "date_flagged"  in header else None
+    existing_keys = set()
+    if url_col is not None and date_col is not None:
+        for row in existing[1:]:
+            if len(row) > max(url_col, date_col):
+                existing_keys.add((row[url_col], row[date_col]))
+    new_rows = []
+    for item in detected_items:
+        url = item.get("current_url", "")
+        if (url, today_str) in existing_keys:
+            continue
+        new_rows.append([
+            today_str, "auto-detected",
+            item.get("estate_name", ""), item.get("retailer", ""),
+            str(item.get("vintage", "")), url,
+            "",  # issue_type — user fills in from: incorrect-url / magnum / 404 / wrong-estate / wrong-vintage / wrong-price / other
+            "",  # corrected_url — user fills in when issue_type = incorrect-url
+            item.get("notes", ""),
+            "auto-detected",  # status — change to 'pending' to trigger processing next run
+            "",
+        ])
+    if new_rows:
+        ws.append_rows(new_rows, value_input_option="USER_ENTERED")
+        logger.info(f"Wrote {len(new_rows)} auto-detected flags to '{FLAGS_TAB}'")
 
 
 # ── Section 1: Run Health ─────────────────────────────────────────────────────
@@ -159,7 +206,7 @@ def _run_health(today, start_time: datetime, duration_seconds: float) -> tuple[l
 
 # ── Section 2: Price Flags ────────────────────────────────────────────────────
 
-def _price_flags(today) -> tuple[list[list], int]:
+def _price_flags(today) -> tuple[list[list], int, list[dict]]:
     df = pd.read_sql(
         """
         WITH hist AS (
@@ -193,6 +240,7 @@ def _price_flags(today) -> tuple[list[list], int]:
     rows = [_cols("Estate", "Color", "Vintage", "Retailer", "Price €", "Hist. Median €",
                   "Ratio", "Retailers", "Issue", "URL")]
     flag_count = 0
+    detected_items = []
 
     for _, r in df.iterrows():
         price    = float(r["price_amount"])
@@ -230,11 +278,18 @@ def _price_flags(today) -> tuple[list[list], int]:
             " | ".join(issues),
             url,
         ]))
+        detected_items.append({
+            "estate_name": estate,
+            "retailer": retailer,
+            "vintage": vintage,
+            "current_url": url,
+            "notes": " | ".join(issues),
+        })
 
     if flag_count == 0:
         rows.append(_pad(["✓ No price flags today — all prices within expected range."]))
 
-    return rows, flag_count
+    return rows, flag_count, detected_items
 
 
 # ── Section 3: Retailer Spreads ───────────────────────────────────────────────
@@ -426,7 +481,11 @@ def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
 
 # ── Main export ───────────────────────────────────────────────────────────────
 
-def export_daily_report(start_time: datetime, duration_seconds: float) -> None:
+def export_daily_report(
+    start_time: datetime,
+    duration_seconds: float,
+    flags_summary: dict | None = None,
+) -> None:
     today     = start_time.date()
     generated = start_time.strftime("%Y-%m-%d %H:%M UTC")
 
@@ -434,6 +493,7 @@ def export_daily_report(start_time: datetime, duration_seconds: float) -> None:
     sheet  = client.open(GOOGLE_SHEET_NAME)
 
     _delete_old_tabs(sheet)
+    ws_flags = _ensure_flags_tab(sheet)
 
     try:
         ws = sheet.worksheet(REPORT_TAB)
@@ -441,8 +501,16 @@ def export_daily_report(start_time: datetime, duration_seconds: float) -> None:
     except gspread.exceptions.WorksheetNotFound:
         ws = sheet.add_worksheet(title=REPORT_TAB, rows=2000, cols=NCOLS)
 
-    health_rows, stats = _run_health(today, start_time, duration_seconds)
-    flag_rows, n_flags = _price_flags(today)
+    health_rows, stats   = _run_health(today, start_time, duration_seconds)
+    if flags_summary:
+        p, m, e = flags_summary["processed"], flags_summary["needs_manual"], flags_summary["errors"]
+        health_rows.append(_pad([
+            "Flags processed this run", p,
+            f"{m} need manual action | {e} error(s)" if (m or e) else "all auto-applied",
+        ]))
+
+    flag_rows, n_flags, detected_items = _price_flags(today)
+    _write_detected_flags(ws_flags, detected_items, today)
     spread_rows        = _retailer_spreads(today)
     trend_rows         = _price_trends(today)
     opp_rows           = _buying_opps(today)

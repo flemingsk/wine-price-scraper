@@ -11,6 +11,7 @@ from .scraper_engine import scrape_retailer_products
 from .export_to_gsheet import export_to_gsheet
 from .daily_report import export_daily_report
 from .load_master_products import main as load_master_products
+from .process_flags import process_flags
 
 logging.basicConfig(
     level=logging.INFO,
@@ -74,12 +75,13 @@ def main():
 
     logging.info("Starting daily wine price scraper")
     init_db()
+    flags_summary = process_flags()
     load_master_products()
     run_once()
     export_to_gsheet()
 
     duration_seconds = time.monotonic() - t0
-    export_daily_report(start_time, duration_seconds)
+    export_daily_report(start_time, duration_seconds, flags_summary=flags_summary)
     logging.info("Scraper finished successfully")
 
 

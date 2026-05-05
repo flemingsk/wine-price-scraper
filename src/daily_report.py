@@ -22,7 +22,7 @@ from sqlalchemy import text
 
 from .db import engine
 from .export_to_gsheet import _get_gsheet_client, GOOGLE_SHEET_NAME
-from .process_flags import FLAGS_TAB, FLAGS_HEADER
+from .process_flags import FLAGS_TAB, FLAGS_HEADER, FLAGS_README, ISSUE_TYPES, STATUS_VALUES
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +83,48 @@ def _ensure_flags_tab(sheet):
         if not ws.get_all_values():
             ws.append_row(FLAGS_HEADER)
     except gspread.exceptions.WorksheetNotFound:
-        ws = sheet.add_worksheet(title=FLAGS_TAB, rows=2000, cols=len(FLAGS_HEADER))
+        # cols=26 ensures columns up to Z exist for the README sidebar
+        ws = sheet.add_worksheet(title=FLAGS_TAB, rows=2000, cols=26)
         ws.append_row(FLAGS_HEADER)
+    _write_flags_readme(ws)
+    _set_flags_validation(ws)
     return ws
+
+
+def _write_flags_readme(ws) -> None:
+    """Write the README sidebar to column N, always overwriting so it stays current."""
+    # Column N = 14th column; data occupies A-L (12 cols), M is a spacer
+    readme_data = [[line] for line in FLAGS_README]
+    readme_data += [[""] for _ in range(10)]  # clear any previously longer README
+    ws.update(f"N1:N{len(readme_data)}", readme_data)
+
+
+def _set_flags_validation(ws) -> None:
+    """Apply dropdown validation on issue_type and status columns. Run on every setup."""
+    issue_col  = FLAGS_HEADER.index("issue_type")
+    status_col = FLAGS_HEADER.index("status")
+    requests = []
+    for col_idx, values in [(issue_col, ISSUE_TYPES), (status_col, STATUS_VALUES)]:
+        requests.append({
+            "setDataValidation": {
+                "range": {
+                    "sheetId": ws.id,
+                    "startRowIndex": 1,   # skip header row
+                    "endRowIndex": 2000,
+                    "startColumnIndex": col_idx,
+                    "endColumnIndex": col_idx + 1,
+                },
+                "rule": {
+                    "condition": {
+                        "type": "ONE_OF_LIST",
+                        "values": [{"userEnteredValue": v} for v in values],
+                    },
+                    "showCustomUi": True,
+                    "strict": False,  # allow system-written values like "auto-detected"
+                },
+            }
+        })
+    ws.spreadsheet.batch_update({"requests": requests})
 
 
 def _load_validated(ws) -> set:
@@ -133,11 +172,12 @@ def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
         new_rows.append([
             today_str, "auto-detected",
             item.get("estate_name", ""), item.get("retailer", ""),
-            str(item.get("vintage", "")), url,
-            "",  # issue_type — user fills in from: incorrect-url / wrong-format / 404 / wrong-estate / wrong-vintage / wrong-price / validated-ok / other
-            "",  # corrected_url — user fills in when issue_type = incorrect-url
+            str(item.get("vintage", "")), item.get("price", ""),
+            url,
+            "",              # issue_type — pick from dropdown
+            "",              # corrected_url — fill in for incorrect-url / wrong-format with replacement
             item.get("notes", ""),
-            "auto-detected",  # status — change to 'pending' to trigger processing next run
+            "auto-detected", # status — change to 'pending' to trigger processing
             "",
         ])
     if new_rows:
@@ -308,6 +348,7 @@ def _price_flags(today, suppressed: set = frozenset()) -> tuple[list[list], int,
             "estate_name": estate,
             "retailer": retailer,
             "vintage": vintage,
+            "price": f"€{price:.2f}",
             "current_url": url,
             "notes": " | ".join(issues),
         })

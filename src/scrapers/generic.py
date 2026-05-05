@@ -46,9 +46,12 @@ class GenericStaticScraper(BaseScraper):
     Ready-to-use scraper for simple static HTML retailers.
     Subclasses only need to set `retailer`.
     Optionally override FALLBACK_SELECTORS for site-specific selectors.
+    Set verify_url_match = True for retailers that silently redirect
+    unavailable products to a category/home page (soft-404 pattern).
     """
     retailer = ""
-    FALLBACK_SELECTORS: list[str] = []  # override in subclass if needed
+    FALLBACK_SELECTORS: list[str] = []
+    verify_url_match: bool = False
 
     def scrape(self, product) -> list[ScrapeResult]:
         results = []
@@ -74,6 +77,18 @@ class GenericStaticScraper(BaseScraper):
                     logger.info(f"{self.retailer}: 404 at {url} — skipping")
                     continue
                 r.raise_for_status()
+
+                if self.verify_url_match:
+                    from urllib.parse import urlparse
+                    req_path  = urlparse(url).path.rstrip("/")
+                    resp_path = urlparse(r.url).path.rstrip("/")
+                    if req_path != resp_path:
+                        logger.info(
+                            f"{self.retailer}: soft-404 — {url} redirected to {r.url} "
+                            f"(product unavailable), skipping"
+                        )
+                        polite_delay(1.5, 3.0)
+                        continue
 
                 soup = BeautifulSoup(r.text, "html.parser")
 

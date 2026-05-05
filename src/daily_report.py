@@ -7,7 +7,7 @@ Replaces: daily_reports, run_log, market_analysis, price_review tabs.
 Sections:
   1. RUN HEALTH       — scrape counts, success rate, failures, missing vs yesterday
   2. PRICE FLAGS      — threshold violations + cross-retailer outliers needing review
-  3. RETAILER SPREADS — cheapest vs most expensive per wine today (arbitrage view)
+  3. RETAILER SPREADS — best price vs 7-day median, filtered to >10% deviation
   4. PRICE TRENDS 7D  — movers > 5% over the past 7 days
   5. BUYING OPPS      — top 10 wines priced ≥10% below their 30-day market median
 """
@@ -365,22 +365,41 @@ def _price_flags(today, suppressed: set = frozenset()) -> tuple[list[list], int,
     return rows, flag_count, detected_items
 
 
-# ── Section 3: Retailer Spreads ───────────────────────────────────────────────
+# ── Section 3: Retailer Spreads vs 7-day Median ──────────────────────────────
+
+SPREAD_VS_MEDIAN_MIN = 0.10   # only show if either extreme deviates >10% from 7d median
 
 def _retailer_spreads(today) -> list[list]:
+    yesterday = today - timedelta(days=1)
+    week_ago  = today - timedelta(days=7)
+
     df = pd.read_sql(
         """
-        SELECT mp.estate_name, mp.wine_color, pr.vintage, mp.retailer, pr.price_amount, pr.url
+        WITH hist_7d AS (
+            SELECT mp.estate_name, pr.vintage, mp.wine_color,
+                   PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY pr.price_amount) AS median_7d
+            FROM price_records pr
+            JOIN master_products mp ON mp.id = pr.master_product_id
+            WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') BETWEEN %(week_ago)s AND %(yesterday)s
+              AND pr.price_amount IS NOT NULL AND pr.price_amount > 0
+            GROUP BY mp.estate_name, pr.vintage, mp.wine_color
+        )
+        SELECT mp.estate_name, mp.wine_color, pr.vintage, mp.retailer,
+               pr.price_amount, pr.url, h.median_7d
         FROM price_records pr
         JOIN master_products mp ON mp.id = pr.master_product_id
+        LEFT JOIN hist_7d h ON h.estate_name = mp.estate_name
+                           AND h.vintage IS NOT DISTINCT FROM pr.vintage
+                           AND h.wine_color = mp.wine_color
         WHERE DATE(pr.fetched_at AT TIME ZONE 'UTC') = %(today)s
           AND pr.price_amount IS NOT NULL AND pr.price_amount > 0
         """,
-        engine, params={"today": today},
+        engine, params={"today": today, "yesterday": yesterday, "week_ago": week_ago},
     )
 
-    rows = [_cols("Estate", "Color", "Vintage", "Min €", "Cheapest Retailer", "Cheapest URL",
-                  "Max €", "Priciest Retailer", "Spread %", "N Retailers")]
+    rows = [_cols("Estate", "Color", "Vintage", "7d Median €",
+                  "Best Price €", "Best Retailer", "vs Median %",
+                  "Priciest €", "Priciest Retailer", "Best URL")]
 
     if df.empty:
         rows.append(_pad(["No data for today."]))
@@ -388,29 +407,48 @@ def _retailer_spreads(today) -> list[list]:
 
     groups = []
     for (estate, color, vintage), grp in df.groupby(["estate_name", "wine_color", "vintage"], dropna=False):
-        if len(grp["retailer"].unique()) < MIN_RETAILERS:
+        if grp["retailer"].nunique() < MIN_RETAILERS:
             continue
+        median_7d = grp["median_7d"].iloc[0]
+        if pd.isna(median_7d) or float(median_7d) <= 0:
+            continue  # no historical reference to compare against
+
         min_row = grp.loc[grp["price_amount"].idxmin()]
         max_row = grp.loc[grp["price_amount"].idxmax()]
-        min_p   = float(min_row["price_amount"])
-        max_p   = float(max_row["price_amount"])
-        spread  = round((max_p - min_p) / min_p * 100, 1) if min_p > 0 else 0
-        n       = grp["retailer"].nunique()
-        vintage_str = "" if pd.isna(vintage) else int(vintage)
-        groups.append((estate, color, vintage_str, min_p, min_row["retailer"], min_row["url"] or "",
-                       max_p, max_row["retailer"], spread, n))
+        min_p = float(min_row["price_amount"])
+        max_p = float(max_row["price_amount"])
+        med   = float(median_7d)
 
-    groups.sort(key=lambda x: x[8], reverse=True)
+        min_vs_med = (min_p - med) / med * 100   # negative = cheaper than median
+        max_vs_med = (max_p - med) / med * 100   # positive = pricier than median
+        sort_key   = max(abs(min_vs_med), abs(max_vs_med))
+
+        if sort_key <= SPREAD_VS_MEDIAN_MIN * 100:
+            continue
+
+        vintage_str = "" if pd.isna(vintage) else int(vintage)
+        groups.append((
+            estate, color, vintage_str,
+            med, min_p, min_row["retailer"], min_row["url"] or "",
+            min_vs_med,
+            max_p, max_row["retailer"],
+            sort_key,
+        ))
+
+    groups.sort(key=lambda x: x[10], reverse=True)
 
     for g in groups:
-        estate, color, vintage, min_p, cheap, cheap_url, max_p, pricey, spread, n = g
-        rows.append(_pad([estate, color, vintage,
-                          f"€{min_p:.2f}", cheap, cheap_url,
-                          f"€{max_p:.2f}", pricey,
-                          f"{spread:.1f}%", n]))
+        estate, color, vintage, med, min_p, cheap, cheap_url, min_vs_med, max_p, pricey, _ = g
+        rows.append(_pad([
+            estate, color, vintage,
+            f"€{med:.2f}",
+            f"€{min_p:.2f}", cheap, f"{min_vs_med:+.1f}%",
+            f"€{max_p:.2f}", pricey,
+            cheap_url,
+        ]))
 
-    if len(groups) == 0:
-        rows.append(_pad(["No products with ≥2 retailer prices today."]))
+    if not groups:
+        rows.append(_pad(["No products with >10% spread vs 7-day median today."]))
 
     return rows
 
@@ -612,7 +650,7 @@ def export_daily_report(
         _section("SECTION 2 — PRICE FLAGS — REVIEW REQUIRED"),
         *flag_rows,
         _blank(),
-        _section("SECTION 3 — RETAILER SPREAD TODAY (sorted by spread %, min 2 retailers)"),
+        _section("SECTION 3 — RETAILER SPREAD vs 7-DAY MEDIAN (>10% deviation, sorted by spread)"),
         *spread_rows,
         _blank(),
         _section("SECTION 4 — PRICE TRENDS — 7 DAYS (changes > 5%)"),

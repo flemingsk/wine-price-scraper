@@ -41,7 +41,7 @@ FLAGS_TAB = "flags"
 
 FLAGS_HEADER = [
     "date_flagged", "source", "estate_name", "retailer", "vintage", "price",
-    "current_url", "issue_type", "corrected_url", "notes", "status", "processed_at",
+    "issue_type", "corrected_url", "current_url", "notes", "status", "processed_at",
 ]
 
 # Dropdown values for issue_type — kept here as the single source of truth.
@@ -128,12 +128,12 @@ FLAGS_README = [
     "D  retailer        Retailer key (e.g. vinotheque_bordeaux, millesima).",
     "E  vintage         Year as integer (blank = non-vintage).",
     "F  price           Price scraped that triggered the flag (auto-filled).",
-    "G  current_url     URL currently tracked in master_products.",
-    "H  issue_type      YOU fill in. See ISSUE TYPES above.",
-    "I  corrected_url   YOU fill in — for incorrect-url (required);",
+    "G  issue_type      YOU fill in. See ISSUE TYPES above. Dropdown provided.",
+    "H  corrected_url   YOU fill in — for incorrect-url (required);",
     "                   for wrong-format / 404 (optional, enables URL swap).",
+    "I  current_url     URL currently tracked in master_products (auto-filled).",
     "J  notes           Auto-filled with detected issue. Add notes freely.",
-    "K  status          Change to 'pending' to trigger processing.",
+    "K  status          Change to 'pending' to trigger processing. Dropdown provided.",
     "L  processed_at    Timestamp when workflow processed this row (auto-filled).",
     "",
     "IMPORTANT",

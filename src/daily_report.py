@@ -80,8 +80,12 @@ def _ensure_flags_tab(sheet):
     """Get or create the 'flags' worksheet with the correct header row."""
     try:
         ws = sheet.worksheet(FLAGS_TAB)
-        if not ws.get_all_values():
+        existing = ws.get_all_values()
+        if not existing:
             ws.append_row(FLAGS_HEADER)
+        elif existing[0] != FLAGS_HEADER:
+            # Header is stale (column order changed) — overwrite row 1 in place.
+            ws.update("A1", [FLAGS_HEADER])
     except gspread.exceptions.WorksheetNotFound:
         ws = sheet.add_worksheet(title=FLAGS_TAB, rows=2000, cols=26)
         ws.append_row(FLAGS_HEADER)
@@ -175,11 +179,11 @@ def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
             today_str, "auto-detected",
             item.get("estate_name", ""), item.get("retailer", ""),
             str(item.get("vintage", "")), item.get("price", ""),
-            url,
-            "",              # issue_type — pick from dropdown
-            "",              # corrected_url — fill in for incorrect-url / wrong-format with replacement
+            "",              # G: issue_type — pick from dropdown
+            "",              # H: corrected_url — fill in if needed
+            url,             # I: current_url (informational, auto-filled)
             item.get("notes", ""),
-            "auto-detected", # status — change to 'pending' to trigger processing
+            "auto-detected", # K: status — change to 'pending' to trigger processing
             "",
         ])
     if new_rows:

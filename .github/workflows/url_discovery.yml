@@ -39,10 +39,7 @@ jobs:
             echo "CSV unchanged — nothing to commit"
           else
             COUNT=$(git diff --cached --numstat master_products.csv | awk '{print $1}')
-            git commit -m "Auto-append ${COUNT} discovered URL(s) to master_products.csv [skip ci]
-
-Appended by url_discovery workflow on $(date -u +%Y-%m-%d).
-The daily scraper at 09:00 UTC will pick up these new rows."
+            git commit -m "$(printf 'Auto-append %s URL(s) to master_products.csv [skip ci]\n\nAppended by url_discovery on %s. Daily scraper at 09:00 UTC will pick these up.' "${COUNT}" "$(date -u +%Y-%m-%d)")"
             git push
             echo "CSV committed and pushed"
           fi

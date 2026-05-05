@@ -4,14 +4,20 @@ User-feedback processing: reads 'pending' rows from the 'flags' GSheet tab
 and applies corrections to the DB before each scrape run.
 
 Workflow:
-  User spots an issue in the daily_report tab → flags tab has a pre-populated
-  auto-detected row, or user adds one manually → sets issue_type + corrected_url
-  → sets status to 'pending' → next run picks it up here.
+  User spots an issue in the daily_report tab -> flags tab has a pre-populated
+  auto-detected row, or user adds one manually -> sets issue_type + corrected_url
+  -> sets status to 'pending' -> next run picks it up here.
 
-Auto-fixable issue types:
+Auto-fixable issue types (set status='pending' to trigger):
   incorrect-url  — updates product_url in master_products + url in price_records
-  magnum         — deactivates master_product in DB, deletes price_records
-  404            — same as magnum
+  wrong-format   — deactivates master_product in DB, deletes price_records
+                   (covers magnums, half-bottles, case prices, wrong-size variants)
+  404            — same as wrong-format
+
+Validated / false-positive suppression (set status='pending' to trigger):
+  validated-ok   — marks status='validated'; suppresses (estate, retailer, vintage)
+                   from appearing in Section 2 of future daily reports permanently.
+                   Delete the row from the flags tab to re-enable the flag.
 
 Needs-manual-action (workflow flags but cannot auto-fix):
   wrong-estate, wrong-vintage, wrong-price, duplicate, other
@@ -38,9 +44,6 @@ FLAGS_HEADER = [
     "date_flagged", "source", "estate_name", "retailer", "vintage",
     "current_url", "issue_type", "corrected_url", "notes", "status", "processed_at",
 ]
-
-# Issue types the workflow can fix automatically
-_AUTO_FIXABLE = {"incorrect-url", "magnum", "404"}
 
 
 def process_flags() -> dict:
@@ -80,9 +83,9 @@ def process_flags() -> dict:
             if row[col["status"]].strip().lower() != "pending":
                 continue
 
-            issue_type    = row[col.get("issue_type", -1)].strip().lower() if "issue_type" in col else ""
-            current_url   = row[col.get("current_url", -1)].strip()        if "current_url" in col else ""
-            corrected_url = row[col.get("corrected_url", -1)].strip()      if "corrected_url" in col else ""
+            issue_type    = row[col["issue_type"]].strip().lower()    if "issue_type"    in col else ""
+            current_url   = row[col["current_url"]].strip()           if "current_url"   in col else ""
+            corrected_url = row[col["corrected_url"]].strip()         if "corrected_url" in col else ""
 
             new_status = "processed"
             try:
@@ -93,13 +96,21 @@ def process_flags() -> dict:
                     else:
                         new_status = "needs-manual-action"
                         summary["needs_manual"] += 1
-                elif issue_type in ("magnum", "404"):
+
+                elif issue_type in ("wrong-format", "404"):
                     if current_url:
                         _deactivate(conn, current_url)
                         summary["processed"] += 1
                     else:
                         new_status = "needs-manual-action"
                         summary["needs_manual"] += 1
+
+                elif issue_type == "validated-ok":
+                    # No DB change — marks as validated so Section 2 suppresses this
+                    # (estate, retailer, vintage) combination in future reports.
+                    new_status = "validated"
+                    summary["processed"] += 1
+
                 else:
                     new_status = "needs-manual-action"
                     summary["needs_manual"] += 1
@@ -126,7 +137,7 @@ def _fix_url(conn, old_url: str, new_url: str) -> None:
         text("UPDATE price_records SET url = :new WHERE url = :old"),
         {"new": new_url, "old": old_url},
     )
-    logger.info(f"URL corrected: {old_url} → {new_url}")
+    logger.info(f"URL corrected: {old_url} -> {new_url}")
 
 
 def _deactivate(conn, url: str) -> None:

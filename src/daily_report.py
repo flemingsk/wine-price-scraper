@@ -88,6 +88,29 @@ def _ensure_flags_tab(sheet):
     return ws
 
 
+def _load_validated(ws) -> set:
+    """
+    Return set of (estate_name, retailer, vintage_str) tuples whose status='validated'.
+    These are permanently suppressed from Section 2. Delete the row to re-enable.
+    """
+    rows = ws.get_all_values()
+    if len(rows) < 2:
+        return set()
+    header = rows[0]
+    col = {name: idx for idx, name in enumerate(header)}
+    suppressed = set()
+    for row in rows[1:]:
+        row = list(row) + [""] * (len(header) - len(row))
+        if row[col.get("status", -1)].strip().lower() != "validated":
+            continue
+        estate   = row[col["estate_name"]].strip() if "estate_name" in col else ""
+        retailer = row[col["retailer"]].strip()     if "retailer"    in col else ""
+        vintage  = row[col["vintage"]].strip()      if "vintage"     in col else ""
+        if estate and retailer:
+            suppressed.add((estate, retailer, vintage))
+    return suppressed
+
+
 def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
     """Append auto-detected price flags to the flags tab, deduped by (url, date)."""
     if not detected_items:
@@ -111,7 +134,7 @@ def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
             today_str, "auto-detected",
             item.get("estate_name", ""), item.get("retailer", ""),
             str(item.get("vintage", "")), url,
-            "",  # issue_type — user fills in from: incorrect-url / magnum / 404 / wrong-estate / wrong-vintage / wrong-price / other
+            "",  # issue_type — user fills in from: incorrect-url / wrong-format / 404 / wrong-estate / wrong-vintage / wrong-price / validated-ok / other
             "",  # corrected_url — user fills in when issue_type = incorrect-url
             item.get("notes", ""),
             "auto-detected",  # status — change to 'pending' to trigger processing next run
@@ -206,7 +229,7 @@ def _run_health(today, start_time: datetime, duration_seconds: float) -> tuple[l
 
 # ── Section 2: Price Flags ────────────────────────────────────────────────────
 
-def _price_flags(today) -> tuple[list[list], int, list[dict]]:
+def _price_flags(today, suppressed: set = frozenset()) -> tuple[list[list], int, list[dict]]:
     df = pd.read_sql(
         """
         WITH hist AS (
@@ -252,6 +275,9 @@ def _price_flags(today) -> tuple[list[list], int, list[dict]]:
         ratio    = float(r["ratio"]) if pd.notna(r.get("ratio")) else None
         n_ret    = int(r["n_retailers"]) if pd.notna(r.get("n_retailers")) else 0
         url      = r["url"] or ""
+
+        if (estate, retailer, str(vintage)) in suppressed:
+            continue
 
         issues = []
         low_threshold = LOW_BLANC if color == "Blanc" else LOW_ROUGE
@@ -509,7 +535,8 @@ def export_daily_report(
             f"{m} need manual action | {e} error(s)" if (m or e) else "all auto-applied",
         ]))
 
-    flag_rows, n_flags, detected_items = _price_flags(today)
+    suppressed = _load_validated(ws_flags)
+    flag_rows, n_flags, detected_items = _price_flags(today, suppressed)
     _write_detected_flags(ws_flags, detected_items, today)
     spread_rows        = _retailer_spreads(today)
     trend_rows         = _price_trends(today)

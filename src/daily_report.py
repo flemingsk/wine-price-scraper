@@ -133,27 +133,38 @@ def _set_flags_validation(ws) -> None:
     ws.spreadsheet.batch_update({"requests": requests})
 
 
-def _load_validated(ws) -> set:
+def _load_seen_flags(ws) -> tuple[set, set]:
     """
-    Return set of (estate_name, retailer, vintage_str) tuples whose status='validated'.
-    These are permanently suppressed from Section 2. Delete the row to re-enable.
+    Read the flags tab and return two sets:
+      suppressed  — (estate, retailer, vintage_str) already in the queue (any status except
+                    'error'). Section 2 will not re-flag these; the flags tab is the review queue.
+                    Delete a row from the flags tab to re-enable its Section 2 alert.
+      flagged_urls — URLs with a data-quality issue type (404/wrong-format/incorrect-url).
+                    Section 5 will exclude these from buying opportunities.
     """
     rows = ws.get_all_values()
     if len(rows) < 2:
-        return set()
+        return set(), set()
     header = rows[0]
     col = {name: idx for idx, name in enumerate(header)}
-    suppressed = set()
+    suppressed   = set()
+    flagged_urls = set()
+    bad_issues   = {"404", "wrong-format", "incorrect-url"}
     for row in rows[1:]:
         row = list(row) + [""] * (len(header) - len(row))
-        if row[col.get("status", -1)].strip().lower() != "validated":
+        status     = row[col["status"]].strip().lower()     if "status"      in col else ""
+        issue_type = row[col["issue_type"]].strip().lower() if "issue_type"  in col else ""
+        current_url = row[col["current_url"]].strip()       if "current_url" in col else ""
+        if status in ("", "error"):
             continue
         estate   = row[col["estate_name"]].strip() if "estate_name" in col else ""
         retailer = row[col["retailer"]].strip()     if "retailer"    in col else ""
         vintage  = row[col["vintage"]].strip()      if "vintage"     in col else ""
         if estate and retailer:
             suppressed.add((estate, retailer, vintage))
-    return suppressed
+        if issue_type in bad_issues and current_url:
+            flagged_urls.add(current_url)
+    return suppressed, flagged_urls
 
 
 def _write_detected_flags(ws, detected_items: list[dict], today) -> None:
@@ -421,9 +432,9 @@ def _retailer_spreads(today) -> list[list]:
 
         min_vs_med = (min_p - med) / med * 100   # negative = cheaper than median
         max_vs_med = (max_p - med) / med * 100   # positive = pricier than median
-        sort_key   = max(abs(min_vs_med), abs(max_vs_med))
 
-        if sort_key <= SPREAD_VS_MEDIAN_MIN * 100:
+        # Only show if the best available price deviates >10% from the 7d median
+        if abs(min_vs_med) <= SPREAD_VS_MEDIAN_MIN * 100:
             continue
 
         vintage_str = "" if pd.isna(vintage) else int(vintage)
@@ -432,13 +443,12 @@ def _retailer_spreads(today) -> list[list]:
             med, min_p, min_row["retailer"], min_row["url"] or "",
             min_vs_med,
             max_p, max_row["retailer"],
-            sort_key,
         ))
 
-    groups.sort(key=lambda x: x[10], reverse=True)
+    groups.sort(key=lambda x: abs(x[7]), reverse=True)
 
     for g in groups:
-        estate, color, vintage, med, min_p, cheap, cheap_url, min_vs_med, max_p, pricey, _ = g
+        estate, color, vintage, med, min_p, cheap, cheap_url, min_vs_med, max_p, pricey = g
         rows.append(_pad([
             estate, color, vintage,
             f"€{med:.2f}",
@@ -516,7 +526,7 @@ def _price_trends(today, days: int = 7, min_pct: float = 5.0) -> list[list]:
 
 # ── Section 5: Buying Opportunities ──────────────────────────────────────────
 
-def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
+def _buying_opps(today, lookback_days: int = 30, top_n: int = 10, flagged_urls: set = frozenset()) -> list[list]:
     ref_start = today - timedelta(days=lookback_days)
 
     df = pd.read_sql(
@@ -554,7 +564,6 @@ def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
                    AND h.wine_color = t.wine_color
         WHERE t.price_amount < h.median_price * (1 - %(min_dis)s)
         ORDER BY discount_pct DESC
-        LIMIT %(top_n)s
         """,
         engine,
         params={
@@ -564,7 +573,6 @@ def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
             "min_ret": MIN_RETAILERS,
             "min_price": MIN_PRICE_FLOOR,
             "min_dis": BUYING_OPP_MIN_DIS,
-            "top_n": top_n,
         },
     )
 
@@ -576,7 +584,10 @@ def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
         rows.append(_pad(["No buying opportunities meeting criteria today."]))
         return rows
 
+    shown = 0
     for _, r in df.iterrows():
+        if r["url"] in flagged_urls:
+            continue  # skip URLs flagged as data-quality issues (404, wrong-format, etc.)
         vintage = "" if pd.isna(r["vintage"]) else int(r["vintage"])
         rows.append(_pad([
             r["estate_name"], r["wine_color"], vintage, r["retailer"],
@@ -586,6 +597,12 @@ def _buying_opps(today, lookback_days: int = 30, top_n: int = 10) -> list[list]:
             int(r["n_retailers"]),
             r["url"] or "",
         ]))
+        shown += 1
+        if shown >= top_n:
+            break
+
+    if shown == 0:
+        rows.append(_pad(["No buying opportunities meeting criteria today (after excluding flagged URLs)."]))
 
     return rows
 
@@ -620,12 +637,12 @@ def export_daily_report(
             f"{m} need manual action | {e} error(s)" if (m or e) else "all auto-applied",
         ]))
 
-    suppressed = _load_validated(ws_flags)
+    suppressed, flagged_urls = _load_seen_flags(ws_flags)
     flag_rows, n_flags, detected_items = _price_flags(today, suppressed)
     _write_detected_flags(ws_flags, detected_items, today)
-    spread_rows        = _retailer_spreads(today)
-    trend_rows         = _price_trends(today)
-    opp_rows           = _buying_opps(today)
+    spread_rows = _retailer_spreads(today)
+    trend_rows  = _price_trends(today)
+    opp_rows    = _buying_opps(today, flagged_urls=flagged_urls)
 
     # ── Narrative headline ────────────────────────────────────────────────────
     best_opp = ""

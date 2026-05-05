@@ -6,6 +6,7 @@ on:
       - main
   schedule:
     - cron: "0 9 * * *"  # daily at 09:00 UTC (10:00 CET / 11:00 CEST)
+  workflow_dispatch:
 
 jobs:
   scrape-and-export:

@@ -19,6 +19,8 @@ STANDARD_BOTTLE_SIZES = {"0.75l", "75cl", "0.75", "75"}
 ESTATE_NAME_CANONICAL: dict[str, str] = {
     "Chateau Malartic Lagraviere":  "Chateau Malartic-Lagraviere",
     "Chateau Sociando Mallet":      "Chateau Sociando-Mallet",
+    # 'c' was a CSV typo for Larrivet Haut-Brion Blanc 2022 jean_merlaut
+    "c":                            "Chateau Larrivet Haut-Brion",
 }
 
 

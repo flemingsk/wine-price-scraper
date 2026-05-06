@@ -96,6 +96,38 @@ def _fix_wrong_estate_names(session) -> None:
                 )
 
 
+def _deactivate_removed_rows(session, csv_keys: set) -> int:
+    """
+    Set active=FALSE for any master_products row whose key is not present in csv_keys.
+    Removing a row from the CSV is the signal that it should no longer be scraped.
+    csv_keys: set of (retailer, estate_name, vintage_start, bottle_size) tuples,
+              already normalised through ESTATE_NAME_CANONICAL.
+    Returns count of rows deactivated.
+    """
+    from sqlalchemy import text as sa_text
+
+    active_rows = session.execute(sa_text(
+        "SELECT id, retailer, estate_name, vintage_start, bottle_size"
+        " FROM master_products WHERE active = TRUE"
+    )).fetchall()
+
+    deactivated = 0
+    for row in active_rows:
+        key = (row.retailer, row.estate_name, row.vintage_start, row.bottle_size)
+        if key not in csv_keys:
+            session.execute(
+                sa_text("UPDATE master_products SET active = FALSE WHERE id = :id"),
+                {"id": row.id},
+            )
+            logger.warning(
+                f"Deactivated: {row.estate_name} | {row.retailer}"
+                f" | v{row.vintage_start} (removed from CSV)"
+            )
+            deactivated += 1
+
+    return deactivated
+
+
 def main():
     csv_path = os.path.abspath(MASTER_PRODUCTS_CSV)
     if not os.path.exists(csv_path):
@@ -160,6 +192,12 @@ def main():
         logger.warning(f"Deduplicated {dupes} duplicate rows from CSV (kept last occurrence)")
     records = list(seen.values())
 
+    # Build the canonical key set from the CSV — used after upsert to detect removed rows.
+    csv_keys = {
+        (rec["retailer"], rec["estate_name"], rec["vintage_start"], rec["bottle_size"])
+        for rec in records
+    }
+
     session = SessionLocal()
     try:
         # Fix any wrong-named rows BEFORE upserting so the unique key never collides
@@ -186,6 +224,11 @@ def main():
         )
         result = session.execute(stmt)
         session.commit()
+
+        # Deactivate any DB rows not present in the current CSV.
+        # Removing a row from the CSV = intent to stop tracking it.
+        deactivated = _deactivate_removed_rows(session, csv_keys)
+        session.commit()
     except Exception:
         session.rollback()
         raise
@@ -195,7 +238,8 @@ def main():
     inserted = result.rowcount if result.rowcount >= 0 else "unknown"
     skipped = len(records) - (result.rowcount if result.rowcount >= 0 else 0)
     logger.info(
-        f"master_products load complete: {inserted} inserted, "
-        f"{skipped} already existed (skipped)"
+        f"master_products load complete: {inserted} upserted, "
+        f"{skipped} unchanged"
         + (f", {skipped_format} non-75cl rows ignored" if skipped_format else "")
+        + (f", {deactivated} deactivated (removed from CSV)" if deactivated else "")
     )

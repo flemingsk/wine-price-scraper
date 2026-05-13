@@ -1,9 +1,16 @@
 # src/scrapers/twil.py
 """
 Twil scraper — requires Playwright (JS-rendered prices).
-Price element: span#product-price-{fragment_id} (content attribute)
-Each product URL contains a fragment (e.g. #326562) that maps to the variant.
-span.price and span#totalPrice both return wrong values (basket/0.00€ or case total).
+
+Price strategy:
+  1. Walk up from span#product-price-{fragment} to find any li.other_offer items
+     within the same product section. If a case offer exists (e.g. "12 bouteilles"),
+     use the per-bottle price from the largest case — consistent with millesima logic.
+  2. If no case offer, use the fragment-based regular price directly.
+  3. If the fragment span is absent (stale ID / server error), return None rather
+     than falling through to a generic selector that could match a different product.
+
+span.price and span#totalPrice are known to return wrong values and are blocked.
 """
 import logging
 from urllib.parse import urldefrag
@@ -18,14 +25,35 @@ logger = logging.getLogger(__name__)
 
 OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
 
-PRICE_SELECTORS = [
-    # fragment-based selector is built dynamically in _scrape_page
-    "span[itemprop='price']",
-    ".product-price",
-]
-
-# These selectors are known to return wrong values (basket total, 0.00€, or 6-bottle case total)
-BAD_SELECTORS = {"span.price", "span#totalPrice"}
+# JS that, given a fragment ID, returns the best case per-bottle price from any
+# li.other_offer in the product's section, or null if none found.
+_CASE_PRICE_JS = """(fragmentId) => {
+    const rp = document.getElementById('product-price-' + fragmentId);
+    if (!rp) return null;
+    let el = rp;
+    while (el && el.tagName !== 'BODY') {
+        const offers = el.querySelectorAll('li.other_offer');
+        if (offers.length > 0) {
+            let bestPrice = null;
+            let bestBottles = 0;
+            offers.forEach(li => {
+                const pe = li.querySelector('.special-price span.price');
+                if (!pe) return;
+                const txt = li.innerText || '';
+                const m = txt.match(/([0-9]+)\\s*bouteille/);
+                const bottles = m ? parseInt(m[1]) : 1;
+                if (bottles > bestBottles) {
+                    bestBottles = bottles;
+                    bestPrice = pe.innerText.trim();
+                }
+            });
+            if (bestPrice) return {price: bestPrice, bottles: bestBottles};
+            break;
+        }
+        el = el.parentElement;
+    }
+    return null;
+}"""
 
 
 class TwilScraper(BaseScraper):
@@ -74,27 +102,33 @@ class TwilScraper(BaseScraper):
 
             page.wait_for_timeout(3000)
 
-            # Build selector list: fragment-specific first (most reliable),
-            # then CSV selector, then generic fallbacks.
-            # span.price and span#totalPrice are unreliable — see module docstring.
-            selectors = []
             _, fragment = urldefrag(url)
-            if fragment:
-                selectors.append(f"span#product-price-{fragment}")
-            if product.price_selector and product.price_selector not in BAD_SELECTORS:
-                selectors.append(product.price_selector)
-            selectors.extend(PRICE_SELECTORS)
 
+            # ── Step 1: look for a case offer (li.other_offer) in the product section ──
             raw_price = None
             used_selector = None
-            for selector in selectors:
-                el = page.query_selector(selector)
+
+            if fragment:
+                case_result = page.evaluate(_CASE_PRICE_JS, fragment)
+                if case_result:
+                    raw_price = case_result["price"]
+                    used_selector = f"other_offer/{case_result['bottles']}bt"
+
+            # ── Step 2: fall back to the fragment-based regular-price span ────────────
+            if not raw_price and fragment:
+                el = page.query_selector(f"span#product-price-{fragment}")
                 if el:
-                    candidate = el.get_attribute("content") or el.inner_text().strip()
-                    if candidate:
-                        raw_price = candidate
-                        used_selector = selector
-                        break
+                    raw_price = el.inner_text().strip()
+                    used_selector = f"span#product-price-{fragment}"
+                else:
+                    # Fragment span absent — stale ID or server error.
+                    # Do NOT fall through to generic selectors; they would match
+                    # a different product on the same page.
+                    logger.warning(
+                        f"Twil: span#product-price-{fragment} not found at {url} "
+                        f"— skipping to avoid wrong-product price"
+                    )
+                    return None
 
             if not raw_price:
                 logger.warning(f"Twil: no price found at {url}")

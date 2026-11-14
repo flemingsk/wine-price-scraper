@@ -10,7 +10,7 @@ on:
 
 jobs:
   scrape-and-export:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # pinned: Playwright 1.57 does not support ubuntu 26.04 (ubuntu-latest)
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}

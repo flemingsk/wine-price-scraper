@@ -139,6 +139,17 @@ class CavissimaScraper(BaseScraper):
             if response and response.status == 404:
                 return None
 
+            # Shopify 301-redirects delisted products to a collection/search page
+            # (status 200, not 404). Parsing that page would pick up an arbitrary
+            # product's price from the listing grid, so treat it as unavailable.
+            final_path = urlparse(page.url).path
+            if "/products/" not in final_path:
+                logger.info(
+                    f"Cavissima: soft-redirect — {url} -> {page.url} "
+                    f"(product delisted), skipping"
+                )
+                return None
+
             page.wait_for_timeout(3000)
 
             # --- Try tile-based extraction first ---

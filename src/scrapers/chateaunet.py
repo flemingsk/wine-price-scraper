@@ -1,9 +1,16 @@
 # src/scrapers/chateaunet.py
 """
 Chateaunet scraper — requires Playwright (JS-rendered prices).
-Price selector: span[itemprop='price'] (content attribute has clean decimal)
+Price selector: .selected-packaging .price (per-bottle/case radio picker,
+scoped to the main product so it can't match the "related products" carousel)
 Note: strip tracking parameters from URLs in master_products.csv
       (remove everything from ?_gl= onwards)
+
+HISTORY: `span[itemprop='price']` was the original selector but the site's
+Magento template dropped that attribute entirely (confirmed 2026-07-23 — zero
+matches on every product page checked). The old fallback chain then silently
+matched `span.price` inside a "related products" carousel on the same page,
+recording an unrelated wine's price instead of the actual product's.
 """
 import logging
 
@@ -18,8 +25,9 @@ logger = logging.getLogger(__name__)
 OOS_TEXT = ["épuisé", "indisponible", "rupture de stock", "out of stock"]
 
 PRICE_SELECTORS = [
+    ".selected-packaging .price",
+    ".product-info-main .price",
     "span[itemprop='price']",
-    "span.price",
     ".our_price_display",
     ".product-price",
 ]
@@ -85,8 +93,12 @@ class ChateaunetScraper(BaseScraper):
             for selector in selectors:
                 el = page.query_selector(selector)
                 if el:
-                    # Prefer content attribute (clean decimal) over inner text
-                    candidate = el.get_attribute("content") or el.inner_text().strip()
+                    # Visible text first: .selected-packaging .price can contain
+                    # a nested crossed-out reference price after the real one
+                    # (e.g. "37,00€ 41,50€"), but parse_price() takes the first
+                    # number found, which is always the current price. The
+                    # `content` attribute is not populated on this markup.
+                    candidate = el.inner_text().strip() or el.get_attribute("content")
                     if candidate:
                         raw_price = candidate
                         used_selector = selector

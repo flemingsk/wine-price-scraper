@@ -75,7 +75,12 @@ class CercleDeMartillacScraper(BaseScraper):
             for selector in selectors:
                 el = page.query_selector(selector)
                 if el:
-                    candidate = el.get_attribute("content") or el.inner_text().strip()
+                    # Prefer the visible text: PrestaShop shows the true per-bottle
+                    # price here (e.g. "60,00€ la bouteille"), while the `content`
+                    # microdata attribute reflects whichever pack option (bottle,
+                    # case of 6, magnum...) happens to be pre-selected on the page
+                    # — for multi-pack products that is often a case total.
+                    candidate = el.inner_text().strip() or el.get_attribute("content")
                     if candidate and any(c.isdigit() for c in candidate):
                         raw_price = candidate
                         used_selector = selector
